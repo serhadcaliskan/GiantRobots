@@ -19,7 +19,7 @@ public class TimeManager : MonoBehaviour
 
     [SerializeField] private Light globalLight;
 
-    private int minutes;
+   [SerializeField] private int minutes;
 
     public int Minutes
     { get { return minutes; } set { minutes = value; OnMinutesChange(value); } }
@@ -33,11 +33,19 @@ public class TimeManager : MonoBehaviour
 
     private float tempSecond;
 
+    public void Start()
+    {
+        // Reset Skybox Shader
+        RenderSettings.skybox.SetTexture("_Texture1", skyboxNight);
+        RenderSettings.skybox.SetTexture("_Texture2", skyboxSunrise);
+        RenderSettings.skybox.SetFloat("_Blend", 0);
+        globalLight.color = graddientNightToSunrise.Evaluate(0);
+    }
     public void Update()
     {
         tempSecond += Time.deltaTime;
 
-        if (tempSecond >= 1)
+        if (tempSecond >= 0.1f)
         {
             Minutes += 1;// speed up if you need
             tempSecond = 0;
