@@ -46,35 +46,44 @@ public class VoiceScript : MonoBehaviour
     public TMP_Text answerTextField;
     public TMP_Text buttonText;
     public TMP_InputField nameTextField;
+    public GameObject canvas;
     APIKeys keys = APIKeys.Load();
+    public float displayDistance = 10.0f;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     private List<Message> chatHistory = new List<Message>();
-    public TTSSpeaker ttsSpeaker;
+    public Transform player;
 
     private string voicesList = "WIT$BRITISH BUTLER, WIT$CAEL, WIT$CAM, WIT$CARL, WIT$CARTOON BABY, WIT$CARTOON KID, WIT$CARTOON VILLAIN, WIT$CHARLIE, WIT$COCKNEY ACCENT, WIT$CODY, WIT$COLIN, WIT$CONNOR, WIT$COOPER, WIT$DISAFFECTED, WIT$HOLLYWOOD, WIT$KENYAN ACCENT, WIT$OVERCONFIDENT, WIT$PIRATE, WIT$PROSPECTOR, WIT$RAILEY, WIT$REBECCA, WIT$REMI, WIT$ROSIE, WIT$RUBIE, WIT$SOUTHERN ACCENT, WIT$SURFER, WIT$TRENDY, WIT$VAMPIRE, WIT$WHIMSICAL, WIT$WIZARD";
     private string voiceSelectRequest = "";
+    // TODO: dont hardcode the following 2 strings
+    private string lastMessage = "Goodbye!";
     private void Start()
     {
         ttsButton.onClick.AddListener(OnTTSButtonClick);
+        tts.VoiceID = "WIT$BRITISH BUTLER";
+        if (canvas != null)
+            canvas.SetActive(false);
     }
     void OnTTSButtonClick()
     {
-        voiceSelectRequest = "I have a TTS app and the user wants to talk with \"" + nameTextField.text + "\".\r\n" +
-            "This is a list of VoiceIDs i have:\"" + voicesList + "\", please choose the best suiting one from the list. " +
-            "If nothing suits give me a random one from the list. Answer only with the one ID you selected.";
-        getChatGPTAnswer(voiceSelectRequest, (reply) =>
-        {
-            Debug.Log("VoiceID: " + reply);
-            if (voicesList.Contains(reply))
-            {
-                ttsSpeaker.VoiceID = reply;
-            }
-            else
-            {
-                ttsSpeaker.VoiceID = "WIT$CAM";
-            }
-        });
+        if (textField.text?.Length > 0)
+            StartCoroutine(CallOpenAI(textField.text));
+        //voiceSelectRequest = "I have a TTS app and the user wants to talk with \"" + nameTextField.text + "\".\r\n" +
+        //    "This is a list of VoiceIDs i have:\"" + voicesList + "\", please choose the best suiting one from the list. " +
+        //    "If nothing suits give me a random one from the list. Answer only with the one ID you selected.";
+        //getChatGPTAnswer(voiceSelectRequest, (reply) =>
+        //{
+        //    Debug.Log("VoiceID: " + reply);
+        //    if (voicesList.Contains(reply))
+        //    {
+        //        ttsSpeaker.VoiceID = reply;
+        //    }
+        //    else
+        //    {
+        //        ttsSpeaker.VoiceID = "WIT$CAM";
+        //    }
+        //});
     }
 
     public void getChatGPTAnswer(string message, Action<string> onComplete)
@@ -136,8 +145,7 @@ public class VoiceScript : MonoBehaviour
         }
         else
         {
-            //chatHistory.Add(new Message { role = "system", content = "You are a wizard. Respond in wizard language." });
-            chatHistory.Add(new Message { role = "system", content = "You are the swedish chef from sesame street. Almost nothing you say is intelligible." });
+            chatHistory.Add(new Message { role = "system", content = "You are shakespeare. Keep your answers short." });
         }
         // Construct the message payload
         chatHistory.Add(new Message { role = "user", content = message });
@@ -247,34 +255,79 @@ public class VoiceScript : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform == player)
+        {
+            ShowCanvasInFrontOfPlayer();
+        }
+    }
+
+    private void ShowCanvasInFrontOfPlayer()
+    {
+        if (canvas != null && player != null)
+        {
+            // Calculate the position for the canvas to appear directly in front of the player
+            Vector3 playerForward = player.forward; // Direction player is facing
+            Vector3 canvasPosition = player.position + playerForward * displayDistance;
+            canvasPosition.y += 35.0f;
+
+            // Position and face the canvas toward the player
+            canvas.transform.position = canvasPosition;
+            canvas.transform.LookAt(player); // Make the canvas face the player
+            canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.position); // Adjust for proper facing
+
+            // Activate the canvas
+            canvas.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.transform == player)
+        {
+            canvas.SetActive(false);
+            tts.SpeakQueued(lastMessage);
+            chatHistory.Add(new Message { role = "system", content = lastMessage });
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        // Start voice recording when the Return key is pressed
-        if (Input.GetKeyDown(KeyCode.Return) && !voiceExperience.Active)
+        if (canvas.activeSelf)
         {
-            voiceExperience.Activate(); // Activates default mic for 20 seconds after the volume threshold is hit.
-                                        // If the user is quiet for 2 seconds, or if it reaches the 20 second mark, the mic will stop recording.
-                                        // (Can all be changed in runtime config)
-        }
+            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Space))
+            {
+                StartCoroutine(CallOpenAI(textField.text));
+            }
 
-        // Stop voice recording when the Return key is released
-        if (Input.GetKeyUp(KeyCode.Return) && voiceExperience.Active)
-        {
-            voiceExperience.Deactivate();
-        }
+            // Start voice recording when the Return key is pressed
+            if (Input.GetKeyDown(KeyCode.Return) && !voiceExperience.Active)
+            {
+                voiceExperience.Activate(); // Activates default mic for 20 seconds after the volume threshold is hit.
+                                            // If the user is quiet for 2 seconds, or if it reaches the 20 second mark, the mic will stop recording.
+                                            // (Can all be changed in runtime config)
+            }
 
-        // Start dictation when the arrow-up key is pressed
-        if (Input.GetKeyDown(KeyCode.UpArrow) && !dictationExperience.Active)
-        {
-            dictationExperience.Activate();
-        }
+            // Stop voice recording when the Return key is released
+            if (Input.GetKeyUp(KeyCode.Return) && voiceExperience.Active)
+            {
+                voiceExperience.Deactivate();
+            }
 
-        // Stop voice dictation when the arrow-up key is released
-        if (Input.GetKeyUp(KeyCode.UpArrow) && dictationExperience.Active)
-        {
-            dictationExperience.Deactivate();
+            // Start dictation when the arrow-up key is pressed
+            if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active)
+            {
+                dictationExperience.Activate();
+            }
+
+            // Stop voice dictation when the arrow-up key is released
+            if (Input.GetKeyUp(KeyCode.UpArrow) && dictationExperience.Active)
+            {
+                dictationExperience.Deactivate();
+            }
         }
     }
 
