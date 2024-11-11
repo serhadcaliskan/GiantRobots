@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject gameCanvas;
     public Transform player;
-    public FPSController fpsController;
+    //public FPSController fpsController;
 
     // UI Buttons
     public Button loadButton;
@@ -123,8 +123,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // TODO Implement gpt calls
-        void AITurnGPT()
+    // TODO Implement gpt calls, get back json with {choice, comment}
+    void AITurnGPT()
     {
         // Simple AI with random action choice
         int choice = Random.Range(0, 3); // 0 = Load, 1 = Shoot, 2 = Shield
