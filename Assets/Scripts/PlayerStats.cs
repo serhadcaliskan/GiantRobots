@@ -49,8 +49,6 @@ public class PlayerStats : MonoBehaviour
         if (PlayerPrefs.HasKey("disarmSuccessRate"))
             disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate");
         else disarmSuccessRate = 0.7f;
-
-        Debug.Log("Game settings loaded!");
     }
     /// <summary>
     /// Adds damage to player's life points.
