@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
@@ -36,6 +37,7 @@ public class GameManagerFive : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text npcLifeText;
     public TMP_Text actionLog;
+    public int difficulty = 1;
 
     public Button loadButton;
     public Button shootButton;
@@ -49,7 +51,7 @@ public class GameManagerFive : MonoBehaviour
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
     /// </summary>
-    private List<(string, string)> gameHistory = new List<(string, string)>();
+    private List<(Action, Action)> gameHistory = new List<(Action, Action)>();
     APIKeys keys = APIKeys.Load();
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private List<Message> chatHistory = new List<Message>();
@@ -111,10 +113,10 @@ public class GameManagerFive : MonoBehaviour
             {
                 Debug.Log(gptAction.action);
             }
-            else npcAction = (Action)Random.Range(0, 5); // NPC randomly selects an action
+            else npcAction = getKiAction(difficulty % 3 + 1);
         }
-        else npcAction = (Action)Random.Range(0, 5); // NPC randomly selects an action
-        gameHistory.Add((playerAction.ToString(), npcAction.ToString()));
+        else npcAction = getKiAction(difficulty % 3 + 1);
+        gameHistory.Add((playerAction, npcAction));
         EvaluateRound();
 
     }
@@ -164,6 +166,65 @@ public class GameManagerFive : MonoBehaviour
             }
         }
         return null;
+    }
+
+    Action getKiAction(int difficulty)
+    {
+        if (gameHistory?.Count == 0) return Action.Load; // Always load in first round
+        int playerLife = player.lifePoints;
+        int playerAmmo = player.loadCount;
+        int playerShields = player.shieldCount;
+
+        int aiLife = npc.lifePoints;
+        int aiAmmo = npc.loadCapacity;
+        int aiShields = npc.shieldCount;
+
+        if (difficulty == 1) // Randomly selects a possible action
+        {
+            List<Action> possibleActions = new List<Action>();
+
+            if (aiAmmo > 0) possibleActions.Add(Action.Shoot);
+            if ((aiAmmo == 0 || Random.value < 0.3) && npc.loadCapacity < aiAmmo) possibleActions.Add(Action.Load); // can be tweaked for more aggressive AI
+            if (aiShields > 0) possibleActions.Add(Action.Shield);
+            possibleActions.Add(Action.Dodge);
+            if (playerAmmo > 0) possibleActions.Add(Action.Disarm);
+
+            return possibleActions[Random.Range(0, possibleActions.Count)];
+        }
+        else if (difficulty == 2)
+        {
+            if (aiAmmo == 0) return Action.Load;
+            var lastPlayerAction = gameHistory?.LastOrDefault().Item1;
+
+            if (playerAmmo > 0)
+            {
+                if ((float)playerAmmo / player.loadCapacity >= 0.6f && aiShields > 0) return Action.Shield;
+                if (Random.value < 0.5) return Action.Dodge;
+            }
+
+            if (aiAmmo > 0 && lastPlayerAction != Action.Shield) return Action.Shoot;
+            if (lastPlayerAction == Action.Load) return Action.Disarm;
+
+            return aiAmmo > 0 ? Action.Shoot : Action.Load;
+        }
+        else if (difficulty == 3)
+        {
+            if (aiAmmo == 0) return 0;
+            var lastPlayerAction = gameHistory?.LastOrDefault().Item1;
+
+            bool playerLikelyToShoot = playerAmmo > 0 && lastPlayerAction == Action.Load;
+            bool playerLikelyToLoad = lastPlayerAction == Action.Disarm || playerAmmo == 0;
+
+            if (playerLikelyToShoot) return aiShields > 0 ? Action.Shield : Action.Dodge;
+            if (playerLikelyToLoad) return Action.Disarm;
+
+            if (playerAmmo > 0 && aiLife < playerLife / 2) return Action.Dodge;
+
+            if (aiAmmo > 0 && lastPlayerAction != Action.Shield) return Action.Shoot;
+            return aiAmmo > 0 ? Action.Shoot : Action.Load;
+        }
+
+        return (Action)Random.Range(0, 5); // Default if all else fails
     }
 
     void EvaluateRound()
@@ -338,7 +399,7 @@ public class GameManagerFive : MonoBehaviour
                         if (!player.isShielding)
                         {
                             actionLog.text = "You tried to shield without having shields!";
-                            if(Random.value <= npc.disarmSuccessRate)
+                            if (Random.value <= npc.disarmSuccessRate)
                             {
                                 player.ResetLoad();
                                 actionLog.text += $"{npcName} disarmed you!";
@@ -368,7 +429,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
-                            if(Random.value <= player.dodgeSuccessRate)
+                            if (Random.value <= player.dodgeSuccessRate)
                             {
                                 actionLog.text = $"You dodged {npcName}'s shot!";
                             }
@@ -394,7 +455,7 @@ public class GameManagerFive : MonoBehaviour
                         break;
 
                     case Action.Disarm:
-                        if(Random.value <= npc.disarmSuccessRate)
+                        if (Random.value <= npc.disarmSuccessRate)
                         {
                             player.ResetLoad();
                             actionLog.text = $"You failed to dodge, {npcName} disarmed you!";
@@ -490,7 +551,6 @@ public class GameManagerFive : MonoBehaviour
         SpeakAndWait();
     }
 
-
     public async Task SpeakAndWait()
     {
         // Todo get GPT comment on actionLog
@@ -540,7 +600,7 @@ public class GameManagerFive : MonoBehaviour
             npc.LoadGameSettings();
             player.LoadGameSettings();
             chatHistory = new List<Message>();
-            gameHistory = new List<(string, string)>();
+            gameHistory = new List<(Action, Action)>();
         }
     }
     string GameHistoryAsString()

@@ -1522,6 +1522,7 @@ MonoBehaviour:
   playerLifeText: {fileID: 236763692}
   npcLifeText: {fileID: 382949367}
   actionLog: {fileID: 132597248}
+  difficulty: 2
   loadButton: {fileID: 516779982}
   shootButton: {fileID: 393133478}
   shieldButton: {fileID: 563769904}
