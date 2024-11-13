@@ -55,7 +55,6 @@ public class GameManagerFive : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    private int basicShotDamage = 10;
     private string npcName = "Napoleon";
 
     private void OnTriggerEnter(Collider other)
@@ -89,6 +88,7 @@ public class GameManagerFive : MonoBehaviour
         dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
         disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
         player.LoadGameSettings();
+        npc.LoadGameSettings();
         ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
 
         if (gameCanvas != null)
@@ -168,348 +168,319 @@ public class GameManagerFive : MonoBehaviour
 
     void EvaluateRound()
     {
-        if (playerAction == Action.Load && npcAction == Action.Load)
+        // TODO when sending actionLog to GPT, tell it "You" is the other player
+        Debug.Log($"Player: {playerAction} - {npcName}: {npcAction}");
+        actionLog.text = "";
+        switch (playerAction)
         {
-            player.IncreaseLoad();
-            npc.IncreaseLoad();
-            actionLog.text = "Both players loaded!";
-        }
-        else if (playerAction == Action.Load && npcAction == Action.Shoot)
-        {
-            player.IncreaseLoad();
-            actionLog.text = "You loaded a round!";
-            if (npc.loadCount > 0)
-            {
-                player.TakeDamage(basicShotDamage);
-                npc.loadCount--;
-                actionLog.text += $"{npcName} shot you!";
-            }
-
-        }
-        else if (playerAction == Action.Load && npcAction == Action.Shield)
-        {
-            player.IncreaseLoad();
-            actionLog.text = "You loaded a round!";
-            npc.UseShield();
-            if (npc.isShielding) actionLog.text += $"{npcName} shielded!"; else actionLog.text += $"{npcName} is out of shields!";
-        }
-        else if (playerAction == Action.Load && npcAction == Action.Dodge)
-        {
-            player.IncreaseLoad();
-            actionLog.text = "You loaded a round!";
-        }
-        else if (playerAction == Action.Load && npcAction == Action.Disarm)
-        {
-            if (Random.value <= npc.disarmSuccessRate)
-            {
-                player.ResetLoad();
-                actionLog.text = $"{npcName} disarmed you!";
-            }
-            else
-            {
+            case Action.Load:
                 player.IncreaseLoad();
-                actionLog.text = $"{npcName}'s disarm failed and you loaded one round!";
-            }
-        }
-        else if (playerAction == Action.Shoot && npcAction == Action.Load)
-        {
-            npc.IncreaseLoad();
-            if (player.loadCount > 0)
-            {
-                npc.TakeDamage(basicShotDamage);
-                player.loadCount--;
-                actionLog.text = $"You shot {npcName}!";
-            }
-            else
-            {
-                actionLog.text = "You are out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Shoot && npcAction == Action.Shoot)
-        {
-            if (player.loadCount > 0)
-            {
-                npc.TakeDamage(basicShotDamage);
-                player.loadCount--;
-                actionLog.text = $"You shot {npcName}!";
-            }
-            else
-            {
-                actionLog.text = "You are out of ammo!";
-            }
-            if (npc.loadCount > 0)
-            {
-                player.TakeDamage(basicShotDamage);
-                npc.loadCount--;
-                actionLog.text += $"{npcName} shot you!";
-            }
+                switch (npcAction)
+                {
+                    case Action.Load:
+                        npc.IncreaseLoad();
+                        actionLog.text = "Both players loaded!";
+                        break;
 
-        }
-        else if (playerAction == Action.Shoot && npcAction == Action.Shield)
-        {
-            npc.UseShield();
-            if (player.loadCount > 0)
-            {
-                player.loadCount--;
-                if (npc.isShielding)
-                {
-                    actionLog.text = $"{npcName} shielded!";
-                }
-                else
-                {
-                    npc.TakeDamage(basicShotDamage);
-                    actionLog.text = $"You shot {npcName}!";
-                }
-            }
-            else
-            {
-                actionLog.text = "You are out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Shoot && npcAction == Action.Dodge)
-        {
-            if (player.loadCount > 0)
-            {
-                player.loadCount--;
-                if (Random.value <= npc.dodgeSuccessRate)
-                {
-                    actionLog.text = $"{npcName} dodged!";
-                }
-                else
-                {
-                    npc.TakeDamage(basicShotDamage);
-                    actionLog.text = $"You shot {npcName}!";
-                }
-            }
-            else
-            {
-                actionLog.text = "You are out of ammo!";
-            }
+                    case Action.Shoot:
+                        actionLog.text = "You loaded a round!";
+                        if (npc.loadCount > 0)
+                        {
+                            player.TakeDamage(npc.shootDamage);
+                            npc.loadCount--;
+                            actionLog.text += $"{npcName} shot you!";
+                        }
+                        else actionLog.text += $"{npcName} tried to shoot without ammo!";
+                        break;
 
-        }
-        else if (playerAction == Action.Shoot && npcAction == Action.Disarm)
-        {
-            if (player.loadCount > 0)
-            {
-                player.loadCount--;
-                npc.TakeDamage(basicShotDamage);
-                actionLog.text = $"You shot {npcName}!";
-            }
-            else
-            {
-                actionLog.text = "You are out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Shield && npcAction == Action.Load)
-        {
-            npc.IncreaseLoad();
-            player.UseShield();
-            if (player.isShielding)
-            {
-                actionLog.text = "You wasted a shield!";
-            }
-            else
-            {
-                actionLog.text = "You are out of shields!";
-            }
-        }
-        else if (playerAction == Action.Shield && npcAction == Action.Shoot)
-        {
-            player.UseShield();
-            if (npc.loadCount > 0)
-            {
-                npc.loadCount--;
-                if (player.isShielding)
-                {
-                    actionLog.text = "You shielded successfully!";
-                }
-                else
-                {
-                    player.TakeDamage(basicShotDamage);
-                    actionLog.text = "You are out of shields!";
-                    actionLog.text += $"{npcName} shot you!";
-                }
-            }
-            else
-            {
-                actionLog.text = $"{npcName} is out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Shield && npcAction == Action.Shield)
-        {
-            player.UseShield();
-            npc.UseShield();
+                    case Action.Shield:
+                        actionLog.text = "You loaded a round!";
+                        npc.UseShield();
+                        actionLog.text += npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!";
+                        break;
 
-            if (player.isShielding)
-            {
-                actionLog.text = "You wasted a shield!";
-            }
-            else
-            {
-                actionLog.text = "You are out of shields!";
-            }
-            if (npc.isShielding)
-            {
-                actionLog.text += $"{npcName} wasted a shield!";
-            }
-            else
-            {
-                actionLog.text += $"{npcName} is out of shields!";
-            }
-        }
-        else if (playerAction == Action.Shield && npcAction == Action.Dodge)
-        {
-            player.UseShield();
-            if (player.isShielding)
-            {
-                actionLog.text = "You wasted a shield!";
-            }
-            else
-            {
-                actionLog.text = "You are out of shields!";
-            }
-        }
-        else if (playerAction == Action.Shield && npcAction == Action.Disarm)
-        {
-            player.UseShield();
-            if (!player.isShielding)
-            {
-                actionLog.text = "You are out of shields!";
-                if (Random.value <= npc.disarmSuccessRate)
-                {
-                    player.ResetLoad();
-                    actionLog.text += $"{npcName} disarmed you!";
+                    case Action.Dodge:
+                        actionLog.text = $"You loaded a round and {npcName} dodged!";
+                        break;
+
+                    case Action.Disarm:
+                        if (Random.value <= npc.disarmSuccessRate)
+                        {
+                            player.ResetLoad();
+                            actionLog.text = $"{npcName} disarmed you, your loading failed!";
+                        }
+                        else
+                        {
+                            actionLog.text = $"{npcName}'s disarm failed, you loaded a round!";
+                        }
+                        break;
                 }
-                else
+                break;
+
+            case Action.Shoot:
+                if (player.loadCount <= 0) actionLog.text = "You tried to shoot without ammo!";
+
+                switch (npcAction)
                 {
-                    actionLog.text += $"{npcName}'s disarm failed!";
+                    case Action.Load:
+                        npc.IncreaseLoad();
+                        if (player.loadCount > 0)
+                        {
+                            player.loadCount--;
+                            npc.TakeDamage(player.shootDamage);
+                            actionLog.text = $"You shot {npcName}! {npcName} loaded a round!";
+                        }
+                        break;
+
+                    case Action.Shoot:
+                        if (player.loadCount > 0)
+                        {
+                            player.loadCount--;
+                            npc.TakeDamage(player.shootDamage);
+                            actionLog.text = $"You shot {npcName}!";
+                        }
+
+                        if (npc.loadCount > 0)
+                        {
+                            player.TakeDamage(npc.shootDamage);
+                            npc.loadCount--;
+                            actionLog.text += $"{npcName} shot you!";
+                        }
+                        else actionLog.text += $"{npcName} tried to shoot without ammo!";
+                        break;
+
+                    case Action.Shield:
+                        npc.UseShield();
+                        if (player.loadCount > 0)
+                        {
+                            player.loadCount--;
+                            if (npc.isShielding)
+                            {
+                                actionLog.text = $"{npcName} shielded your shot!";
+                            }
+                            else
+                            {
+                                npc.TakeDamage(player.shootDamage);
+                                actionLog.text = $"{npcName} tried to shield without having shields. You shot {npcName}!";
+                            }
+                        }
+                        else actionLog.text += npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields.";
+                        break;
+
+                    case Action.Dodge:
+                        if (player.loadCount > 0)
+                        {
+                            player.loadCount--;
+                            if (Random.value <= npc.dodgeSuccessRate)
+                            {
+                                actionLog.text = $"{npcName} dodged your shot!";
+                            }
+                            else
+                            {
+                                npc.TakeDamage(player.shootDamage);
+                                actionLog.text = $"{npcName}'s dodge failed! You shot {npcName}!";
+                            }
+                        }
+                        break;
+
+                    case Action.Disarm:
+                        if (player.loadCount > 0)
+                        {
+                            player.loadCount--;
+                            npc.TakeDamage(player.shootDamage);
+                            actionLog.text = $"You shot {npcName}! {npcName} failed to disarm you!";
+                        }
+                        else actionLog.text += $"{npcName} tried to disarm you!";
+                        break;
                 }
-            }
-            else actionLog.text = "You shielded successfully!";
-        }
-        else if (playerAction == Action.Dodge && npcAction == Action.Load)
-        {
-            npc.IncreaseLoad();
-            actionLog.text = $"{npcName} loaded a round!";
-        }
-        else if (playerAction == Action.Dodge && npcAction == Action.Shoot)
-        {
-            if (npc.loadCount > 0)
-            {
-                npc.loadCount--;
-                if (Random.value <= player.dodgeSuccessRate)
+                break;
+
+            case Action.Shield:
+                player.UseShield();
+                switch (npcAction)
                 {
-                    actionLog.text = "You dodged successfully!";
+                    case Action.Load:
+                        npc.IncreaseLoad();
+                        actionLog.text = $"{npcName} loaded! " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
+                        break;
+
+                    case Action.Shoot:
+                        if (npc.loadCount > 0)
+                        {
+                            npc.loadCount--;
+                            if (player.isShielding)
+                            {
+                                actionLog.text = $"You shielded {npcName}'s shot!";
+                            }
+                            else
+                            {
+                                player.TakeDamage(npc.shootDamage);
+                                actionLog.text = $"You tried to shield without having shields! {npcName} shot you!";
+                            }
+                        }
+                        else
+                        {
+                            actionLog.text = $"{(player.isShielding ? "You wasted a shield," : "You tried to shield without having shields!")} {npcName} tried to shoot without ammo!";
+                        }
+                        break;
+
+                    case Action.Shield:
+                        npc.UseShield();
+                        actionLog.text = (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!") +
+                                         (npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!");
+                        break;
+
+                    case Action.Dodge:
+                        actionLog.text = $"{npcName} dodged, " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
+                        break;
+
+                    case Action.Disarm:
+                        if (!player.isShielding)
+                        {
+                            actionLog.text = "You tried to shield without having shields!";
+                            if(Random.value <= npc.disarmSuccessRate)
+                            {
+                                player.ResetLoad();
+                                actionLog.text += $"{npcName} disarmed you!";
+                            }
+                            else
+                            {
+                                actionLog.text += $"{npcName}'s disarm failed!";
+                            }
+                        }
+                        else
+                        {
+                            actionLog.text = $"You shielded {npcName}'s disarm attempt!";
+                        }
+                        break;
                 }
-                else
+                break;
+
+            case Action.Dodge:
+                switch (npcAction)
                 {
-                    player.TakeDamage(basicShotDamage);
-                    actionLog.text = "You failed to dodge!";
-                    actionLog.text += $"{npcName} shot you!";
+                    case Action.Load:
+                        npc.IncreaseLoad();
+                        actionLog.text = $"{npcName} loaded a round! You dodged";
+                        break;
+
+                    case Action.Shoot:
+                        if (npc.loadCount > 0)
+                        {
+                            npc.loadCount--;
+                            if(Random.value <= player.dodgeSuccessRate)
+                            {
+                                actionLog.text = $"You dodged {npcName}'s shot!";
+                            }
+                            else
+                            {
+                                player.TakeDamage(npc.shootDamage);
+                                actionLog.text = $"You failed to dodge! {npcName} shot you!";
+                            }
+                        }
+                        else
+                        {
+                            actionLog.text = $"{npcName} tried to shoot without ammo, you dodged!";
+                        }
+                        break;
+
+                    case Action.Shield:
+                        npc.UseShield();
+                        actionLog.text = "You dodged, " + (npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!");
+                        break;
+
+                    case Action.Dodge:
+                        actionLog.text = "Both players dodged!";
+                        break;
+
+                    case Action.Disarm:
+                        if(Random.value <= npc.disarmSuccessRate)
+                        {
+                            player.ResetLoad();
+                            actionLog.text = $"You failed to dodge, {npcName} disarmed you!";
+                        }
+                        else
+                        {
+                            actionLog.text = $"You dodged {npcName}'s disarm!";
+                        }
+                        break;
                 }
-            }
-            else
-            {
-                actionLog.text = $"{npcName} is out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Dodge && npcAction == Action.Shield)
-        {
-            npc.UseShield();
-            if (npc.isShielding)
-            {
-                actionLog.text = $"{npcName} wasted a shield!";
-            }
-            else
-            {
-                actionLog.text = $"{npcName} is out of shields!";
-            }
-        }
-        else if (playerAction == Action.Dodge && npcAction == Action.Dodge)
-        {
-            actionLog.text = "Both players dodged!";
-        }
-        else if (playerAction == Action.Dodge && npcAction == Action.Disarm)
-        {
-            if (Random.value <= npc.disarmSuccessRate)
-            {
-                player.ResetLoad();
-                actionLog.text = $"{npcName} disarmed you!";
-            }
-            else
-            {
-                actionLog.text = $"{npcName}'s disarm failed!";
-            }
-        }
-        else if (playerAction == Action.Disarm && npcAction == Action.Load)
-        {
-            if (Random.value <= player.disarmSuccessRate)
-            {
-                npc.ResetLoad();
-                actionLog.text = $"You disarmed {npcName}!";
-            }
-            else
-            {
-                actionLog.text = "Your disarm failed!";
-                npc.IncreaseLoad();
-            }
-        }
-        else if (playerAction == Action.Disarm && npcAction == Action.Shoot)
-        {
-            if (npc.loadCount > 0)
-            {
-                npc.loadCount--;
-                player.TakeDamage(basicShotDamage);
-                actionLog.text = "Your disarm failed!";
-                actionLog.text += $"{npcName} shot you!";
-            }
-            else
-            {
-                actionLog.text = $"{npcName} is out of ammo!";
-            }
-        }
-        else if (playerAction == Action.Disarm && npcAction == Action.Shield)
-        {
-            npc.UseShield();
-            if (Random.value <= player.disarmSuccessRate)
-            {
-                if (!npc.isShielding)
+                break;
+
+            case Action.Disarm:
+                switch (npcAction)
                 {
-                    actionLog.text = $"You disarmed {npcName}!";
-                    npc.ResetLoad();
+                    case Action.Load:
+                        if (Random.value <= player.disarmSuccessRate)
+                        {
+                            actionLog.text = $"You disarmed {npcName} who tried to load!";
+                            npc.ResetLoad();
+                        }
+                        else
+                        {
+                            npc.IncreaseLoad();
+                            actionLog.text = $"Your disarm failed! {npcName} loaded 1 round";
+                        }
+                        break;
+
+                    case Action.Shoot:
+                        if (npc.loadCount > 0)
+                        {
+                            npc.loadCount--;
+                            player.TakeDamage(npc.shootDamage);
+                            actionLog.text = $"Your disarm failed! {npcName} shot you!";
+                        }
+                        else
+                        {
+                            actionLog.text = $"{npcName} tried to shoot without ammo, you didnt need to disarm!";
+                        }
+                        break;
+
+                    case Action.Shield:
+                        npc.UseShield();
+                        if (!npc.isShielding)
+                        {
+                            if (Random.value <= player.disarmSuccessRate)
+                            {
+                                actionLog.text = $"You disarmed {npcName}.";
+                                npc.ResetLoad();
+                            }
+                            else actionLog.text = $"Your disarm failed by probability!";
+                            actionLog.text += $"{npcName} tried to shield without having shields!";
+                        }
+                        else
+                        {
+                            actionLog.text = $"{npcName} shielded your disarm!";
+                        }
+                        break;
+
+                    case Action.Dodge:
+                        if (Random.value <= player.disarmSuccessRate)
+                        {
+                            actionLog.text = $"You disarmed {npcName}!";
+                            npc.ResetLoad();
+                        }
+                        else
+                            actionLog.text = "Your disarm failed by probability!";
+                        break;
+
+                    case Action.Disarm:
+                        actionLog.text = "Both players attempted to disarm!";
+                        if (Random.value <= player.disarmSuccessRate)
+                        {
+                            actionLog.text += $"You disarmed {npcName}!";
+                            npc.ResetLoad();
+                        }
+                        else actionLog.text += $"Your disarm failed by probability!";
+                        if (Random.value <= npc.disarmSuccessRate)
+                        {
+                            actionLog.text += $"{npcName} disarmed you!";
+                            player.ResetLoad();
+                        }
+                        else actionLog.text += $"{npcName}'s disarm failed by probability!";
+                        break;
                 }
-                else
-                {
-                    actionLog.text = $"Your disarm failed because {npcName} used a shield!";
-                }
-            }
-            else
-            {
-                actionLog.text = "Your disarm failed!";
-            }
-        }
-        else if (playerAction == Action.Disarm && npcAction == Action.Dodge)
-        {
-            if (Random.value <= player.disarmSuccessRate)
-            {
-                npc.ResetLoad();
-                actionLog.text = $"You disarmed {npcName}!";
-            }
-            else actionLog.text = "Your disarm failed!";
-        }
-        else if (playerAction == Action.Disarm && npcAction == Action.Disarm)
-        {
-            actionLog.text = "Both players attemted to disarm!";
-            if (Random.value <= player.disarmSuccessRate)
-            {
-                npc.ResetLoad();
-                actionLog.text += $"You disarmed {npcName}!";
-            }
-            if (Random.value <= npc.disarmSuccessRate)
-            {
-                player.ResetLoad();
-                actionLog.text += $"{npcName} disarmed you!";
-            }
+                break;
         }
 
         // Reset states
@@ -519,12 +490,14 @@ public class GameManagerFive : MonoBehaviour
         SpeakAndWait();
     }
 
+
     public async Task SpeakAndWait()
     {
+        // Todo get GPT comment on actionLog
         // Wait until the speech is done
         if (gptAction?.comment != null) await ttsSpeakerNPC.SpeakTask(gptAction.comment);
+        else await ttsSpeakerNPC.SpeakTask($"I {npcAction}!");
         await ttsSpeakerCommentary.SpeakTask(actionLog.text);
-
 
         UpdateUI();
         CheckGameEnd();

@@ -22,8 +22,10 @@ public class PlayerStats : MonoBehaviour
         PlayerPrefs.SetInt("loadCapacity", loadCapacity);
         PlayerPrefs.SetFloat("dodgeSuccessRate", dodgeSuccessRate);
         PlayerPrefs.SetFloat("disarmSuccessRate", disarmSuccessRate);
+        //PlayerPrefs.SetInt("shootDamage", 20);
+        //PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
+        //PlayerPrefs.SetFloat("disarmSuccessRate", 0.4f);
 
-        // Save changes
         PlayerPrefs.Save();
         Debug.Log("Game settings saved!");
     }
@@ -36,7 +38,7 @@ public class PlayerStats : MonoBehaviour
 
         if (PlayerPrefs.HasKey("shootDamage"))
             shootDamage = PlayerPrefs.GetInt("shootDamage");
-        else shootDamage = 10;
+        else shootDamage = 20;
 
         if (PlayerPrefs.HasKey("loadCapacity"))
             loadCapacity = PlayerPrefs.GetInt("loadCapacity");
@@ -48,7 +50,9 @@ public class PlayerStats : MonoBehaviour
 
         if (PlayerPrefs.HasKey("disarmSuccessRate"))
             disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate");
-        else disarmSuccessRate = 0.7f;
+        else disarmSuccessRate = 0.4f;
+
+        Debug.Log($"Settings loaded: shieldCount={shieldCount}, shootDamage={shootDamage}, loadCapacity={loadCapacity}, dodgeSuccessRate={dodgeSuccessRate}, disarmSuccessRate={disarmSuccessRate}");
     }
     /// <summary>
     /// Adds damage to player's life points.
