@@ -1522,12 +1522,12 @@ MonoBehaviour:
   playerLifeText: {fileID: 236763692}
   npcLifeText: {fileID: 382949367}
   actionLog: {fileID: 132597248}
-  difficulty: 2
   loadButton: {fileID: 516779982}
   shootButton: {fileID: 393133478}
   shieldButton: {fileID: 563769904}
   dodgeButton: {fileID: 779458540}
   disarmButton: {fileID: 1753751834}
+  npcName: Albus Dumbledore
 --- !u!1 &352402401
 GameObject:
   m_ObjectHideFlags: 0

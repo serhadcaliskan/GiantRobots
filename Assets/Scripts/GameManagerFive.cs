@@ -1,12 +1,15 @@
 using Meta.WitAi.TTS.Utilities;
 using Newtonsoft.Json;
+using Oculus.Platform.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -16,12 +19,20 @@ using Random = UnityEngine.Random;
 public class GPTAction
 {
     public string action;
-    public string comment;
 
-    public GPTAction(string action, string comment)
+    public GPTAction(string action)
     {
         this.action = action;
-        this.comment = comment;
+    }
+}
+[System.Serializable]
+public class GPTReaction
+{
+    public string reaction;
+
+    public GPTReaction(string reaction)
+    {
+        this.reaction = reaction;
     }
 }
 
@@ -37,7 +48,6 @@ public class GameManagerFive : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text npcLifeText;
     public TMP_Text actionLog;
-    public int difficulty = 1;
 
     public Button loadButton;
     public Button shootButton;
@@ -47,17 +57,32 @@ public class GameManagerFive : MonoBehaviour
 
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
+    private int difficulty = 3;
     private Action npcAction;
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
     /// </summary>
     private List<(Action, Action)> gameHistory = new List<(Action, Action)>();
+    private List<Action> npcCoolDowns = new List<Action>();
+    Dictionary<Action, int> cooldownPeriods = new Dictionary<Action, int>
+{
+    { Action.Shoot, 1 },
+    { Action.Shield, 2 },
+    { Action.Disarm, 1 }
+}; Dictionary<Action, int> actionCooldowns = new Dictionary<Action, int>
+{
+    { Action.Shoot, 0 },
+    { Action.Shield, 0 },
+    { Action.Disarm, 0 },
+    { Action.Load, 0 },    // Load and Dodge usually won’t have cooldowns
+    { Action.Dodge, 0 }
+};
     APIKeys keys = APIKeys.Load();
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    private string npcName = "Napoleon";
+    public string npcName = "Napoleon";
 
     private void OnTriggerEnter(Collider other)
     {
@@ -113,9 +138,9 @@ public class GameManagerFive : MonoBehaviour
             {
                 Debug.Log(gptAction.action);
             }
-            else npcAction = getKiAction(difficulty % 3 + 1);
+            else npcAction = getKiAction(difficulty);
         }
-        else npcAction = getKiAction(difficulty % 3 + 1);
+        else npcAction = getKiAction(difficulty);
         gameHistory.Add((playerAction, npcAction));
         EvaluateRound();
 
@@ -126,7 +151,7 @@ public class GameManagerFive : MonoBehaviour
         chatHistory.Add(new Message
         {
             role = "system",
-            content = "Game Rules: You play as " + npcName + " against the user. On your turn, choose one action:\nLoad – Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot – Fire at your opponent if you've loaded at least once. It deducts one load.\nShield – Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge – Avoid a shot. If successful, the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm – Reduce your opponent's load to zero. It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponent’s load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\", \"comment\": \"Your message to the opponent\"}"
+            content = "Game Rules: You play as " + npcName + " against the user. On your turn, choose one action:\nLoad – Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot – Fire at your opponent if you've loaded at least once. It deducts one load.\nShield – Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge – Avoid a shot. If successful, the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm – Reduce your opponent's load to zero. It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponent’s load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
         });
         string userMessage = $"Histroy: {GameHistoryAsString()}\n Stats: {StatsString()}";
         Debug.Log(userMessage);
@@ -137,100 +162,182 @@ public class GameManagerFive : MonoBehaviour
             messages = chatHistory
         };
         string jsonData = JsonConvert.SerializeObject(requestData);
-
-        using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            if (keys != null)
-            {
-                request.SetRequestHeader("Authorization", "Bearer " + keys.OpenAIKey);
-            }
-            var operation = request.SendWebRequest();
-
-            // Await the completion of the request
-            while (!operation.isDone)
-            {
-                await Task.Yield(); // Let the engine continue to update other tasks
-            }
-
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                OpenAIResponse response = JsonConvert.DeserializeObject<OpenAIResponse>(request.downloadHandler.text);
-                string reply = response.choices[0].message.content;
-                Debug.Log(reply);
-                GPTAction gptAction = JsonConvert.DeserializeObject<GPTAction>(reply);
-                return gptAction;
-            }
-        }
-        return null;
+        GPTAction gptAction = JsonConvert.DeserializeObject<GPTAction>(await GetOpenAIResponseAsync(jsonData));
+        return gptAction;
     }
 
     Action getKiAction(int difficulty)
     {
-        if (gameHistory?.Count == 0) return Action.Load; // Always load in first round
+        // Ensure difficulty is within bounds
+        if (difficulty < 1 || difficulty > 3) difficulty = difficulty % 3 + 1;
+        if (gameHistory?.Count == 0) return Action.Load; // AI loads on the first round
+
+        // Decrement cooldowns each turn
+        DecrementCooldowns();
+
+        // Retrieve player and AI states
         int playerLife = player.lifePoints;
         int playerAmmo = player.loadCount;
         int playerShields = player.shieldCount;
 
         int aiLife = npc.lifePoints;
-        int aiAmmo = npc.loadCapacity;
+        int aiAmmo = npc.loadCount;
         int aiShields = npc.shieldCount;
 
-        if (difficulty == 1) // Randomly selects a possible action
+        // Difficulty 1: Simple random action selection with minor tweaks for realism
+        if (difficulty == 1)
         {
             List<Action> possibleActions = new List<Action>();
 
-            if (aiAmmo > 0) possibleActions.Add(Action.Shoot);
-            if ((aiAmmo == 0 || Random.value < 0.3) && npc.loadCapacity < aiAmmo) possibleActions.Add(Action.Load); // can be tweaked for more aggressive AI
-            if (aiShields > 0) possibleActions.Add(Action.Shield);
+            if (aiAmmo > 0 && !IsOnCooldown(Action.Shoot)) possibleActions.Add(Action.Shoot);
+            if (aiAmmo == 0 || Random.value < 0.3f) possibleActions.Add(Action.Load); // Slight preference for loading when low on ammo
+            if (aiShields > 0 && !IsOnCooldown(Action.Shield)) possibleActions.Add(Action.Shield);
             possibleActions.Add(Action.Dodge);
-            if (playerAmmo > 0) possibleActions.Add(Action.Disarm);
+            if (playerAmmo > 0 && !IsOnCooldown(Action.Disarm)) possibleActions.Add(Action.Disarm);
 
-            return possibleActions[Random.Range(0, possibleActions.Count)];
+            var selectedAction = possibleActions[Random.Range(0, possibleActions.Count)];
+            SetCooldown(selectedAction);
+            return selectedAction;
         }
+
+        // Difficulty 2: Slightly smarter; attempts to anticipate the player's moves
         else if (difficulty == 2)
         {
-            if (aiAmmo == 0) return Action.Load;
             var lastPlayerAction = gameHistory?.LastOrDefault().Item1;
 
             if (playerAmmo > 0)
             {
-                if ((float)playerAmmo / player.loadCapacity >= 0.6f && aiShields > 0) return Action.Shield;
+                if ((float)playerAmmo / player.loadCapacity >= 0.6f && aiShields > 0 && !IsOnCooldown(Action.Shield))
+                {
+                    SetCooldown(Action.Shield);
+                    return Action.Shield;
+                }
                 if (Random.value < 0.5) return Action.Dodge;
             }
+            if (aiAmmo == 0) return Action.Load;
+            if (aiAmmo > 0 && lastPlayerAction != Action.Shield && !IsOnCooldown(Action.Shoot))
+            {
+                SetCooldown(Action.Shoot);
+                return Action.Shoot;
+            }
+            if (lastPlayerAction == Action.Load && playerAmmo > 0 && !IsOnCooldown(Action.Disarm))
+            {
+                SetCooldown(Action.Disarm);
+                return Action.Disarm;
+            }
 
-            if (aiAmmo > 0 && lastPlayerAction != Action.Shield) return Action.Shoot;
-            if (lastPlayerAction == Action.Load) return Action.Disarm;
-
-            return aiAmmo > 0 ? Action.Shoot : Action.Load;
+            var selectedAction = aiAmmo > 0 ? Action.Shoot : Action.Load;
+            SetCooldown(selectedAction);
+            return selectedAction;
         }
+
+        // Difficulty 3: Advanced AI with dynamic weighting, endgame aggressiveness, and cooldown management
         else if (difficulty == 3)
         {
-            if (aiAmmo == 0) return 0;
             var lastPlayerAction = gameHistory?.LastOrDefault().Item1;
-
             bool playerLikelyToShoot = playerAmmo > 0 && lastPlayerAction == Action.Load;
             bool playerLikelyToLoad = lastPlayerAction == Action.Disarm || playerAmmo == 0;
 
-            if (playerLikelyToShoot) return aiShields > 0 ? Action.Shield : Action.Dodge;
-            if (playerLikelyToLoad) return Action.Disarm;
+            // High likelihood of Shield or Dodge if AI anticipates a shot
+            if (playerLikelyToShoot && !IsOnCooldown(Action.Shield))
+            {
+                SetCooldown(Action.Shield);
+                return aiShields > 0 ? Action.Shield : Action.Dodge;
+            }
 
-            if (playerAmmo > 0 && aiLife < playerLife / 2) return Action.Dodge;
+            // Prefer Disarm if player is likely to load
+            if (playerLikelyToLoad && Random.value < 0.8 && !IsOnCooldown(Action.Disarm))
+            {
+                SetCooldown(Action.Disarm);
+                return Action.Disarm;
+            }
 
-            if (aiAmmo > 0 && lastPlayerAction != Action.Shield) return Action.Shoot;
-            return aiAmmo > 0 ? Action.Shoot : Action.Load;
+            // Endgame strategy: more aggressive if AI has lower life
+            if (aiLife < playerLife * 0.3 && aiAmmo > 0 && !IsOnCooldown(Action.Shoot))
+            {
+                SetCooldown(Action.Shoot);
+                return Action.Shoot;
+            }
+
+            // Conditional action weights
+            float healthFactor = aiLife < playerLife ? 1.2f : 0.8f;
+            float ammoFactor = aiAmmo > playerAmmo ? 1.1f : 0.9f;
+            float shieldFactor = aiShields > 0 ? 1.1f : 0.7f;
+
+            // Weighted probabilities for each action
+            float shootWeight = 0.4f * healthFactor * ammoFactor;
+            float shieldWeight = 0.2f * shieldFactor;
+            float dodgeWeight = 0.2f;
+            float loadWeight = aiAmmo == 0 ? 0.5f : 0.1f;
+            float disarmWeight = playerAmmo > 0 ? 0.3f : 0.1f;
+
+            // Compile weighted actions, skipping actions on cooldown
+            List<(Action, float)> weightedActions = new List<(Action, float)>
+        {
+            (Action.Shoot, shootWeight),
+            (Action.Shield, shieldWeight),
+            (Action.Dodge, dodgeWeight),
+            (Action.Load, loadWeight),
+            (Action.Disarm, disarmWeight)
+        }.Where(a => !IsOnCooldown(a.Item1)).ToList();
+
+            // Normalize weights and select action
+            float totalWeight = weightedActions.Sum(a => a.Item2);
+            float rand = Random.value * totalWeight;
+            float cumulative = 0;
+
+            foreach (var (action, weight) in weightedActions)
+            {
+                cumulative += weight;
+                if (rand < cumulative)
+                {
+                    SetCooldown(action);
+                    return action;
+                }
+            }
+
+            // Fallback in case no actions are available (should rarely happen)
+            var fallbackAction = aiAmmo > 0 ? Action.Shoot : Action.Load;
+            SetCooldown(fallbackAction);
+            return fallbackAction;
         }
 
-        return (Action)Random.Range(0, 5); // Default if all else fails
+        // Default fallback if all else fails
+        var defaultAction = (Action)Random.Range(0, 5);
+        SetCooldown(defaultAction);
+        return defaultAction;
     }
 
+    async Task<string> getKiReaction()
+    {
+        List<Message> chat = new List<Message>
+        {
+            new Message
+            {
+                role = "system",
+                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
+            },
+            new Message
+            {
+                role = "user",
+                content = $"Actions:\nPlayer: {playerAction} - {npcName}: {npcAction}\nOutcome: {actionLog.text}"
+            }
+        };
+        var requestData = new OpenAIRequest
+        {
+            model = "gpt-4o-mini",
+            messages = chat
+        };
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        string response = await GetOpenAIResponseAsync(jsonData);
+        GPTReaction gptReaction = JsonConvert.DeserializeObject<GPTReaction>(response);
+        if (gptReaction != null)
+            return gptReaction.reaction;
+        return $"I {npcAction}";
+    }
     void EvaluateRound()
     {
         // TODO when sending actionLog to GPT, tell it "You" is the other player
-        Debug.Log($"Player: {playerAction} - {npcName}: {npcAction}");
         actionLog.text = "";
         switch (playerAction)
         {
@@ -462,7 +569,7 @@ public class GameManagerFive : MonoBehaviour
                         }
                         else
                         {
-                            actionLog.text = $"You dodged {npcName}'s disarm!";
+                            actionLog.text = $"You dodged, {npcName}'s disarm failed by probability!";
                         }
                         break;
                 }
@@ -543,6 +650,7 @@ public class GameManagerFive : MonoBehaviour
                 }
                 break;
         }
+        Debug.Log($"Actions:\nPlayer: {playerAction} - {npcName}: {npcAction}\nOutcome: {actionLog.text}");
 
         // Reset states
         player.ResetDodge(); player.ResetShield();
@@ -553,13 +661,15 @@ public class GameManagerFive : MonoBehaviour
 
     public async Task SpeakAndWait()
     {
-        // Todo get GPT comment on actionLog
         // Wait until the speech is done
-        if (gptAction?.comment != null) await ttsSpeakerNPC.SpeakTask(gptAction.comment);
-        else await ttsSpeakerNPC.SpeakTask($"I {npcAction}!");
-        await ttsSpeakerCommentary.SpeakTask(actionLog.text);
-
         UpdateUI();
+        string reaction = $"I {npcAction}";
+        // TODO: remove comment for LLM-NPC
+        //string reaction = await getKiReaction();
+        
+        await ttsSpeakerNPC.SpeakTask(reaction);
+        //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
+
         CheckGameEnd();
         toggleButtons();
     }
@@ -603,6 +713,44 @@ public class GameManagerFive : MonoBehaviour
             gameHistory = new List<(Action, Action)>();
         }
     }
+
+    /// <summary>
+    /// Gets OpenAI response from JSON data, TODO move to a helper class
+    /// </summary>
+    /// <param name="jsonData">Only the data as serialized OpenAIRequest, token will be added in method</param>
+    /// <returns>a the GPT answer to your message</returns>
+    async Task<string> GetOpenAIResponseAsync(string jsonData)
+    {
+        using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (keys != null)
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + keys.OpenAIKey);
+            }
+            var operation = request.SendWebRequest();
+
+            // Await the completion of the request
+            while (!operation.isDone)
+            {
+                await Task.Yield(); // Let the engine continue to update other tasks
+            }
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                OpenAIResponse response = JsonConvert.DeserializeObject<OpenAIResponse>(request.downloadHandler.text);
+                string reply = response.choices[0].message.content;
+                if (reply != null)
+                {
+                    return reply;
+                }
+            }
+        }
+        return null;
+    }
     string GameHistoryAsString()
     {
         string history = "";
@@ -617,5 +765,24 @@ public class GameManagerFive : MonoBehaviour
     {
         return $"Player: Life: {player.lifePoints} Ammo: {player.loadCount}/{player.loadCapacity} Shields: {player.shieldCount}\n" +
             $"{npcName}: Life: {npc.lifePoints} Ammo: {npc.loadCount}/{npc.loadCapacity} Shields: {npc.shieldCount}";
+    }
+
+    bool IsOnCooldown(Action action) => actionCooldowns[action] > 0;
+
+    // Helper function to set cooldown for an action after use
+    void SetCooldown(Action action)
+    {
+        if (cooldownPeriods.ContainsKey(action))
+            actionCooldowns[action] = cooldownPeriods[action];
+    }
+
+    // Decrement cooldowns at the beginning of each turn
+    void DecrementCooldowns()
+    {
+        foreach (var action in actionCooldowns.Keys.ToList())
+        {
+            if (actionCooldowns[action] > 0)
+                actionCooldowns[action]--;
+        }
     }
 }
