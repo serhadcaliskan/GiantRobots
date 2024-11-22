@@ -14,6 +14,13 @@ public class PlayerStats : MonoBehaviour
     public bool isDodging = false;
     public bool isShielding = false;
 
+    public GameObject shield;
+
+    private void Start()
+    {
+        shield.SetActive(false);
+    }
+
     // Save the settings to PlayerPrefs
     public void SaveGameSettings()
     {
@@ -74,8 +81,15 @@ public class PlayerStats : MonoBehaviour
         if (shieldCount > 0)
         {
             shieldCount--;
-            this.isShielding = true;
-        } else this.isShielding = false;
+            isShielding = true;
+            shield.SetActive(true);
+            shield.GetComponent<ShieldCollision>().Activate();
+        }
+        else
+        {
+            isShielding = false;
+            shield.GetComponent<ShieldCollision>().Deactivate();
+        }
     }
 
     /// <summary>
@@ -108,5 +122,6 @@ public class PlayerStats : MonoBehaviour
     public void ResetShield()
     {
         isShielding = false;
+        shield.GetComponent<ShieldCollision>().Deactivate();
     }
 }

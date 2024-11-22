@@ -142,6 +142,11 @@ public class GameManagerFive : MonoBehaviour
         }
         else npcAction = getKiAction(difficulty);
         gameHistory.Add((playerAction, npcAction));
+        // Reset states
+        player.ResetDodge();
+        if (player.isShielding) player.ResetShield();
+        npc.ResetDodge();
+        if (npc.isShielding) npc.ResetShield();
         EvaluateRound();
 
     }
@@ -652,10 +657,6 @@ public class GameManagerFive : MonoBehaviour
         }
         Debug.Log($"Actions:\nPlayer: {playerAction} - {npcName}: {npcAction}\nOutcome: {actionLog.text}");
 
-        // Reset states
-        player.ResetDodge(); player.ResetShield();
-        npc.ResetDodge(); npc.ResetShield();
-
         SpeakAndWait();
     }
 
@@ -665,8 +666,8 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
         string reaction = $"I {npcAction}";
         // TODO: remove comment for LLM-NPC
-        //string reaction = await getKiReaction();
-        
+        //reaction = await getKiReaction();
+
         await ttsSpeakerNPC.SpeakTask(reaction);
         //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
 
