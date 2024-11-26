@@ -15,7 +15,8 @@ public class PlayerStats : MonoBehaviour
     public bool isShielding = false;
 
     public GameObject shield;
-
+    public GameObject projectilePrefab;
+    public Transform opponent;
     private void Start()
     {
         shield.SetActive(false);
@@ -70,6 +71,17 @@ public class PlayerStats : MonoBehaviour
         lifePoints -= damage;
         if (lifePoints < 0)
             lifePoints = 0;
+    }
+    //  TODO add sound effect
+    public void Shoot()
+    {
+        GameObject projectile = Instantiate(projectilePrefab, gameObject.transform.position, Quaternion.identity);
+
+        Projectile projScript = projectile.GetComponent<Projectile>();
+        if (projScript != null)
+        {
+            projScript.SetTarget(opponent);
+        }
     }
 
     /// <summary>

@@ -1502,6 +1502,8 @@ MonoBehaviour:
   isDodging: 0
   isShielding: 0
   shield: {fileID: 2082282920}
+  projectilePrefab: {fileID: 7942092390904961014, guid: 2c2037d4ce73e5d42a9e55794ee9e830, type: 3}
+  opponent: {fileID: 1311503698}
 --- !u!114 &340196871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5491,6 +5493,8 @@ MonoBehaviour:
   isDodging: 0
   isShielding: 0
   shield: {fileID: 1539007216}
+  projectilePrefab: {fileID: 7942092390904961014, guid: 2c2037d4ce73e5d42a9e55794ee9e830, type: 3}
+  opponent: {fileID: 340196868}
 --- !u!1 &1314715918
 GameObject:
   m_ObjectHideFlags: 0

@@ -126,6 +126,14 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player.Shoot();
+        }
+    }
+
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
