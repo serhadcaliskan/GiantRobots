@@ -12,6 +12,12 @@ public class PlayerStats : MonoBehaviour
     public float dodgeSuccessRate = 0.5f;
     public float disarmSuccessRate = 0.7f;
     public bool isDodging = false;
+    public float dodgeDistance = 70f;
+    public float dodgeSpeed = 50f;
+    private float dodgeDirection = 1.0f;
+    public bool inFight = false;
+
+    private Vector3 initialPosition;
     public bool isShielding = false;
 
     public GameObject shield;
@@ -26,6 +32,12 @@ public class PlayerStats : MonoBehaviour
         audioSource = GetComponentInChildren<AudioSource>();
         shootSound = Resources.Load<AudioClip>("Audio/shoot");
         reloadSound = Resources.Load<AudioClip>("Audio/reload");
+    }
+
+    public void startFight()
+    {
+        inFight = true;
+        initialPosition = transform.position;
     }
 
     // Save the settings to PlayerPrefs
@@ -68,6 +80,13 @@ public class PlayerStats : MonoBehaviour
 
         Debug.Log($"Settings loaded: shieldCount={shieldCount}, shootDamage={shootDamage}, loadCapacity={loadCapacity}, dodgeSuccessRate={dodgeSuccessRate}, disarmSuccessRate={disarmSuccessRate}");
     }
+    void Update()
+    {
+        if (inFight && (isDodging || initialPosition != transform.position))
+        {
+            Dodge();
+        }
+    }
     /// <summary>
     /// Adds damage to player's life points.
     /// </summary>
@@ -79,18 +98,32 @@ public class PlayerStats : MonoBehaviour
             lifePoints = 0;
     }
     //  TODO add sound effect
-    public void Shoot()
+    public void Shoot(bool hit)
     {
         GameObject projectile = Instantiate(projectilePrefab, gameObject.transform.position, Quaternion.identity);
 
         Projectile projScript = projectile.GetComponent<Projectile>();
         if (projScript != null)
         {
-            projScript.SetTarget(opponent);
+            projScript.SetTarget(opponent, hit);
         }
         if (audioSource != null && shootSound != null)
         {
             audioSource.PlayOneShot(shootSound);
+        }
+    }
+
+    public void Dodge()
+    {
+        if (isDodging)
+        {
+            Vector3 dodgePosition = initialPosition + new Vector3(dodgeDistance * dodgeDirection, 0, 0);
+
+            transform.position = Vector3.Lerp(transform.position, dodgePosition, dodgeSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, initialPosition, dodgeSpeed * Time.deltaTime);
         }
     }
 
@@ -140,6 +173,7 @@ public class PlayerStats : MonoBehaviour
     public void ResetDodge()
     {
         isDodging = false;
+        dodgeDirection = Random.value > 0.5f ? 1.0f : -1.0f;
     }
     /// <summary>
     /// Removes the shield from the player.

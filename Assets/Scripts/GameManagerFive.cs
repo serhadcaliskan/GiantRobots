@@ -60,6 +60,7 @@ public class GameManagerFive : MonoBehaviour
     private int difficulty = 3;
     private float shieldSoundLength = 0f;
     private Action npcAction;
+    [SerializeField]
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
     /// </summary>
@@ -85,7 +86,7 @@ public class GameManagerFive : MonoBehaviour
 
     public string npcName = "Napoleon";
 
-    private void OnTriggerEnter(Collider other)
+    public void EnterGame(Collider other)
     {
         if (other.transform == playerObj)
         {
@@ -95,10 +96,12 @@ public class GameManagerFive : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             fpsController.canMove = false;
+            npc.startFight();
+            player.startFight();
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    public void ExitGame(Collider other)
     {
         if (other.transform == playerObj)
         {
@@ -132,7 +135,7 @@ public class GameManagerFive : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player.Shoot();
+            player.Shoot(true);
         }
     }
 
@@ -366,7 +369,7 @@ public class GameManagerFive : MonoBehaviour
                         {
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
-                            npc.Shoot();
+                            npc.Shoot(true);
                             actionLog.text += $"{npcName} shot you!";
                         }
                         else actionLog.text += $"{npcName} tried to shoot without ammo!";
@@ -380,6 +383,7 @@ public class GameManagerFive : MonoBehaviour
 
                     case Action.Dodge:
                         actionLog.text = $"You loaded a round and {npcName} dodged!";
+                        npc.isDodging = true;
                         break;
 
                     case Action.Disarm:
@@ -406,7 +410,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
-                            player.Shoot();
+                            player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}! {npcName} loaded a round!";
                         }
@@ -416,7 +420,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
-                            player.Shoot();
+                            player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}!";
                         }
@@ -425,7 +429,7 @@ public class GameManagerFive : MonoBehaviour
                         {
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
-                            npc.Shoot();
+                            npc.Shoot(true);
                             actionLog.text += $"{npcName} shot you!";
                         }
                         else actionLog.text += $"{npcName} tried to shoot without ammo!";
@@ -436,7 +440,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
-                            player.Shoot();
+                            player.Shoot(true);
                             if (npc.isShielding)
                             {
                                 actionLog.text = $"{npcName} shielded your shot!";
@@ -451,17 +455,19 @@ public class GameManagerFive : MonoBehaviour
                         break;
 
                     case Action.Dodge:
+                        npc.isDodging = true;
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
-                            player.Shoot();
                             if (Random.value <= npc.dodgeSuccessRate)
                             {
                                 actionLog.text = $"{npcName} dodged your shot!";
+                                player.Shoot(false);
                             }
                             else
                             {
                                 npc.TakeDamage(player.shootDamage);
+                                player.Shoot(true);
                                 actionLog.text = $"{npcName}'s dodge failed! You shot {npcName}!";
                             }
                         }
@@ -471,7 +477,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
-                            player.Shoot();
+                            player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}! {npcName} failed to disarm you!";
                         }
@@ -493,7 +499,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
-                            npc.Shoot();
+                            npc.Shoot(true);
                             if (player.isShielding)
                             {
                                 actionLog.text = $"You shielded {npcName}'s shot!";
@@ -517,6 +523,7 @@ public class GameManagerFive : MonoBehaviour
                         break;
 
                     case Action.Dodge:
+                        npc.isDodging = true;
                         actionLog.text = $"{npcName} dodged, " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
                         break;
 
@@ -543,6 +550,7 @@ public class GameManagerFive : MonoBehaviour
                 break;
 
             case Action.Dodge:
+                //player.isDodging = true;
                 switch (npcAction)
                 {
                     case Action.Load:
@@ -554,15 +562,16 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
-                            npc.Shoot();
                             if (Random.value <= player.dodgeSuccessRate)
                             {
                                 actionLog.text = $"You dodged {npcName}'s shot!";
+                                npc.Shoot(false);
                             }
                             else
                             {
                                 player.TakeDamage(npc.shootDamage);
                                 actionLog.text = $"You failed to dodge! {npcName} shot you!";
+                                npc.Shoot(true);
                             }
                         }
                         else
@@ -578,6 +587,7 @@ public class GameManagerFive : MonoBehaviour
 
                     case Action.Dodge:
                         actionLog.text = "Both players dodged!";
+                        npc.isDodging = true;
                         break;
 
                     case Action.Disarm:
@@ -614,7 +624,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
-                            npc.Shoot();
+                            npc.Shoot(true);
                             player.TakeDamage(npc.shootDamage);
                             actionLog.text = $"Your disarm failed! {npcName} shot you!";
                         }
@@ -643,6 +653,7 @@ public class GameManagerFive : MonoBehaviour
                         break;
 
                     case Action.Dodge:
+                        npc.isDodging = true;
                         if (Random.value <= player.disarmSuccessRate)
                         {
                             actionLog.text = $"You disarmed {npcName}!";
@@ -694,7 +705,7 @@ public class GameManagerFive : MonoBehaviour
         {
             player.ResetShield(npcAction != Action.Shoot);// if the action is shoot, the sound comes from projectile and the blink effect deactivates the shield
             time = shieldSoundLength;
-        } 
+        }
 
         if (npc.isShielding)
         {
@@ -749,6 +760,8 @@ public class GameManagerFive : MonoBehaviour
             player.LoadGameSettings();
             chatHistory = new List<Message>();
             gameHistory = new List<(Action, Action)>();
+            npc.inFight = false;
+            player.inFight = false;
         }
     }
 

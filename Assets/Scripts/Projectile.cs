@@ -9,21 +9,47 @@ public class Projectile : MonoBehaviour
 
 
     private Transform target; // Opponent's transform
+    private Vector3 initTargetPosition;
+    private bool hit = true;
 
     // Set the target for the projectile
-    public void SetTarget(Transform opponent)
+    public void SetTarget(Transform opponent, bool hit)
     {
         target = opponent;
+        this.hit = hit;
+        initTargetPosition = opponent.position;
     }
 
     void Update()
     {
+        //if (target != null)
+        //{
+        //    // Move to target
+        //    Vector3 direction = hit ? (target.position - transform.position).normalized : (initTargetPosition - transform.position).normalized;
+        //    transform.position += direction * speed * Time.deltaTime;
+        //    // Rotate so that projectile is facing the target
+        //    Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, direction);
+        //    transform.rotation = targetRotation;
+        //}
         if (target != null)
         {
-            // Move to target
-            Vector3 direction = (target.position - transform.position).normalized;
+            Vector3 direction;
+            if (hit)
+            {
+                // If hit is true, move towards the target
+                direction = (target.position - transform.position).normalized;
+            }
+            else
+            {
+                direction = (initTargetPosition - transform.position);
+                direction.y -= 2f;
+                direction.Normalize();
+            }
+
+            // Move the projectile
             transform.position += direction * speed * Time.deltaTime;
-            // Rotate so that projectile is facing the target
+
+            // Rotate so that the projectile is facing the movement direction
             Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, direction);
             transform.rotation = targetRotation;
         }
@@ -41,7 +67,7 @@ public class Projectile : MonoBehaviour
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
             }
-            
+
             Destroy(gameObject);
         }
     }
