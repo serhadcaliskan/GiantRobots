@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float speed = 50f;
+    public float speed = 100f;
     public GameObject impactEffect;
+
 
     private Transform target; // Opponent's transform
 
@@ -19,9 +20,12 @@ public class Projectile : MonoBehaviour
     {
         if (target != null)
         {
-            // Move the projectile toward the target
+            // Move to target
             Vector3 direction = (target.position - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
+            // Rotate so that projectile is facing the target
+            Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, direction);
+            transform.rotation = targetRotation;
         }
         else
         {
@@ -37,8 +41,7 @@ public class Projectile : MonoBehaviour
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
             }
-            // TODO Destroy also if missed the target
-            // TODO add sound effect
+            
             Destroy(gameObject);
         }
     }

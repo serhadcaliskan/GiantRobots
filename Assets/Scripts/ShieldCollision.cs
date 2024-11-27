@@ -18,11 +18,9 @@ public class ShieldCollision : MonoBehaviour // Todo: Make player shield visible
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Projectile")) // Todo: Add a Projectile tag to the projectile GameObject
+        if (other.CompareTag("Projectile"))
         {
-            Destroy(other.gameObject);
-            audioSource.PlayOneShot(shieldBreakSound);
-
+            //audioSource.PlayOneShot(shieldBreakSound);
             blinkEffect.BreakShield();
         }
     }
@@ -34,8 +32,14 @@ public class ShieldCollision : MonoBehaviour // Todo: Make player shield visible
 
     public void Deactivate()
     {
+        StartCoroutine(DeactivateAfterSound());
+    }
+
+    private IEnumerator DeactivateAfterSound()
+    {
         audioSource.PlayOneShot(deactivateShield);
-        blinkEffect.BreakShield();
+        yield return new WaitForSeconds(deactivateShield.length);
+        gameObject.SetActive(false);
     }
 
 }

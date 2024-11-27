@@ -8,11 +8,18 @@ using UnityEngine;
 public class DestroyParticleSystem : MonoBehaviour
 {
     private ParticleSystem[] childParticleSystems;
-
+    private AudioSource audioSource;
+    private AudioClip impactSound;
     void Start()
     {
         // Get all ParticleSystem components in the parent and its children
         childParticleSystems = GetComponentsInChildren<ParticleSystem>();
+        audioSource = GetComponentInChildren<AudioSource>();
+        impactSound = Resources.Load<AudioClip>("Audio/impact");
+        if (audioSource != null && impactSound != null)
+        {
+            audioSource.PlayOneShot(impactSound);
+        }
     }
 
     void Update()
@@ -26,6 +33,10 @@ public class DestroyParticleSystem : MonoBehaviour
                 allStopped = false;
                 break;
             }
+        }
+        if(audioSource != null && audioSource.isPlaying)
+        {
+            allStopped = false;
         }
 
         if (allStopped)

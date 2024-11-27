@@ -58,6 +58,7 @@ public class GameManagerFive : MonoBehaviour
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
     private int difficulty = 3;
+    private float shieldSoundLength = 0f;
     private Action npcAction;
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
@@ -117,6 +118,7 @@ public class GameManagerFive : MonoBehaviour
         player.LoadGameSettings();
         npc.LoadGameSettings();
         ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
+        shieldSoundLength = Resources.Load<AudioClip>("Audio/deactivateShield").length;
 
         if (gameCanvas != null)
         {
@@ -126,7 +128,7 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
     }
 
-    private void Update()
+    private void Update() // TODO remove after testing
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -150,11 +152,6 @@ public class GameManagerFive : MonoBehaviour
         }
         else npcAction = getKiAction(difficulty);
         gameHistory.Add((playerAction, npcAction));
-        // Reset states
-        player.ResetDodge();
-        if (player.isShielding) player.ResetShield();
-        npc.ResetDodge();
-        if (npc.isShielding) npc.ResetShield();
         EvaluateRound();
 
     }
@@ -369,6 +366,7 @@ public class GameManagerFive : MonoBehaviour
                         {
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
+                            npc.Shoot();
                             actionLog.text += $"{npcName} shot you!";
                         }
                         else actionLog.text += $"{npcName} tried to shoot without ammo!";
@@ -408,6 +406,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
+                            player.Shoot();
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}! {npcName} loaded a round!";
                         }
@@ -417,6 +416,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
+                            player.Shoot();
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}!";
                         }
@@ -425,6 +425,7 @@ public class GameManagerFive : MonoBehaviour
                         {
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
+                            npc.Shoot();
                             actionLog.text += $"{npcName} shot you!";
                         }
                         else actionLog.text += $"{npcName} tried to shoot without ammo!";
@@ -435,6 +436,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
+                            player.Shoot();
                             if (npc.isShielding)
                             {
                                 actionLog.text = $"{npcName} shielded your shot!";
@@ -452,6 +454,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
+                            player.Shoot();
                             if (Random.value <= npc.dodgeSuccessRate)
                             {
                                 actionLog.text = $"{npcName} dodged your shot!";
@@ -468,6 +471,7 @@ public class GameManagerFive : MonoBehaviour
                         if (player.loadCount > 0)
                         {
                             player.loadCount--;
+                            player.Shoot();
                             npc.TakeDamage(player.shootDamage);
                             actionLog.text = $"You shot {npcName}! {npcName} failed to disarm you!";
                         }
@@ -489,6 +493,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
+                            npc.Shoot();
                             if (player.isShielding)
                             {
                                 actionLog.text = $"You shielded {npcName}'s shot!";
@@ -549,6 +554,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
+                            npc.Shoot();
                             if (Random.value <= player.dodgeSuccessRate)
                             {
                                 actionLog.text = $"You dodged {npcName}'s shot!";
@@ -608,6 +614,7 @@ public class GameManagerFive : MonoBehaviour
                         if (npc.loadCount > 0)
                         {
                             npc.loadCount--;
+                            npc.Shoot();
                             player.TakeDamage(npc.shootDamage);
                             actionLog.text = $"Your disarm failed! {npcName} shot you!";
                         }
@@ -679,7 +686,29 @@ public class GameManagerFive : MonoBehaviour
         await ttsSpeakerNPC.SpeakTask(reaction);
         //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
 
+        // Reset states
+        player.ResetDodge();
+        npc.ResetDodge();
+        float time = 0;
+        if (player.isShielding)
+        {
+            player.ResetShield(npcAction != Action.Shoot);// if the action is shoot, the sound comes from projectile and the blink effect deactivates the shield
+            time = shieldSoundLength;
+        } 
+
+        if (npc.isShielding)
+        {
+            npc.ResetShield(playerAction != Action.Shoot);
+            time = shieldSoundLength;
+        }
+
         CheckGameEnd();
+        StartCoroutine(DelayedToggle(time));
+    }
+
+    private IEnumerator DelayedToggle(float time = 0)
+    {
+        yield return new WaitForSeconds(time); // Pause to be sure shield is deactivated
         toggleButtons();
     }
 

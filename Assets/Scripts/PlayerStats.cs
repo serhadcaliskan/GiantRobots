@@ -17,9 +17,15 @@ public class PlayerStats : MonoBehaviour
     public GameObject shield;
     public GameObject projectilePrefab;
     public Transform opponent;
+    private AudioSource audioSource;
+    private AudioClip shootSound;
+    private AudioClip reloadSound;
     private void Start()
     {
         shield.SetActive(false);
+        audioSource = GetComponentInChildren<AudioSource>();
+        shootSound = Resources.Load<AudioClip>("Audio/shoot");
+        reloadSound = Resources.Load<AudioClip>("Audio/reload");
     }
 
     // Save the settings to PlayerPrefs
@@ -82,6 +88,10 @@ public class PlayerStats : MonoBehaviour
         {
             projScript.SetTarget(opponent);
         }
+        if (audioSource != null && shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
     }
 
     /// <summary>
@@ -100,7 +110,6 @@ public class PlayerStats : MonoBehaviour
         else
         {
             isShielding = false;
-            shield.GetComponent<ShieldCollision>().Deactivate();
         }
     }
 
@@ -110,7 +119,11 @@ public class PlayerStats : MonoBehaviour
     public void IncreaseLoad()
     {
         if (loadCount < loadCapacity)
+        {
             loadCount++;
+            if (audioSource != null && reloadSound != null)
+                audioSource.PlayOneShot(reloadSound);
+        }
     }
 
     /// <summary>
@@ -131,9 +144,11 @@ public class PlayerStats : MonoBehaviour
     /// <summary>
     /// Removes the shield from the player.
     /// </summary>
-    public void ResetShield()
+    /// <param name="deactivateSound"> If true, the deactivate sound will be played. Set to false if the other action is shoot because the sound comes from projectile and the blink effect deactivates the shield </param>
+    public void ResetShield(bool deactivateSound = true)
     {
         isShielding = false;
-        shield.GetComponent<ShieldCollision>().Deactivate();
+        if (deactivateSound)
+            shield.GetComponent<ShieldCollision>().Deactivate();
     }
 }

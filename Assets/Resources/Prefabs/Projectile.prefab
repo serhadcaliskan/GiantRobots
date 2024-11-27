@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 1391538258466707567}
   - component: {fileID: 5689197063439471885}
   - component: {fileID: 5315698424309603258}
-  - component: {fileID: 8411931117031601263}
   - component: {fileID: 4152470154131430175}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Projectile
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -152,11 +151,11 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 0.3
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.6
+    widthMultiplier: 2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -223,33 +222,6 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!54 &8411931117031601263
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7942092390904961014}
-  serializedVersion: 4
-  m_Mass: 0.0000001
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &4152470154131430175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,5 +234,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e5f9ee4dca5e28479400323c72d2580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
+  speed: 100
   impactEffect: {fileID: 188803999412558196, guid: a9d0f948498a6b741a097cc6e4ef0f14, type: 3}

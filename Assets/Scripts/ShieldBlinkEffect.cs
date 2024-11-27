@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ShieldBlinkEffect : MonoBehaviour
 {
-    public float blinkInterval = 0.1f;
+    public float blinkInterval = 0.05f;
     public int blinkCount = 10;
 
     private Material shieldMaterial;
