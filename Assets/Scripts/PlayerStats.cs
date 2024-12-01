@@ -26,12 +26,16 @@ public class PlayerStats : MonoBehaviour
     private AudioSource audioSource;
     private AudioClip shootSound;
     private AudioClip reloadSound;
+    private AudioClip disarmSound;
+    private ShakeEffect shakeEffect;
     private void Start()
     {
         shield.SetActive(false);
         audioSource = GetComponentInChildren<AudioSource>();
         shootSound = Resources.Load<AudioClip>("Audio/shoot");
         reloadSound = Resources.Load<AudioClip>("Audio/reload");
+        disarmSound = Resources.Load<AudioClip>("Audio/disarm");
+        shakeEffect = GetComponent<ShakeEffect>();
     }
 
     public void startFight()
@@ -160,11 +164,15 @@ public class PlayerStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Resets loads to 0.
+    /// Resets loads to 0. = gets disarmed
     /// </summary>
     public void ResetLoad()
     {
         loadCount = 0;
+
+        if (audioSource != null && disarmSound != null)
+            audioSource.PlayOneShot(disarmSound);
+        shakeEffect.Shake();
     }
 
     /// <summary>

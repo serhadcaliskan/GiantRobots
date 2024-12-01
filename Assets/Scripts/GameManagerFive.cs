@@ -57,7 +57,7 @@ public class GameManagerFive : MonoBehaviour
 
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
-    private int difficulty = 3;
+    private int difficulty = 1;
     private float shieldSoundLength = 0f;
     private Action npcAction;
     [SerializeField]
@@ -131,14 +131,6 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
     }
 
-    private void Update() // TODO remove after testing
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            player.Shoot(true);
-        }
-    }
-
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
@@ -185,6 +177,7 @@ public class GameManagerFive : MonoBehaviour
         if (difficulty < 1 || difficulty > 3) difficulty = difficulty % 3 + 1;
         if (gameHistory?.Count == 0) return Action.Load; // AI loads on the first round
 
+
         // Decrement cooldowns each turn
         DecrementCooldowns();
 
@@ -196,7 +189,6 @@ public class GameManagerFive : MonoBehaviour
         int aiLife = npc.lifePoints;
         int aiAmmo = npc.loadCount;
         int aiShields = npc.shieldCount;
-
         // Difficulty 1: Simple random action selection with minor tweaks for realism
         if (difficulty == 1)
         {
