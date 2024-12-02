@@ -126,6 +126,7 @@ public class GameManagerFive : MonoBehaviour
             fpsController.canMove = false;
             npc.startFight();
             player.startFight();
+            voiceExperience.Activate();
         }
     }
 
@@ -722,6 +723,7 @@ public class GameManagerFive : MonoBehaviour
     {
         yield return new WaitForSeconds(time); // Pause to be sure shield is deactivated
         toggleButtons();
+        voiceExperience.Activate();
     }
 
     void toggleButtons()
@@ -765,11 +767,13 @@ public class GameManagerFive : MonoBehaviour
 
     private void HighlightButton(Button button)
     {
+        voiceExperience.Deactivate();
         highlightedButton = button;
         Image buttonImage = button.GetComponent<Image>();
         if (buttonImage != null)
         {
             buttonImage.color = highlightedColor; // Set the highlight color
+            //button.onClick.Invoke(); // TODO: see if it need confirm or not
         }
     }
     private void ResetAllButtons()
