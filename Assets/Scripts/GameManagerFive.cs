@@ -1,6 +1,7 @@
 using Meta.WitAi.TTS.Utilities;
 using Newtonsoft.Json;
 using Oculus.Platform.Models;
+using Oculus.Voice;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,12 +55,17 @@ public class GameManagerFive : MonoBehaviour
     public Button shieldButton;
     public Button dodgeButton;
     public Button disarmButton;
+    private Button highlightedButton;
 
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
     private int difficulty = 1;
     private float shieldSoundLength = 0f;
     private Action npcAction;
+    private Color defaultColor;
+    public Color highlightedColor = Color.green;
+    public AppVoiceExperience voiceExperience;
+    private bool isPlayerTurn = true; // gets edited in toggleButtons
     [SerializeField]
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
@@ -84,15 +90,37 @@ public class GameManagerFive : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    public string npcName = "Napoleon";
-
+    public string npcName = "Pirate";
+    private void Start()
+    {
+        if (gameCanvas != null)
+        {
+            gameCanvas.SetActive(false);
+        }
+        if (loadButton != null)
+        {
+            defaultColor = loadButton.GetComponent<Image>().color;
+        }
+    }
     public void EnterGame(Collider other)
     {
         if (other.transform == playerObj)
         {
+            // TODO: use rightShift as push-to-talk [WitAI command detection] to select an action and enter to submit
+            loadButton.onClick.AddListener(() => SelectAction(Action.Load));
+            shootButton.onClick.AddListener(() => SelectAction(Action.Shoot));
+            shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
+            dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
+            disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
+            player.LoadGameSettings();
+            npc.LoadGameSettings();
+            ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
+            shieldSoundLength = Resources.Load<AudioClip>("Audio/deactivateShield").length;
+
+            UpdateUI();
             gameCanvas.SetActive(true);
             actionLog.text = "Select an action!";
-            ttsSpeakerCommentary.Speak(actionLog.text);
+            //ttsSpeakerCommentary.Speak(actionLog.text);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             fpsController.canMove = false;
@@ -111,29 +139,10 @@ public class GameManagerFive : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        loadButton.onClick.AddListener(() => SelectAction(Action.Load));
-        shootButton.onClick.AddListener(() => SelectAction(Action.Shoot));
-        shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
-        dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
-        disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
-        player.LoadGameSettings();
-        npc.LoadGameSettings();
-        ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
-        shieldSoundLength = Resources.Load<AudioClip>("Audio/deactivateShield").length;
-
-        if (gameCanvas != null)
-        {
-            gameCanvas.SetActive(false);
-        }
-
-        UpdateUI();
-    }
-
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
+        ResetAllButtons(); // reset their color
         playerAction = action;
         // TODO: remove comment for LLM-NPC
         //gptAction = await GetGptAction();
@@ -320,7 +329,7 @@ public class GameManagerFive : MonoBehaviour
             new Message
             {
                 role = "system",
-                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
+                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. Keep it short. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
             },
             new Message
             {
@@ -684,8 +693,8 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
         string reaction = $"I {npcAction}";
         // TODO: remove comment for LLM-NPC
-        //reaction = await getKiReaction();
-
+        reaction = await getKiReaction();
+        actionLog.text += "\n" + reaction;
         await ttsSpeakerNPC.SpeakTask(reaction);
         //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
 
@@ -722,8 +731,57 @@ public class GameManagerFive : MonoBehaviour
         shieldButton.interactable = !shieldButton.interactable;
         dodgeButton.interactable = !dodgeButton.interactable;
         disarmButton.interactable = !disarmButton.interactable;
+        isPlayerTurn = !isPlayerTurn;
     }
 
+    public void SelectButton(string action)
+    {
+        // Reset all buttons to default color
+        ResetAllButtons();
+
+        // Highlight the button corresponding to the action
+        switch (action)
+        {
+            case "Load":
+                HighlightButton(loadButton);
+                break;
+            case "Shoot":
+                HighlightButton(shootButton);
+                break;
+            case "Shield":
+                HighlightButton(shieldButton);
+                break;
+            case "Dodge":
+                HighlightButton(dodgeButton);
+                break;
+            case "Disarm":
+                HighlightButton(disarmButton);
+                break;
+            default:
+                Debug.LogWarning("Unknown action: " + action);
+                break;
+        }
+    }
+
+    private void HighlightButton(Button button)
+    {
+        highlightedButton = button;
+        Image buttonImage = button.GetComponent<Image>();
+        if (buttonImage != null)
+        {
+            buttonImage.color = highlightedColor; // Set the highlight color
+        }
+    }
+    private void ResetAllButtons()
+    {
+        // Reset all buttons to the default color
+        loadButton.GetComponent<Image>().color = defaultColor;
+        shootButton.GetComponent<Image>().color = defaultColor;
+        shieldButton.GetComponent<Image>().color = defaultColor;
+        dodgeButton.GetComponent<Image>().color = defaultColor;
+        disarmButton.GetComponent<Image>().color = defaultColor;
+        highlightedButton = null;
+    }
     void UpdateUI()
     {
         playerLifeText.text = "Player Life: " + player.lifePoints + " Ammo: " + player.loadCount + "/" + player.loadCapacity + " Shields: " + player.shieldCount;
@@ -826,6 +884,26 @@ public class GameManagerFive : MonoBehaviour
         {
             if (actionCooldowns[action] > 0)
                 actionCooldowns[action]--;
+        }
+    }
+
+    void Update()
+    {
+        if (gameCanvas.activeSelf && isPlayerTurn) // TODO: could also activate mic per default when its users turn?!
+        {
+            if (Input.GetKeyDown(KeyCode.Return) && highlightedButton != null) // TODO: replace with handgesture
+            {
+                highlightedButton.onClick.Invoke();
+            }
+            if (Input.GetKeyDown(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking && !ttsSpeakerCommentary.IsSpeaking) // TODO: replace with handgesture
+            {
+                voiceExperience.Activate();
+            }
+
+            if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
+            {
+                voiceExperience.Deactivate();
+            }
         }
     }
 }

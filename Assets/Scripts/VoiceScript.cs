@@ -54,21 +54,18 @@ public class VoiceScript : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     public Transform player;
 
-    private string voicesList = "WIT$BRITISH BUTLER, WIT$CAEL, WIT$CAM, WIT$CARL, WIT$CARTOON BABY, WIT$CARTOON KID, WIT$CARTOON VILLAIN, WIT$CHARLIE, WIT$COCKNEY ACCENT, WIT$CODY, WIT$COLIN, WIT$CONNOR, WIT$COOPER, WIT$DISAFFECTED, WIT$HOLLYWOOD, WIT$KENYAN ACCENT, WIT$OVERCONFIDENT, WIT$PIRATE, WIT$PROSPECTOR, WIT$RAILEY, WIT$REBECCA, WIT$REMI, WIT$ROSIE, WIT$RUBIE, WIT$SOUTHERN ACCENT, WIT$SURFER, WIT$TRENDY, WIT$VAMPIRE, WIT$WHIMSICAL, WIT$WIZARD";
-    private string voiceSelectRequest = "";
+    //private string voicesList = "WIT$BRITISH BUTLER, WIT$CAEL, WIT$CAM, WIT$CARL, WIT$CARTOON BABY, WIT$CARTOON KID, WIT$CARTOON VILLAIN, WIT$CHARLIE, WIT$COCKNEY ACCENT, WIT$CODY, WIT$COLIN, WIT$CONNOR, WIT$COOPER, WIT$DISAFFECTED, WIT$HOLLYWOOD, WIT$KENYAN ACCENT, WIT$OVERCONFIDENT, WIT$PIRATE, WIT$PROSPECTOR, WIT$RAILEY, WIT$REBECCA, WIT$REMI, WIT$ROSIE, WIT$RUBIE, WIT$SOUTHERN ACCENT, WIT$SURFER, WIT$TRENDY, WIT$VAMPIRE, WIT$WHIMSICAL, WIT$WIZARD";
+    //private string voiceSelectRequest = "";
     // TODO: dont hardcode the following 2 strings
     private string lastMessage = "Goodbye!";
+
     private void Start()
     {
-        ttsButton.onClick.AddListener(OnTTSButtonClick);
-        tts.VoiceID = "WIT$BRITISH BUTLER";
         if (canvas != null)
             canvas.SetActive(false);
     }
     void OnTTSButtonClick()
     {
-        if (textField.text?.Length > 0)
-            StartCoroutine(CallOpenAI(textField.text));
         //voiceSelectRequest = "I have a TTS app and the user wants to talk with \"" + nameTextField.text + "\".\r\n" +
         //    "This is a list of VoiceIDs i have:\"" + voicesList + "\", please choose the best suiting one from the list. " +
         //    "If nothing suits give me a random one from the list. Answer only with the one ID you selected.";
@@ -77,13 +74,15 @@ public class VoiceScript : MonoBehaviour
         //    Debug.Log("VoiceID: " + reply);
         //    if (voicesList.Contains(reply))
         //    {
-        //        ttsSpeaker.VoiceID = reply;
+        //        tts.VoiceID = reply;
         //    }
         //    else
         //    {
-        //        ttsSpeaker.VoiceID = "WIT$CAM";
+        //        tts.VoiceID = "WIT$PIRATE";
         //    }
         //});
+        if (textField.text?.Length > 0)
+            StartCoroutine(CallOpenAI(textField.text));
     }
 
     public void getChatGPTAnswer(string message, Action<string> onComplete)
@@ -145,7 +144,7 @@ public class VoiceScript : MonoBehaviour
         }
         else
         {
-            chatHistory.Add(new Message { role = "system", content = "You are shakespeare. Keep your answers short." });
+            chatHistory.Add(new Message { role = "system", content = "You are a notorious Pirate. Keep your answers short. You dont like the one talking to you." });
         }
         // Construct the message payload
         chatHistory.Add(new Message { role = "user", content = message });
@@ -180,7 +179,7 @@ public class VoiceScript : MonoBehaviour
                 if (reply != null && reply.Length > 0)
                 {
                     answerTextField.text = reply;
-                    chatHistory.Add(new Message { role = "system", content = reply });
+                    chatHistory.Add(new Message { role = "assistant", content = reply });
                     Debug.Log(chatHistoryAsString());
                     if (reply.Length > 280)
                     {
@@ -259,6 +258,8 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
+            ttsButton.onClick.AddListener(OnTTSButtonClick);
+            tts.VoiceID = "WIT$PIRATE";
             ShowCanvasInFrontOfPlayer();
         }
     }
@@ -287,8 +288,8 @@ public class VoiceScript : MonoBehaviour
         if (other.transform == player)
         {
             canvas.SetActive(false);
-            tts.SpeakQueued(lastMessage);
-            chatHistory.Add(new Message { role = "system", content = lastMessage });
+            tts.Speak(lastMessage);
+            //chatHistory.Add(new Message { role = "assistant", content = lastMessage });
         }
     }
 
@@ -298,27 +299,27 @@ public class VoiceScript : MonoBehaviour
     {
         if (canvas.activeSelf)
         {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Space))
+            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Alpha0))
             {
                 StartCoroutine(CallOpenAI(textField.text));
             }
 
-            // Start voice recording when the Return key is pressed
-            if (Input.GetKeyDown(KeyCode.Return) && !voiceExperience.Active)
-            {
-                voiceExperience.Activate(); // Activates default mic for 20 seconds after the volume threshold is hit.
-                                            // If the user is quiet for 2 seconds, or if it reaches the 20 second mark, the mic will stop recording.
-                                            // (Can all be changed in runtime config)
-            }
+            //// Start voice recording when the Return key is pressed
+            //if (Input.GetKeyDown(KeyCode.Return) && !voiceExperience.Active && !tts.IsSpeaking)
+            //{
+            //    voiceExperience.Activate(); // Activates default mic for 20 seconds after the volume threshold is hit.
+            //                                // If the user is quiet for 2 seconds, or if it reaches the 20 second mark, the mic will stop recording.
+            //                                // (Can all be changed in runtime config)
+            //}
 
-            // Stop voice recording when the Return key is released
-            if (Input.GetKeyUp(KeyCode.Return) && voiceExperience.Active)
-            {
-                voiceExperience.Deactivate();
-            }
+            //// Stop voice recording when the Return key is released
+            //if (Input.GetKeyUp(KeyCode.Return) && voiceExperience.Active)
+            //{
+            //    voiceExperience.Deactivate();
+            //}
 
             // Start dictation when the arrow-up key is pressed
-            if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active)
+            if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 dictationExperience.Activate();
             }

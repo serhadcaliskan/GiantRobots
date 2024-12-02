@@ -694,8 +694,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 72691952}
-  - component: {fileID: 72691953}
-  - component: {fileID: 72691954}
+  - component: {fileID: 72691957}
+  - component: {fileID: 72691956}
+  - component: {fileID: 72691955}
+  - component: {fileID: 72691959}
+  - component: {fileID: 72691958}
   m_Layer: 0
   m_Name: Response Handler
   m_TagString: Untagged
@@ -718,7 +721,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1135048411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &72691953
+--- !u!114 &72691955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -732,7 +735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Voice: {fileID: 1135048410}
   ValidateEarly: 0
-  intent: wit$confirmation
+  intent: Dodge
   confidenceThreshold: 0.6
   valueMatchers:
   - path: intents[0].name
@@ -757,7 +760,139 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Confirmation
+          m_StringArgument: Dodge
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 340196871}
+        m_TargetAssemblyTypeName: GameManagerFive, Assembly-CSharp
+        m_MethodName: SelectButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Dodge
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDidNotMatch:
+    m_PersistentCalls:
+      m_Calls: []
+  onOutOfDomain:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &72691956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72691951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591c3d6f017c11b4faa41506d75635b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Voice: {fileID: 1135048410}
+  ValidateEarly: 0
+  intent: Shield
+  confidenceThreshold: 0.6
+  valueMatchers:
+  - path: intents[0].id
+    witValueReference: {fileID: 0}
+    contentRequired: 1
+    matchMethod: 0
+    comparisonMethod: 0
+    matchValue: 
+    floatingPointComparisonTolerance: 0.00009999999747378752
+    allowConfidenceOverlap: 0
+    confidenceRanges: []
+  formattedValueEvents: []
+  onMultiValueEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 264594648}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shield
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 340196871}
+        m_TargetAssemblyTypeName: GameManagerFive, Assembly-CSharp
+        m_MethodName: SelectButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shield
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDidNotMatch:
+    m_PersistentCalls:
+      m_Calls: []
+  onOutOfDomain:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &72691957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72691951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591c3d6f017c11b4faa41506d75635b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Voice: {fileID: 1135048410}
+  ValidateEarly: 0
+  intent: Shoot
+  confidenceThreshold: 0.6
+  valueMatchers:
+  - path: intents[0].confidence
+    witValueReference: {fileID: 0}
+    contentRequired: 1
+    matchMethod: 0
+    comparisonMethod: 0
+    matchValue: 
+    floatingPointComparisonTolerance: 0.00009999999747378752
+    allowConfidenceOverlap: 0
+    confidenceRanges: []
+  formattedValueEvents: []
+  onMultiValueEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 264594648}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shoot
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 340196871}
+        m_TargetAssemblyTypeName: GameManagerFive, Assembly-CSharp
+        m_MethodName: SelectButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shoot
           m_BoolArgument: 0
         m_CallState: 1
   onDidNotMatch:
@@ -766,7 +901,7 @@ MonoBehaviour:
   onOutOfDomain:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &72691954
+--- !u!114 &72691958
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -780,7 +915,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Voice: {fileID: 1135048410}
   ValidateEarly: 0
-  intent: wit$negation
+  intent: Load
   confidenceThreshold: 0.6
   valueMatchers:
   - path: intents[0].name
@@ -805,9 +940,81 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Negation
+          m_StringArgument: Load
           m_BoolArgument: 0
         m_CallState: 1
+      - m_Target: {fileID: 340196871}
+        m_TargetAssemblyTypeName: GameManagerFive, Assembly-CSharp
+        m_MethodName: SelectButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Load
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDidNotMatch:
+    m_PersistentCalls:
+      m_Calls: []
+  onOutOfDomain:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &72691959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72691951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591c3d6f017c11b4faa41506d75635b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Voice: {fileID: 1135048410}
+  ValidateEarly: 0
+  intent: Disarm
+  confidenceThreshold: 0.6
+  valueMatchers:
+  - path: intents[0].name
+    witValueReference: {fileID: 0}
+    contentRequired: 1
+    matchMethod: 0
+    comparisonMethod: 0
+    matchValue: 
+    floatingPointComparisonTolerance: 0.00009999999747378752
+    allowConfidenceOverlap: 0
+    confidenceRanges: []
+  formattedValueEvents: []
+  onMultiValueEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 264594648}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Disarm
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 340196871}
+        m_TargetAssemblyTypeName: GameManagerFive, Assembly-CSharp
+        m_MethodName: SelectButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Disarm
+          m_BoolArgument: 0
+        m_CallState: 2
   onDidNotMatch:
     m_PersistentCalls:
       m_Calls: []
@@ -1473,6 +1680,8 @@ MonoBehaviour:
   shieldButton: {fileID: 563769904}
   dodgeButton: {fileID: 779458540}
   disarmButton: {fileID: 1753751834}
+  highlightedColor: {r: 0.6986472, g: 0.9433962, b: 0.6986472, a: 1}
+  voiceExperience: {fileID: 1135048410}
   npcName: Albus Dumbledore
 --- !u!114 &340196872
 MonoBehaviour:
@@ -1488,6 +1697,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shakeAmount: 0.1
   shakeDuration: 0.5
+  intensityOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &352402401
 GameObject:
   m_ObjectHideFlags: 0
@@ -3440,7 +3655,7 @@ MonoBehaviour:
   PrependedText: 
   AppendedText: 
   _ttsService: {fileID: 32320793}
-  presetVoiceID: WIT$PROSPECTOR
+  presetVoiceID: WIT$WIZARD
   customWitVoiceSettings:
     SettingsId: 
     PrependedText: 
@@ -5448,8 +5663,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14754d0a989a836448a7f3ae48984c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkingSpeed: 20
-  runningSpeed: 28
+  walkingSpeed: 30
+  runningSpeed: 40
   jumpSpeed: 14
   gravity: 20
   playerCamera: {fileID: 1459003263}
@@ -5523,6 +5738,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shakeAmount: 0.1
   shakeDuration: 1
+  intensityOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1314715918
 GameObject:
   m_ObjectHideFlags: 0
@@ -5843,12 +6064,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Hold "Enter" for Command detection
+  m_text: 'Hold "Enter" for Command detection [currently disabled]
 
-    Hold "Right Shift" for Dictation
+    Hold "Right
+    Shift" for Dictation
 
-    Click
-    "Space" to send msg to LLM'
+    Click "0" to send msg to LLM'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6231,7 +6452,7 @@ MonoBehaviour:
   PrependedText: 
   AppendedText: 
   _ttsService: {fileID: 2053239946}
-  presetVoiceID: WIT$COLIN
+  presetVoiceID: WIT$PIRATE
   customWitVoiceSettings:
     SettingsId: 
     PrependedText: 

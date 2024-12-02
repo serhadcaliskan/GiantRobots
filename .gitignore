@@ -72,5 +72,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Exclude the API keys file
-/Assets/Config/api_keys.json
-/Assets/Config/api_keys.json.meta
+/Assets/Config/api_keys.*
