@@ -318,14 +318,14 @@ public class VoiceScript : MonoBehaviour
             //    voiceExperience.Deactivate();
             //}
 
-            // Start dictation when the arrow-up key is pressed
+            // Start dictation when the key is pressed
             if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 dictationExperience.Activate();
             }
 
-            // Stop voice dictation when the arrow-up key is released
-            if (Input.GetKeyUp(KeyCode.UpArrow) && dictationExperience.Active)
+            // Stop voice dictation when the key is released
+            if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
             {
                 dictationExperience.Deactivate();
             }
