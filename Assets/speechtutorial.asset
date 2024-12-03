@@ -20,18 +20,24 @@ MonoBehaviour:
     isPrivate: 1
     createdAt: 2024-10-21T06:02:18-0700
     trainingStatus: 1
-    lastTrainDuration: 0
-    lastTrainedAt: 1969-12-31T16:00:00-0800
-    nextTrainAt: 1969-12-31T16:00:00-0800
+    lastTrainDuration: 96
+    lastTrainedAt: 2024-12-02T06:10:21-0800
+    nextTrainAt: 2024-12-02T06:08:45-0800
     intents:
-    - id: 552835067288241
-      name: wit$confirmation
+    - id: 850696983656880
+      name: Disarm
       entities: []
-    - id: 1738534336981544
-      name: wit$delete_alarm
+    - id: 3555960641360902
+      name: Dodge
       entities: []
-    - id: 915640707156282
-      name: wit$negation
+    - id: 1093345629097275
+      name: Load
+      entities: []
+    - id: 903772508548935
+      name: Shield
+      entities: []
+    - id: 586882713814195
+      name: Shoot
       entities: []
     entities: []
     traits: []
