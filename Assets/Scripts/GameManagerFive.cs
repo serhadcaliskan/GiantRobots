@@ -59,7 +59,7 @@ public class GameManagerFive : MonoBehaviour
 
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
-    private int difficulty = 1;
+    private int difficulty = 2;
     private float shieldSoundLength = 0f;
     private Action npcAction;
     private Color defaultColor;
@@ -146,7 +146,7 @@ public class GameManagerFive : MonoBehaviour
         ResetAllButtons(); // reset their color
         playerAction = action;
         // TODO: remove comment for LLM-NPC
-        //gptAction = await GetGptAction();
+        gptAction = await GetGptAction();
         if (gptAction != null)
         {
             if (Enum.TryParse(gptAction.action, true, out npcAction))
@@ -199,6 +199,10 @@ public class GameManagerFive : MonoBehaviour
         int aiLife = npc.lifePoints;
         int aiAmmo = npc.loadCount;
         int aiShields = npc.shieldCount;
+        if (aiAmmo > 0)
+        {
+            return Action.Shoot;
+        }
         // Difficulty 1: Simple random action selection with minor tweaks for realism
         if (difficulty == 1)
         {
@@ -330,7 +334,7 @@ public class GameManagerFive : MonoBehaviour
             new Message
             {
                 role = "system",
-                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. Keep it short. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
+                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. Keep it short and dont spoil information about next moves. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
             },
             new Message
             {
@@ -340,7 +344,7 @@ public class GameManagerFive : MonoBehaviour
         };
         var requestData = new OpenAIRequest
         {
-            model = "gpt-4o-mini",
+            model = "gpt-4o",
             messages = chat
         };
         string jsonData = JsonConvert.SerializeObject(requestData);
