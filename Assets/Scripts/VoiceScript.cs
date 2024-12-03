@@ -144,7 +144,7 @@ public class VoiceScript : MonoBehaviour
         }
         else
         {
-            chatHistory.Add(new Message { role = "system", content = "You are a notorious Pirate. Keep your answers short. You dont like the one talking to you." });
+            chatHistory.Add(new Message { role = "system", content = "You are the notorious Gandalf and you dont like the one talking to you." });
         }
         // Construct the message payload
         chatHistory.Add(new Message { role = "user", content = message });
@@ -259,7 +259,7 @@ public class VoiceScript : MonoBehaviour
         if (other.transform == player)
         {
             ttsButton.onClick.AddListener(OnTTSButtonClick);
-            tts.VoiceID = "WIT$PIRATE";
+            tts.VoiceID = "WIT$WIZARD";
             ShowCanvasInFrontOfPlayer();
         }
     }
