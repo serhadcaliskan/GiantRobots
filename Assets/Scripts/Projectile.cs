@@ -18,19 +18,14 @@ public class Projectile : MonoBehaviour
         target = opponent;
         this.hit = hit;
         initTargetPosition = opponent.position;
+        if (!hit)
+        {
+            initTargetPosition.y = 0;
+        }
     }
 
     void Update()
     {
-        //if (target != null)
-        //{
-        //    // Move to target
-        //    Vector3 direction = hit ? (target.position - transform.position).normalized : (initTargetPosition - transform.position).normalized;
-        //    transform.position += direction * speed * Time.deltaTime;
-        //    // Rotate so that projectile is facing the target
-        //    Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, direction);
-        //    transform.rotation = targetRotation;
-        //}
         if (target != null)
         {
             Vector3 direction;
@@ -42,7 +37,6 @@ public class Projectile : MonoBehaviour
             else
             {
                 direction = (initTargetPosition - transform.position);
-                direction.y -= 2f;
                 direction.Normalize();
             }
 

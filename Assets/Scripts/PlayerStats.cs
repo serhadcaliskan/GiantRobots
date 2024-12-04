@@ -42,6 +42,9 @@ public class PlayerStats : MonoBehaviour
     {
         inFight = true;
         initialPosition = transform.position;
+        loadCount = 0;
+        shieldCount = 3;
+        lifePoints = 100;
     }
 
     // Save the settings to PlayerPrefs
