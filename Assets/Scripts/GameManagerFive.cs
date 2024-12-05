@@ -66,6 +66,7 @@ public class GameManagerFive : MonoBehaviour
     public Color highlightedColor = Color.green;
     public AppVoiceExperience voiceExperience;
     private bool isPlayerTurn = true; // gets edited in toggleButtons
+    public bool useKI = false;
     [SerializeField]
     /// <summary>
     /// a tupel is: (playerAction, npcAction)
@@ -82,7 +83,7 @@ public class GameManagerFive : MonoBehaviour
     { Action.Shoot, 0 },
     { Action.Shield, 0 },
     { Action.Disarm, 0 },
-    { Action.Load, 0 },    // Load and Dodge usually won’t have cooldowns
+    { Action.Load, 0 },    // Load and Dodge usually wonï¿½t have cooldowns
     { Action.Dodge, 0 }
 };
     APIKeys keys = APIKeys.Load();
@@ -101,23 +102,21 @@ public class GameManagerFive : MonoBehaviour
         {
             defaultColor = loadButton.GetComponent<Image>().color;
         }
+        loadButton.onClick.AddListener(() => SelectAction(Action.Load));
+        shootButton.onClick.AddListener(() => SelectAction(Action.Shoot));
+        shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
+        dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
+        disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
     }
     public void EnterGame(Collider other)
     {
         if (other.transform == playerObj)
         {
-            // TODO: use rightShift as push-to-talk [WitAI command detection] to select an action and enter to submit
-            loadButton.onClick.AddListener(() => SelectAction(Action.Load));
-            shootButton.onClick.AddListener(() => SelectAction(Action.Shoot));
-            shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
-            dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
-            disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
             player.LoadGameSettings();
             npc.LoadGameSettings();
             ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
             shieldSoundLength = Resources.Load<AudioClip>("Audio/deactivateShield").length;
 
-            UpdateUI();
             gameCanvas.SetActive(true);
             actionLog.text = "Select an action!";
             //ttsSpeakerCommentary.Speak(actionLog.text);
@@ -127,6 +126,7 @@ public class GameManagerFive : MonoBehaviour
             npc.startFight();
             player.startFight();
             voiceExperience.Activate();
+            UpdateUI();
         }
     }
 
@@ -144,9 +144,11 @@ public class GameManagerFive : MonoBehaviour
     {
         toggleButtons(); // make them unclickable
         ResetAllButtons(); // reset their color
+        voiceExperience.Deactivate();
         playerAction = action;
         // TODO: remove comment for LLM-NPC
-        gptAction = await GetGptAction();
+        if (useKI)
+            gptAction = await GetGptAction();
         if (gptAction != null)
         {
             if (Enum.TryParse(gptAction.action, true, out npcAction))
@@ -166,7 +168,7 @@ public class GameManagerFive : MonoBehaviour
         chatHistory.Add(new Message
         {
             role = "system",
-            content = "Game Rules: You play as " + npcName + " against the user. On your turn, choose one action:\nLoad – Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot – Fire at your opponent if you've loaded at least once. It deducts one load.\nShield – Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge – Avoid a shot. If successful, the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm – Reduce your opponent's load to zero. It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponent’s load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
+            content = "Game Rules: You play as " + npcName + " against the user. On your turn, choose one action:\nLoad ï¿½ Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot ï¿½ Fire at your opponent if you've loaded at least once. It deducts one load.\nShield ï¿½ Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge ï¿½ Avoid a shot. If successful, the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm ï¿½ Reduce your opponent's load to zero. It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponentï¿½s load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
         });
         string userMessage = $"Histroy: {GameHistoryAsString()}\n Stats: {StatsString()}";
         Debug.Log(userMessage);
@@ -199,10 +201,6 @@ public class GameManagerFive : MonoBehaviour
         int aiLife = npc.lifePoints;
         int aiAmmo = npc.loadCount;
         int aiShields = npc.shieldCount;
-        if (aiAmmo > 0)
-        {
-            return Action.Shoot;
-        }
         // Difficulty 1: Simple random action selection with minor tweaks for realism
         if (difficulty == 1)
         {
@@ -697,8 +695,8 @@ public class GameManagerFive : MonoBehaviour
         // Wait until the speech is done
         UpdateUI();
         string reaction = $"I {npcAction}";
-        // TODO: remove comment for LLM-NPC
-        reaction = await getKiReaction();
+        if (useKI)
+            reaction = await getKiReaction();
         actionLog.text += "\n" + reaction;
         await ttsSpeakerNPC.SpeakTask(reaction);
         //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
@@ -804,7 +802,7 @@ public class GameManagerFive : MonoBehaviour
         }
         else if (player.lifePoints <= 0)
         {
-            actionLog.text = "NPC Wins!";
+            actionLog.text = $"{npcName} Wins!";
         }
         else if (npc.lifePoints <= 0)
         {
@@ -897,7 +895,7 @@ public class GameManagerFive : MonoBehaviour
 
     void Update()
     {
-        if (gameCanvas.activeSelf && isPlayerTurn) // TODO: could also activate mic per default when its users turn?!
+        if (gameCanvas.activeSelf && isPlayerTurn)
         {
             if (Input.GetKeyDown(KeyCode.Return) && highlightedButton != null) // TODO: replace with handgesture
             {

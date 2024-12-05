@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldCollision : MonoBehaviour // Todo: Make player shield visible, currently it is invisible bc we are inside the spehere
+public class ShieldCollision : MonoBehaviour
 {
     private AudioSource audioSource;
     public AudioClip shieldBreakSound;
@@ -14,13 +14,13 @@ public class ShieldCollision : MonoBehaviour // Todo: Make player shield visible
     private void Start()
     {
         audioSource = GetComponentInChildren<AudioSource>();
+        Debug.Log("ShieldCollision audioSource: " + audioSource);
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Projectile"))
         {
-            //audioSource.PlayOneShot(shieldBreakSound);
             blinkEffect.BreakShield();
         }
     }

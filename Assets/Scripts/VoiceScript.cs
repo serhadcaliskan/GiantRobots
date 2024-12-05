@@ -38,7 +38,6 @@ public class Message
 }
 public class VoiceScript : MonoBehaviour
 {
-    public AppVoiceExperience voiceExperience;
     public AppDictationExperience dictationExperience;
     public TTSSpeaker tts;
     public Button ttsButton;
@@ -56,7 +55,7 @@ public class VoiceScript : MonoBehaviour
 
     //private string voicesList = "WIT$BRITISH BUTLER, WIT$CAEL, WIT$CAM, WIT$CARL, WIT$CARTOON BABY, WIT$CARTOON KID, WIT$CARTOON VILLAIN, WIT$CHARLIE, WIT$COCKNEY ACCENT, WIT$CODY, WIT$COLIN, WIT$CONNOR, WIT$COOPER, WIT$DISAFFECTED, WIT$HOLLYWOOD, WIT$KENYAN ACCENT, WIT$OVERCONFIDENT, WIT$PIRATE, WIT$PROSPECTOR, WIT$RAILEY, WIT$REBECCA, WIT$REMI, WIT$ROSIE, WIT$RUBIE, WIT$SOUTHERN ACCENT, WIT$SURFER, WIT$TRENDY, WIT$VAMPIRE, WIT$WHIMSICAL, WIT$WIZARD";
     //private string voiceSelectRequest = "";
-    // TODO: dont hardcode the following 2 strings
+    // TODO: dont hardcode the following string
     private string lastMessage = "Goodbye!";
 
     private void Start()
@@ -122,7 +121,7 @@ public class VoiceScript : MonoBehaviour
 
                 // Call the callback with the reply
                 onComplete(reply);
-                if (!tts.IsSpeaking && textField.text?.Length > 0 && !voiceExperience.Active && !dictationExperience.Active)
+                if (!tts.IsSpeaking && textField.text?.Length > 0 && !dictationExperience.Active)
                 {
                     buttonText.text = "Loading...";
                     ttsButton.enabled = false;
@@ -144,7 +143,7 @@ public class VoiceScript : MonoBehaviour
         }
         else
         {
-            chatHistory.Add(new Message { role = "system", content = "You are the notorious Gandalf and you dont like the one talking to you." });
+            chatHistory.Add(new Message { role = "system", content = "You are the mysterious Gandalf and you dont like the one talking to you." });
         }
         // Construct the message payload
         chatHistory.Add(new Message { role = "user", content = message });
@@ -271,7 +270,7 @@ public class VoiceScript : MonoBehaviour
             // Calculate the position for the canvas to appear directly in front of the player
             Vector3 playerForward = player.forward; // Direction player is facing
             Vector3 canvasPosition = player.position + playerForward * displayDistance;
-            canvasPosition.y += 35.0f;
+            canvasPosition.y += 30.0f;
 
             // Position and face the canvas toward the player
             canvas.transform.position = canvasPosition;
@@ -299,26 +298,11 @@ public class VoiceScript : MonoBehaviour
     {
         if (canvas.activeSelf)
         {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Alpha0))
+            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return))
             {
                 StartCoroutine(CallOpenAI(textField.text));
             }
 
-            //// Start voice recording when the Return key is pressed
-            //if (Input.GetKeyDown(KeyCode.Return) && !voiceExperience.Active && !tts.IsSpeaking)
-            //{
-            //    voiceExperience.Activate(); // Activates default mic for 20 seconds after the volume threshold is hit.
-            //                                // If the user is quiet for 2 seconds, or if it reaches the 20 second mark, the mic will stop recording.
-            //                                // (Can all be changed in runtime config)
-            //}
-
-            //// Stop voice recording when the Return key is released
-            //if (Input.GetKeyUp(KeyCode.Return) && voiceExperience.Active)
-            //{
-            //    voiceExperience.Deactivate();
-            //}
-
-            // Start dictation when the key is pressed
             if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 dictationExperience.Activate();
