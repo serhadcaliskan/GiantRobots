@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/StartMenu.unity
     guid: 4c97d9c057fd5974b8e9f179a129798c
   - enabled: 1
-    path: Assets/Scenes/PauseMenu.unity
-    guid: 66195afc86171764cb46e149ca0977f4
+    path: Assets/Scenes/Prolog.unity
+    guid: 514266d3e349c1a4c952f9400b8acec8
   - enabled: 1
     path: Assets/Scenes/CharacterMovement.unity
     guid: 4a28efbaa0af1544999052dbf86abb49

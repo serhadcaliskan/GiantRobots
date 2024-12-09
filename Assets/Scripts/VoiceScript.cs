@@ -180,6 +180,7 @@ public class VoiceScript : MonoBehaviour
                     answerTextField.text = reply;
                     chatHistory.Add(new Message { role = "assistant", content = reply });
                     Debug.Log(chatHistoryAsString());
+                    // TODO refactor and use the TTSScript
                     if (reply.Length > 280)
                     {
                         List<string> textChunks = SplitTextIntoChunks(reply, 275);
@@ -200,6 +201,7 @@ public class VoiceScript : MonoBehaviour
         }
     }
 
+    // TODO refactor and use the TTSScript
     private List<string> SplitTextIntoChunks(string text, int chunkLength)
     {
         List<string> chunks = new List<string>();
@@ -240,7 +242,7 @@ public class VoiceScript : MonoBehaviour
         return output;
     }
 
-
+    // TODO refactor and use the TTSScript
     private IEnumerator PlayChunksSequentially(List<string> chunks)
     {
         Debug.Log(chunks);

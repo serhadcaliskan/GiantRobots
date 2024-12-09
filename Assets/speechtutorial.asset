@@ -20,9 +20,9 @@ MonoBehaviour:
     isPrivate: 1
     createdAt: 2024-10-21T06:02:18-0700
     trainingStatus: 1
-    lastTrainDuration: 96
-    lastTrainedAt: 2024-12-02T06:10:21-0800
-    nextTrainAt: 2024-12-02T06:08:45-0800
+    lastTrainDuration: 225
+    lastTrainedAt: 2024-12-03T12:24:17-0800
+    nextTrainAt: 2024-12-03T12:20:32-0800
     intents:
     - id: 850696983656880
       name: Disarm
