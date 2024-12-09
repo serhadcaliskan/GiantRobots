@@ -23,21 +23,14 @@ public class PrologHandler : MonoBehaviour
         StartCoroutine(TypeTextWithBlink(prologText, uiText, () => { SceneManager.LoadScene(2); }));
     }
 
+    private bool addBlink = false;
+
     IEnumerator TypeTextWithBlink(string prologText, TextMeshProUGUI uiText, System.Action callback)
     {
         ttsScript.Speak(prologText.Replace("\n", " "), speaker);
         prologText += "...";
-        bool addBlink = false;
-        for (int i = 0; i < 6; i++)
-        {
-            while (Time.timeScale == 0f) yield return null; // Wait for the game to be unpaused
 
-            string baseText = uiText.text.TrimEnd('|');
-            uiText.text = addBlink ? baseText + "|" : baseText;
-
-            addBlink = !addBlink;
-            yield return new WaitForSeconds(0.3f);
-        }
+        yield return Blink(uiText, 6, 0.3f);
 
         foreach (char c in prologText)
         {
@@ -55,7 +48,14 @@ public class PrologHandler : MonoBehaviour
             yield return new WaitForSeconds(0.055f);
         }
 
-        for (int i = 0; i < 7; i++) // Blink 10 times
+        yield return Blink(uiText, 7, 0.3f);
+
+        callback?.Invoke();
+    }
+
+    private IEnumerator Blink(TextMeshProUGUI uiText, int blinkCount, float blinkInterval)
+    {
+        for (int i = 0; i < blinkCount; i++)
         {
             while (Time.timeScale == 0f) yield return null; // Wait for the game to be unpaused
 
@@ -63,8 +63,7 @@ public class PrologHandler : MonoBehaviour
             uiText.text = addBlink ? baseText + "|" : baseText;
 
             addBlink = !addBlink;
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(blinkInterval);
         }
-        callback?.Invoke();
     }
 }

@@ -8,6 +8,7 @@ public class Menu : MonoBehaviour
     public AudioClip clickSound;
     public AudioSource audioSource;
     public Canvas pauseCanvas;
+    public GameObject noConnectionHint;
 
     private void Start()
     {
@@ -28,7 +29,13 @@ public class Menu : MonoBehaviour
     }
     public void OnPlayButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(1)));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(1)));
     }
 
     public void OnQuitButton()
@@ -73,6 +80,24 @@ public class Menu : MonoBehaviour
         audioSource.PlayOneShot(clickSound);
         yield return new WaitForSecondsRealtime(clickSound.length); // need realtime otherwise callback isnt called in PauseGame
         callback?.Invoke();
+    }
+
+    private IEnumerator ShowNoConnectionHint()
+    {
+        if (noConnectionHint != null) noConnectionHint.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        if (noConnectionHint != null) noConnectionHint.SetActive(false);
+    }
+
+    private bool IsConnectedToInternet()
+    {
+        // Check if there is an internet connection
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return false; // No connection
+        }
+
+        return true; // Connection is available
     }
 
     private void OnDestroy()
