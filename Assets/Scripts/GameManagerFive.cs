@@ -92,6 +92,7 @@ public class GameManagerFive : MonoBehaviour
     private GPTAction gptAction;
 
     public string npcName = "Pirate";
+    private bool paused = false;
     private void Start()
     {
         if (gameCanvas != null)
@@ -895,6 +896,14 @@ public class GameManagerFive : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f && !paused)
+        {
+            TogglePauseGame();
+        }
+        else if (Time.timeScale == 1f && paused)
+        {
+            TogglePauseGame();
+        }
         if (gameCanvas.activeSelf && isPlayerTurn)
         {
             if (Input.GetKeyDown(KeyCode.Return) && highlightedButton != null) // TODO: replace with handgesture
@@ -911,5 +920,23 @@ public class GameManagerFive : MonoBehaviour
                 voiceExperience.Deactivate();
             }
         }
+    }
+
+    void TogglePauseGame()
+    {
+        paused = !paused;
+        if (paused || gameCanvas.activeSelf)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else if (!paused && !gameCanvas.activeSelf)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        fpsController.canMove = !(paused || gameCanvas.activeSelf); // if the game is paused or the game is on, the player should not be able to move
+        ttsSpeakerNPC.Stop();
+        ttsSpeakerCommentary.Stop();
     }
 }

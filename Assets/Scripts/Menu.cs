@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
@@ -13,6 +14,8 @@ public class Menu : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f; // Unpause the game if it was paused
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(false);
         OVRManager.HMDMounted += PauseGame;
     }
@@ -59,7 +62,7 @@ public class Menu : MonoBehaviour
 
     public void OnSaveButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => Debug.Log("TODO: implement save function!")));
+        StartCoroutine(PlaySoundAndExecute(() => { Debug.Log("TODO: implement save function!"); SceneManager.LoadScene(0); }));
     }
 
     private void ToggleGame()
@@ -79,6 +82,7 @@ public class Menu : MonoBehaviour
     {
         audioSource.PlayOneShot(clickSound);
         yield return new WaitForSecondsRealtime(clickSound.length); // need realtime otherwise callback isnt called in PauseGame
+        EventSystem.current.SetSelectedGameObject(null);
         callback?.Invoke();
     }
 

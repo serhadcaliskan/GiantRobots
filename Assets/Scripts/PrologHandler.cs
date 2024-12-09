@@ -6,7 +6,7 @@ using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PrologHandler : MonoBehaviour
+public class PrologHandler : MonoBehaviour // TODO add to gamobject in lvl to handle game start and end
 {
     private string prologText = "YOU FOOL! You put on the forbidden mask of unbearable truths." +
         " As punishment for your disobedience you are teleported to the prison planet Mars." +
@@ -19,14 +19,16 @@ public class PrologHandler : MonoBehaviour
         "Mars becomes your eternal prison, a desolate monument to failure. Yet in your loss, whispers of " +
         "your struggle inspire others to defy the odds you could not";
 
-
-
     public TextMeshProUGUI uiText;
     public TTSSpeaker speaker;
+    public Canvas canvas;
     private TTSScript ttsScript;
+
     public void Start()
     {
+        Debug.Log("PrologHandler Start");
         ttsScript = GetComponent<TTSScript>();
+        canvas.gameObject.SetActive(true);
         uiText.text = "";
         StartCoroutine(TypeTextWithBlink(prologText, uiText, () => { SceneManager.LoadScene(2); }));
     }
@@ -35,7 +37,7 @@ public class PrologHandler : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)) // TODO: remove when we have gameplay with lvls
         {
             ShowEndScreen(Random.value > 0.5);
         }
@@ -43,7 +45,10 @@ public class PrologHandler : MonoBehaviour
 
     public void ShowEndScreen(bool won) // Call this method when the player wins or loses
     {
-        StartCoroutine(TypeTextWithBlink(won ? epilogTextWon : epilogTextLost, uiText, () => { SceneManager.LoadScene(0); }));
+        canvas.gameObject.SetActive(true);
+        StartCoroutine(TypeTextWithBlink(won ? epilogTextWon : epilogTextLost, uiText, () => { 
+            SceneManager.LoadScene(0); 
+        }));
     }
 
     IEnumerator TypeTextWithBlink(string prologText, TextMeshProUGUI uiText, System.Action callback)
@@ -51,12 +56,10 @@ public class PrologHandler : MonoBehaviour
         ttsScript.Speak(prologText.Replace("\n", " "), speaker);
         prologText += "...";
         uiText.text = "|";
-        yield return Blink(uiText, 6, 0.3f);
+        yield return Blink(uiText, 5, 0.3f);
 
         foreach (char c in prologText)
         {
-            while (Time.timeScale == 0f) yield return null; // Wait for the game to be unpaused
-
             string baseText = uiText.text.TrimEnd('|');
             uiText.text = baseText + c;
 
@@ -66,11 +69,11 @@ public class PrologHandler : MonoBehaviour
             }
 
             addBlink = !addBlink;
-            yield return new WaitForSeconds(0.055f);
+            yield return new WaitForSeconds(0.045f);
         }
 
-        yield return Blink(uiText, 7, 0.3f);
-
+        yield return Blink(uiText, 10, 0.3f);
+        canvas.gameObject.SetActive(false);
         callback?.Invoke();
     }
 
@@ -78,8 +81,6 @@ public class PrologHandler : MonoBehaviour
     {
         for (int i = 0; i < blinkCount; i++)
         {
-            while (Time.timeScale == 0f) yield return null; // Wait for the game to be unpaused
-
             string baseText = uiText.text.TrimEnd('|');
             uiText.text = addBlink ? baseText + "|" : baseText;
 
