@@ -3,7 +3,22 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Shield
+  - Projectile
+  - QDSUIToggleBorderlessButton
+  - QDSUIIcon
+  - QDSUITextSecondaryColor
+  - QDSUIPrimaryButton
+  - QDSUIAccentColor
+  - QDSUISharedThemeColor
+  - QDSUISecondaryButton
+  - QDSUIToggleButton
+  - QDSUIToggleCheckboxRadio
+  - QDSUIBorderlessButton
+  - QDSUIDestructiveButton
+  - QDSUIToggleSwitch
+  - PrologEpilogHandler
   layers:
   - Default
   - TransparentFX
