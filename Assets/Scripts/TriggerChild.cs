@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class TriggerChild : MonoBehaviour
 {
-    private GameManagerFive gameManager;
+    private GameManager gameManager;
     private void Start()
     {
-        gameManager = GetComponentInChildren<GameManagerFive>();
+        gameManager = GetComponentInChildren<GameManager>();
     }
     private void OnTriggerEnter(Collider other)
     {

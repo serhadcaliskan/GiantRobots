@@ -406,7 +406,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1200809756852934070}
-  - component: {fileID: 3721723670977783538}
   - component: {fileID: 7469889387987768148}
   m_Layer: 0
   m_Name: PrologEpilogHandler
@@ -432,21 +431,6 @@ Transform:
   - {fileID: 455799147031870341}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3721723670977783538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4157480741099391466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ccca3bce80ec414dbb1b0105c55b109, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiText: {fileID: 3181834315325266318}
-  speaker: {fileID: 1729310723159273795}
-  canvas: {fileID: 5131218397976710208}
 --- !u!114 &7469889387987768148
 MonoBehaviour:
   m_ObjectHideFlags: 0

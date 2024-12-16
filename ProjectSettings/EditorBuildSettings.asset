@@ -9,15 +9,19 @@ EditorBuildSettings:
     path: Assets/Scenes/StartMenu.unity
     guid: 4c97d9c057fd5974b8e9f179a129798c
   - enabled: 1
-    path: Assets/Scenes/PrologEpilog.unity
+    path: Assets/Scenes/Prolog.unity
     guid: 514266d3e349c1a4c952f9400b8acec8
   - enabled: 1
     path: Assets/Scenes/AudioDemo.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
+    path: Assets/Scenes/Epilog.unity
+    guid: 2d5c69d03f5fbf2468b7646128ed9a68
+  - enabled: 1
     path: Assets/Scenes/CharacterMovement.unity
     guid: 4a28efbaa0af1544999052dbf86abb49
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 91fb6f2628115d34a8492b9bee98aeed, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: c7aa27fa14613d44b9ff5073cd8f174c, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e5cf4d3360eaa4a47b71fd9389da1138, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 2874103d1c5b3f64289ceb4666839b0a, type: 2}
