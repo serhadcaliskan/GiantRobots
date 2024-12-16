@@ -5,5 +5,5 @@ using UnityEngine;
 public class NpcStats : Stats
 {
     public string npcName;
-    public string npcVoice;
+    public string fightBehaviour;
 }
