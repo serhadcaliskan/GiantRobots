@@ -92,7 +92,6 @@ public class GameManager : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    //public string npc.npcName = "Pirate";
     private bool paused = false;
     private void Start()
     {
@@ -167,7 +166,7 @@ public class GameManager : MonoBehaviour
         chatHistory.Add(new Message
         {
             role = "system",
-            content = "Game Rules: You play as " + npc.npcName + " against the user. On your turn, choose one action:\nLoad-Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot-Fire at your opponent if you've loaded at least once. It deducts one load.\nShield-Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge-Avoid a shot. If successful(" + npc.dodgeSuccessRate + "%success), the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm-Reduce your opponent's load to zero(" + npc.disarmSuccessRate + "%success). It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponents load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
+            content = "Game Rules: You play as " + npc.npcName + " against the user."+npc.fightBehaviour+"On your turn, choose one action:\nLoad-Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot-Fire at your opponent if you've loaded at least once. It deducts one load.\nShield-Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge-Avoid a shot. If successful(" + npc.dodgeSuccessRate + "%success), the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm-Reduce your opponent's load to zero(" + npc.disarmSuccessRate + "%success). It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponents load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
         });
         string userMessage = $"Histroy: {GameHistoryAsString()}\n Stats: {StatsString()}";
         Debug.Log(userMessage);
