@@ -16,8 +16,22 @@ public class Epilog : PrologEpilogHandler
         base.Start();
         StartCoroutine(TypeTextWithBlink(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
+            // Reset the game settings to default for next game
             PlayerPrefs.SetInt("wonCount", 0);
-            SceneManager.LoadScene(0);
+            PlayerPrefs.SetInt("lifePoints", 100);
+            PlayerPrefs.SetInt("shieldCount", 3);
+            PlayerPrefs.SetInt("shootDamage", 10);
+            PlayerPrefs.SetInt("loadCapacity", 3);
+            PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
+            PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
+            PlayerPrefs.Save();
+
+            // TODO: wait until user takes off the mask
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
         }));
     }
 }

@@ -96,7 +96,6 @@ public class GameManager : MonoBehaviour
     private bool paused = false;
     private void Start()
     {
-        SceneManager.LoadScene(3);
         if (gameCanvas != null)
         {
             gameCanvas.SetActive(false);
@@ -800,27 +799,28 @@ public class GameManager : MonoBehaviour
         if (player.lifePoints <= 0 && npc.lifePoints <= 0)
         {
             actionLog.text = "It's a draw!";
+            SceneManager.LoadScene("Epilog");
         }
         else if (player.lifePoints <= 0)
         {
             actionLog.text = $"{npcName} Wins!";
+            SceneManager.LoadScene("Epilog");
         }
         else if (npc.lifePoints <= 0)
         {
+            //TODO: play die-animation of npc and the do rest
+            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount") + 1);
             actionLog.text = "You Win!";
-            // TODO: check if the player has won 3 times and then end the game
-            // TODO: reward player with a new weapon or something
-        }
-        if (player.lifePoints <= 0 || npc.lifePoints <= 0)
-        {
-            ttsSpeakerCommentary.Speak(actionLog.text);
-            fpsController.canMove = true;
-            npc.LoadGameSettings();
-            player.LoadGameSettings();
-            chatHistory = new List<Message>();
-            gameHistory = new List<(Action, Action)>();
-            npc.inFight = false;
-            player.inFight = false;
+            if (PlayerPrefs.GetInt("wonCount") == 3)
+                SceneManager.LoadScene(3);
+            else
+            {
+                // TODO: reward player with something
+                fpsController.canMove = true;
+                player.LoadGameSettings();
+                player.inFight = false;
+                Destroy(gameObject);
+            }
         }
     }
 

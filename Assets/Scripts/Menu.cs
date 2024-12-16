@@ -60,11 +60,6 @@ public class Menu : MonoBehaviour
         StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
     }
 
-    public void OnSaveButton()
-    {
-        StartCoroutine(PlaySoundAndExecute(() => { Debug.Log("TODO: implement save function!"); SceneManager.LoadScene(0); }));
-    }
-
     private void ToggleGame()
     {
         Time.timeScale = Time.timeScale == 0f ? 1f : 0f; // Pause or unpause the game

@@ -61,11 +61,6 @@ public class Stats : MonoBehaviour
         LoadGameSettings();
     }
 
-    // Save the settings to PlayerPrefs
-    public virtual void SaveGameSettings()
-    {
-        Debug.Log("Called SaveGameSettings()");
-    }
     public virtual void LoadGameSettings()
     {
         Debug.Log("Called LoadGameSettings()");

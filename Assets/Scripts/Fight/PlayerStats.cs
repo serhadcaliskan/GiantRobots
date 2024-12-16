@@ -4,20 +4,9 @@ using UnityEngine;
 
 public class PlayerStats : Stats
 {
-    // Save the settings to PlayerPrefs
-    public override void SaveGameSettings()
-    {
-        PlayerPrefs.SetInt("lifePoints", lifePoints);
-        PlayerPrefs.SetInt("shieldCount", shieldCount);
-        PlayerPrefs.SetInt("shootDamage", shootDamage);
-        PlayerPrefs.SetInt("loadCapacity", loadCapacity);
-        PlayerPrefs.SetFloat("dodgeSuccessRate", dodgeSuccessRate);
-        PlayerPrefs.SetFloat("disarmSuccessRate", disarmSuccessRate);
-
-        PlayerPrefs.Save();
-        Debug.Log("Game settings saved!");
-    }
-    // Load the settings from PlayerPrefs
+    /// <summary>
+    /// Load the settings from PlayerPrefs, if not found, gets the default values
+    /// </summary>
     public override void LoadGameSettings()
     {
         if(PlayerPrefs.HasKey("lifePoints"))
@@ -30,7 +19,7 @@ public class PlayerStats : Stats
 
         if (PlayerPrefs.HasKey("shootDamage"))
             shootDamage = PlayerPrefs.GetInt("shootDamage");
-        else shootDamage = 20;
+        else shootDamage = 10;
 
         if (PlayerPrefs.HasKey("loadCapacity"))
             loadCapacity = PlayerPrefs.GetInt("loadCapacity");
@@ -42,6 +31,6 @@ public class PlayerStats : Stats
 
         if (PlayerPrefs.HasKey("disarmSuccessRate"))
             disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate");
-        else disarmSuccessRate = 0.4f;
+        else disarmSuccessRate = 0.5f;
     }
 }
