@@ -5,10 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class Prolog : PrologEpilogHandler
 {
+    //private string prologText = "YOU FOOL! You put on the forbidden mask of unbearable truths." +
+    //    " As punishment for your disobedience you are teleported to the prison planet Mars." +
+    //    " To earn one of the few tickets back to earth you will have to prove yourself " +
+    //    "in a series of fights. Good luck";
     private string prologText = "YOU FOOL! You put on the forbidden mask of unbearable truths." +
-        " As punishment for your disobedience you are teleported to the prison planet Mars." +
-        " To earn one of the few tickets back to earth you will have to prove yourself " +
-        "in a series of fights. Good luck";
+        "As punishment, you’re sent to the prison planet Mars. But the mask triggered a chain-reaction—each fight fuels chaos," +
+        "each choice ripples outward. Prove yourself in battle, or be crushed by the chain. Good luck.";
 
     public override void Start()
     {
