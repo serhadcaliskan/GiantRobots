@@ -2,33 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStats : MonoBehaviour
+/// <summary>
+/// Parent class for player and opponent stats
+/// </summary>
+public class Stats : MonoBehaviour
 {
-    public int lifePoints = 100;
-    public int loadCount = 0;
-    public int shieldCount = 3;
-    public int shootDamage = 10;
-    public int loadCapacity = 3;
-    public float dodgeSuccessRate = 0.5f;
-    public float disarmSuccessRate = 0.7f;
-    public bool isDodging = false;
-    public float dodgeDistance = 70f;
-    public float dodgeSpeed = 50f;
-    private float dodgeDirection = 1.0f;
-    public bool inFight = false;
+    public int lifePoints;
+    public int shieldCount;
+    public int shootDamage;
+    public int loadCapacity;
+    public float dodgeSuccessRate;
+    public float disarmSuccessRate;
 
+    [HideInInspector] public bool isDodging = false;
+    [HideInInspector] public bool inFight = false;
+    [HideInInspector] public bool isShielding = false;
+    [HideInInspector] public int loadCount;
+
+    private float dodgeDistance = 70f;
+    private float dodgeSpeed = 50f;
+    private float dodgeDirection = 1.0f;
     private Vector3 initialPosition;
-    public bool isShielding = false;
+
 
     public GameObject shield;
     public GameObject projectilePrefab;
     public Transform opponent;
+
     private AudioSource audioSource;
     private AudioClip shootSound;
     private AudioClip reloadSound;
     private AudioClip disarmSound;
     private ShakeEffect shakeEffect;
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
         shield.SetActive(false);
         audioSource = GetComponentInChildren<AudioSource>();
@@ -38,55 +45,7 @@ public class PlayerStats : MonoBehaviour
         shakeEffect = GetComponent<ShakeEffect>();
     }
 
-    public void startFight()
-    {
-        inFight = true;
-        initialPosition = transform.position;
-        loadCount = 0;
-        shieldCount = 3;
-        lifePoints = 100;
-    }
-
-    // Save the settings to PlayerPrefs
-    public void SaveGameSettings()
-    {
-        PlayerPrefs.SetInt("shieldCount", shieldCount);
-        PlayerPrefs.SetInt("shootDamage", shootDamage);
-        PlayerPrefs.SetInt("loadCapacity", loadCapacity);
-        PlayerPrefs.SetFloat("dodgeSuccessRate", dodgeSuccessRate);
-        PlayerPrefs.SetFloat("disarmSuccessRate", disarmSuccessRate);
-        //PlayerPrefs.SetInt("shootDamage", 20);
-        //PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
-        //PlayerPrefs.SetFloat("disarmSuccessRate", 0.4f);
-
-        PlayerPrefs.Save();
-        Debug.Log("Game settings saved!");
-    }
-    // Load the settings from PlayerPrefs
-    public void LoadGameSettings()
-    {
-        if (PlayerPrefs.HasKey("shieldCount"))
-            shieldCount = PlayerPrefs.GetInt("shieldCount");
-        else shieldCount = 3;
-
-        if (PlayerPrefs.HasKey("shootDamage"))
-            shootDamage = PlayerPrefs.GetInt("shootDamage");
-        else shootDamage = 20;
-
-        if (PlayerPrefs.HasKey("loadCapacity"))
-            loadCapacity = PlayerPrefs.GetInt("loadCapacity");
-        else loadCapacity = 3;
-
-        if (PlayerPrefs.HasKey("dodgeSuccessRate"))
-            dodgeSuccessRate = PlayerPrefs.GetFloat("dodgeSuccessRate");
-        else dodgeSuccessRate = 0.5f;
-
-        if (PlayerPrefs.HasKey("disarmSuccessRate"))
-            disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate");
-        else disarmSuccessRate = 0.4f;
-
-        Debug.Log($"Settings loaded: shieldCount={shieldCount}, shootDamage={shootDamage}, loadCapacity={loadCapacity}, dodgeSuccessRate={dodgeSuccessRate}, disarmSuccessRate={disarmSuccessRate}");
-    }
+    // Update is called once per frame
     void Update()
     {
         if (inFight && (isDodging || initialPosition != transform.position))
@@ -94,8 +53,21 @@ public class PlayerStats : MonoBehaviour
             Dodge();
         }
     }
+
+    public void startFight()
+    {
+        inFight = true;
+        initialPosition = transform.position;
+        LoadGameSettings();
+    }
+
+    public virtual void LoadGameSettings()
+    {
+        Debug.Log("Called LoadGameSettings()");
+    }
+
     /// <summary>
-    /// Adds damage to player's life points.
+    /// Adds damage to this gameobject's life points.
     /// </summary>
     /// <param name="damage"> How much damage to give. </param>
     public void TakeDamage(int damage)
@@ -104,7 +76,7 @@ public class PlayerStats : MonoBehaviour
         if (lifePoints < 0)
             lifePoints = 0;
     }
-    //  TODO add sound effect
+
     public void Shoot(bool hit)
     {
         GameObject projectile = Instantiate(projectilePrefab, gameObject.transform.position, Quaternion.identity);
@@ -119,7 +91,6 @@ public class PlayerStats : MonoBehaviour
             audioSource.PlayOneShot(shootSound);
         }
     }
-
     public void Dodge()
     {
         if (isDodging)
@@ -135,7 +106,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     /// <summary>
-    /// If player has shields it will be used and the flag set.
+    /// If gamobject has shields it will be used and the flag set.
     /// </summary>
     /// <remarks>Dont forget to ResetShield() after round</remarks>
     public void UseShield()
@@ -186,6 +157,7 @@ public class PlayerStats : MonoBehaviour
         isDodging = false;
         dodgeDirection = Random.value > 0.5f ? 1.0f : -1.0f;
     }
+
     /// <summary>
     /// Removes the shield from the player.
     /// </summary>

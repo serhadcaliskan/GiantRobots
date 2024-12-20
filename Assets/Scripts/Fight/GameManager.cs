@@ -13,6 +13,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -37,13 +38,13 @@ public class GPTReaction
     }
 }
 
-public class GameManagerFive : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
+    public GameObject nextOpponent;
     public PlayerStats player;
-    public PlayerStats npc;
+    public NpcStats npc;
     public Transform playerObj;
     public FPSController fpsController;
-    public TTSSpeaker ttsSpeakerCommentary;
     public TTSSpeaker ttsSpeakerNPC;
     public GameObject gameCanvas;
     public TMP_Text playerLifeText;
@@ -91,7 +92,6 @@ public class GameManagerFive : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    public string npcName = "Pirate";
     private bool paused = false;
     private void Start()
     {
@@ -113,14 +113,10 @@ public class GameManagerFive : MonoBehaviour
     {
         if (other.transform == playerObj)
         {
-            player.LoadGameSettings();
-            npc.LoadGameSettings();
-            ttsSpeakerCommentary.VoiceID = "WIT$DISAFFECTED";
             shieldSoundLength = Resources.Load<AudioClip>("Audio/deactivateShield").length;
 
             gameCanvas.SetActive(true);
             actionLog.text = "Select an action!";
-            //ttsSpeakerCommentary.Speak(actionLog.text);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             fpsController.canMove = false;
@@ -164,12 +160,13 @@ public class GameManagerFive : MonoBehaviour
 
     }
 
+    // TODO: use Assistant API insted of Completions API
     async Task<GPTAction> GetGptAction()
     {
         chatHistory.Add(new Message
         {
             role = "system",
-            content = "Game Rules: You play as " + npcName + " against the user. On your turn, choose one action:\nLoad � Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot � Fire at your opponent if you've loaded at least once. It deducts one load.\nShield � Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge � Avoid a shot. If successful, the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm � Reduce your opponent's load to zero. It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponent�s load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
+            content = "Game Rules: You play as " + npc.npcName + " against the user."+npc.fightBehaviour+"On your turn, choose one action:\nLoad-Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot-Fire at your opponent if you've loaded at least once. It deducts one load.\nShield-Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge-Avoid a shot. If successful(" + npc.dodgeSuccessRate + "%success), the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm-Reduce your opponent's load to zero(" + npc.disarmSuccessRate + "%success). It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponents load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
         });
         string userMessage = $"Histroy: {GameHistoryAsString()}\n Stats: {StatsString()}";
         Debug.Log(userMessage);
@@ -326,19 +323,19 @@ public class GameManagerFive : MonoBehaviour
         return defaultAction;
     }
 
-    async Task<string> getKiReaction()
+    async Task<string> getGptReaction()
     {
         List<Message> chat = new List<Message>
         {
             new Message
             {
                 role = "system",
-                content = $"You are {npcName}, playing against the user. Your task is to send me a short reaction of {npcName} to the outcome of the current round. Keep it short and dont spoil information about next moves. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
+                content = $"You are {npc.npcName}, playing against the user. Your task is to send me a short reaction of {npc.npcName} to the outcome of the current round. Keep it short and dont spoil information about next moves. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
             },
             new Message
             {
                 role = "user",
-                content = $"Actions:\nPlayer: {playerAction} - {npcName}: {npcAction}\nOutcome: {actionLog.text}"
+                content = $"Actions:\nPlayer: {playerAction} - {npc.npcName}: {npcAction}\nOutcome: {actionLog.text}"
             }
         };
         var requestData = new OpenAIRequest
@@ -355,7 +352,6 @@ public class GameManagerFive : MonoBehaviour
     }
     void EvaluateRound()
     {
-        // TODO when sending actionLog to GPT, tell it "You" is the other player
         actionLog.text = "";
         switch (playerAction)
         {
@@ -375,19 +371,19 @@ public class GameManagerFive : MonoBehaviour
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
                             npc.Shoot(true);
-                            actionLog.text += $"{npcName} shot you!";
+                            actionLog.text += $"{npc.npcName} shot you!";
                         }
-                        else actionLog.text += $"{npcName} tried to shoot without ammo!";
+                        else actionLog.text += $"{npc.npcName} tried to shoot without ammo!";
                         break;
 
                     case Action.Shield:
                         actionLog.text = "You loaded a round!";
                         npc.UseShield();
-                        actionLog.text += npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!";
+                        actionLog.text += npc.isShielding ? $"{npc.npcName} wasted a shield!" : $"{npc.npcName} tried to shield without having shields!";
                         break;
 
                     case Action.Dodge:
-                        actionLog.text = $"You loaded a round and {npcName} dodged!";
+                        actionLog.text = $"You loaded a round and {npc.npcName} unnecessarily dodged!";
                         npc.isDodging = true;
                         break;
 
@@ -395,11 +391,11 @@ public class GameManagerFive : MonoBehaviour
                         if (Random.value <= npc.disarmSuccessRate)
                         {
                             player.ResetLoad();
-                            actionLog.text = $"{npcName} disarmed you, your loading failed!";
+                            actionLog.text = $"{npc.npcName} disarmed you, your loading failed!";
                         }
                         else
                         {
-                            actionLog.text = $"{npcName}'s disarm failed, you loaded a round!";
+                            actionLog.text = $"{npc.npcName}'s disarm failed, you loaded a round!";
                         }
                         break;
                 }
@@ -417,7 +413,7 @@ public class GameManagerFive : MonoBehaviour
                             player.loadCount--;
                             player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
-                            actionLog.text = $"You shot {npcName}! {npcName} loaded a round!";
+                            actionLog.text = $"You shot {npc.npcName}! {npc.npcName} loaded a round!";
                         }
                         break;
 
@@ -427,7 +423,7 @@ public class GameManagerFive : MonoBehaviour
                             player.loadCount--;
                             player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
-                            actionLog.text = $"You shot {npcName}!";
+                            actionLog.text = $"You shot {npc.npcName}!";
                         }
 
                         if (npc.loadCount > 0)
@@ -435,9 +431,9 @@ public class GameManagerFive : MonoBehaviour
                             player.TakeDamage(npc.shootDamage);
                             npc.loadCount--;
                             npc.Shoot(true);
-                            actionLog.text += $"{npcName} shot you!";
+                            actionLog.text += $"{npc.npcName} shot you!";
                         }
-                        else actionLog.text += $"{npcName} tried to shoot without ammo!";
+                        else actionLog.text += $"{npc.npcName} tried to shoot without ammo!";
                         break;
 
                     case Action.Shield:
@@ -448,15 +444,15 @@ public class GameManagerFive : MonoBehaviour
                             player.Shoot(true);
                             if (npc.isShielding)
                             {
-                                actionLog.text = $"{npcName} shielded your shot!";
+                                actionLog.text = $"{npc.npcName} shielded your shot!";
                             }
                             else
                             {
                                 npc.TakeDamage(player.shootDamage);
-                                actionLog.text = $"{npcName} tried to shield without having shields. You shot {npcName}!";
+                                actionLog.text = $"{npc.npcName} tried to shield without having shields and you shot {npc.npcName}!";
                             }
                         }
-                        else actionLog.text += npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields.";
+                        else actionLog.text += npc.isShielding ? $"{npc.npcName} wasted a shield!" : $"{npc.npcName} tried to shield without having shields.";
                         break;
 
                     case Action.Dodge:
@@ -466,14 +462,14 @@ public class GameManagerFive : MonoBehaviour
                             player.loadCount--;
                             if (Random.value <= npc.dodgeSuccessRate)
                             {
-                                actionLog.text = $"{npcName} dodged your shot!";
+                                actionLog.text = $"{npc.npcName} dodged your shot!";
                                 player.Shoot(false);
                             }
                             else
                             {
                                 npc.TakeDamage(player.shootDamage);
                                 player.Shoot(true);
-                                actionLog.text = $"{npcName}'s dodge failed! You shot {npcName}!";
+                                actionLog.text = $"{npc.npcName}'s dodge failed! You shot {npc.npcName}!";
                             }
                         }
                         break;
@@ -484,9 +480,9 @@ public class GameManagerFive : MonoBehaviour
                             player.loadCount--;
                             player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
-                            actionLog.text = $"You shot {npcName}! {npcName} failed to disarm you!";
+                            actionLog.text = $"{npc.npcName} failed to disarm you because you shot {npc.npcName}!";
                         }
-                        else actionLog.text += $"{npcName} tried to disarm you!";
+                        else actionLog.text += $"{npc.npcName} tried to disarm you!";
                         break;
                 }
                 break;
@@ -497,7 +493,7 @@ public class GameManagerFive : MonoBehaviour
                 {
                     case Action.Load:
                         npc.IncreaseLoad();
-                        actionLog.text = $"{npcName} loaded! " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
+                        actionLog.text = $"{npc.npcName} loaded! " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
                         break;
 
                     case Action.Shoot:
@@ -507,29 +503,29 @@ public class GameManagerFive : MonoBehaviour
                             npc.Shoot(true);
                             if (player.isShielding)
                             {
-                                actionLog.text = $"You shielded {npcName}'s shot!";
+                                actionLog.text = $"You shielded {npc.npcName}'s shot!";
                             }
                             else
                             {
                                 player.TakeDamage(npc.shootDamage);
-                                actionLog.text = $"You tried to shield without having shields! {npcName} shot you!";
+                                actionLog.text = $"You tried to shield without having shields! {npc.npcName} shot you!";
                             }
                         }
                         else
                         {
-                            actionLog.text = $"{(player.isShielding ? "You wasted a shield," : "You tried to shield without having shields!")} {npcName} tried to shoot without ammo!";
+                            actionLog.text = $"{(player.isShielding ? "You wasted a shield," : "You tried to shield without having shields!")} {npc.npcName} tried to shoot without ammo!";
                         }
                         break;
 
                     case Action.Shield:
                         npc.UseShield();
                         actionLog.text = (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!") +
-                                         (npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!");
+                                         (npc.isShielding ? $"{npc.npcName} wasted a shield!" : $"{npc.npcName} tried to shield without having shields!");
                         break;
 
                     case Action.Dodge:
                         npc.isDodging = true;
-                        actionLog.text = $"{npcName} dodged, " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
+                        actionLog.text = $"{npc.npcName} dodged, " + (player.isShielding ? "You wasted a shield!" : "You tried to shield without having shields!");
                         break;
 
                     case Action.Disarm:
@@ -539,16 +535,16 @@ public class GameManagerFive : MonoBehaviour
                             if (Random.value <= npc.disarmSuccessRate)
                             {
                                 player.ResetLoad();
-                                actionLog.text += $"{npcName} disarmed you!";
+                                actionLog.text += $"{npc.npcName} disarmed you!";
                             }
                             else
                             {
-                                actionLog.text += $"{npcName}'s disarm failed!";
+                                actionLog.text += $"{npc.npcName}'s disarm failed!";
                             }
                         }
                         else
                         {
-                            actionLog.text = $"You shielded {npcName}'s disarm attempt!";
+                            actionLog.text = $"You shielded {npc.npcName}'s disarm attempt!";
                         }
                         break;
                 }
@@ -560,7 +556,7 @@ public class GameManagerFive : MonoBehaviour
                 {
                     case Action.Load:
                         npc.IncreaseLoad();
-                        actionLog.text = $"{npcName} loaded a round! You dodged";
+                        actionLog.text = $"{npc.npcName} loaded a round! You dodged unnecessarily";
                         break;
 
                     case Action.Shoot:
@@ -569,29 +565,29 @@ public class GameManagerFive : MonoBehaviour
                             npc.loadCount--;
                             if (Random.value <= player.dodgeSuccessRate)
                             {
-                                actionLog.text = $"You dodged {npcName}'s shot!";
+                                actionLog.text = $"You dodged {npc.npcName}'s shot!";
                                 npc.Shoot(false);
                             }
                             else
                             {
                                 player.TakeDamage(npc.shootDamage);
-                                actionLog.text = $"You failed to dodge! {npcName} shot you!";
+                                actionLog.text = $"You failed to dodge! {npc.npcName} shot you!";
                                 npc.Shoot(true);
                             }
                         }
                         else
                         {
-                            actionLog.text = $"{npcName} tried to shoot without ammo, you dodged!";
+                            actionLog.text = $"{npc.npcName} tried to shoot without ammo, you dodged unnecessarily!";
                         }
                         break;
 
                     case Action.Shield:
                         npc.UseShield();
-                        actionLog.text = "You dodged, " + (npc.isShielding ? $"{npcName} wasted a shield!" : $"{npcName} tried to shield without having shields!");
+                        actionLog.text = "You dodged unnecessarily, " + (npc.isShielding ? $"{npc.npcName} wasted a shield!" : $"{npc.npcName} tried to shield without having shields!");
                         break;
 
                     case Action.Dodge:
-                        actionLog.text = "Both players dodged!";
+                        actionLog.text = "Both players dodged unnecessarily!";
                         npc.isDodging = true;
                         break;
 
@@ -599,11 +595,11 @@ public class GameManagerFive : MonoBehaviour
                         if (Random.value <= npc.disarmSuccessRate)
                         {
                             player.ResetLoad();
-                            actionLog.text = $"You failed to dodge, {npcName} disarmed you!";
+                            actionLog.text = $"You failed to dodge, {npc.npcName} disarmed you!";
                         }
                         else
                         {
-                            actionLog.text = $"You dodged, {npcName}'s disarm failed by probability!";
+                            actionLog.text = $"You dodged, {npc.npcName}'s disarm failed by probability!";
                         }
                         break;
                 }
@@ -615,13 +611,13 @@ public class GameManagerFive : MonoBehaviour
                     case Action.Load:
                         if (Random.value <= player.disarmSuccessRate)
                         {
-                            actionLog.text = $"You disarmed {npcName} who tried to load!";
+                            actionLog.text = $"You disarmed {npc.npcName} who tried to load!";
                             npc.ResetLoad();
                         }
                         else
                         {
                             npc.IncreaseLoad();
-                            actionLog.text = $"Your disarm failed! {npcName} loaded 1 round";
+                            actionLog.text = $"Your disarm failed! {npc.npcName} loaded 1 round";
                         }
                         break;
 
@@ -631,11 +627,11 @@ public class GameManagerFive : MonoBehaviour
                             npc.loadCount--;
                             npc.Shoot(true);
                             player.TakeDamage(npc.shootDamage);
-                            actionLog.text = $"Your disarm failed! {npcName} shot you!";
+                            actionLog.text = $"Your disarm failed! {npc.npcName} shot you!";
                         }
                         else
                         {
-                            actionLog.text = $"{npcName} tried to shoot without ammo, you didnt need to disarm!";
+                            actionLog.text = $"{npc.npcName} tried to shoot without ammo, you didnt need to disarm!";
                         }
                         break;
 
@@ -645,15 +641,15 @@ public class GameManagerFive : MonoBehaviour
                         {
                             if (Random.value <= player.disarmSuccessRate)
                             {
-                                actionLog.text = $"You disarmed {npcName}.";
+                                actionLog.text = $"You disarmed {npc.npcName}.";
                                 npc.ResetLoad();
                             }
                             else actionLog.text = $"Your disarm failed by probability!";
-                            actionLog.text += $"{npcName} tried to shield without having shields!";
+                            actionLog.text += $"{npc.npcName} tried to shield without having shields!";
                         }
                         else
                         {
-                            actionLog.text = $"{npcName} shielded your disarm!";
+                            actionLog.text = $"{npc.npcName} shielded your disarm!";
                         }
                         break;
 
@@ -661,7 +657,7 @@ public class GameManagerFive : MonoBehaviour
                         npc.isDodging = true;
                         if (Random.value <= player.disarmSuccessRate)
                         {
-                            actionLog.text = $"You disarmed {npcName}!";
+                            actionLog.text = $"You disarmed {npc.npcName}!";
                             npc.ResetLoad();
                         }
                         else
@@ -672,21 +668,21 @@ public class GameManagerFive : MonoBehaviour
                         actionLog.text = "Both players attempted to disarm!";
                         if (Random.value <= player.disarmSuccessRate)
                         {
-                            actionLog.text += $"You disarmed {npcName}!";
+                            actionLog.text += $"You disarmed {npc.npcName}!";
                             npc.ResetLoad();
                         }
                         else actionLog.text += $"Your disarm failed by probability!";
                         if (Random.value <= npc.disarmSuccessRate)
                         {
-                            actionLog.text += $"{npcName} disarmed you!";
+                            actionLog.text += $"{npc.npcName} disarmed you!";
                             player.ResetLoad();
                         }
-                        else actionLog.text += $"{npcName}'s disarm failed by probability!";
+                        else actionLog.text += $"{npc.npcName}'s disarm failed by probability!";
                         break;
                 }
                 break;
         }
-        Debug.Log($"Actions:\nPlayer: {playerAction} - {npcName}: {npcAction}\nOutcome: {actionLog.text}");
+        Debug.Log($"Actions:\nPlayer: {playerAction} - {npc.npcName}: {npcAction}\nOutcome: {actionLog.text}");
 
         SpeakAndWait();
     }
@@ -697,7 +693,7 @@ public class GameManagerFive : MonoBehaviour
         UpdateUI();
         string reaction = $"I {npcAction}";
         if (useKI)
-            reaction = await getKiReaction();
+            reaction = await getGptReaction();
         actionLog.text += "\n" + reaction;
         await ttsSpeakerNPC.SpeakTask(reaction);
         //await ttsSpeakerCommentary.SpeakTask(actionLog.text);
@@ -800,25 +796,30 @@ public class GameManagerFive : MonoBehaviour
         if (player.lifePoints <= 0 && npc.lifePoints <= 0)
         {
             actionLog.text = "It's a draw!";
+            SceneManager.LoadScene("Epilog");
         }
         else if (player.lifePoints <= 0)
         {
-            actionLog.text = $"{npcName} Wins!";
+            actionLog.text = $"{npc.npcName} Wins!";
+            SceneManager.LoadScene("Epilog");
         }
         else if (npc.lifePoints <= 0)
         {
+            //TODO: play die-animation of npc and the do rest
+            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount") + 1);
+            PlayerPrefs.Save();
             actionLog.text = "You Win!";
-        }
-        if (player.lifePoints <= 0 || npc.lifePoints <= 0)
-        {
-            ttsSpeakerCommentary.Speak(actionLog.text);
-            fpsController.canMove = true;
-            npc.LoadGameSettings();
-            player.LoadGameSettings();
-            chatHistory = new List<Message>();
-            gameHistory = new List<(Action, Action)>();
-            npc.inFight = false;
-            player.inFight = false;
+            if (PlayerPrefs.GetInt("wonCount") == 3)
+                SceneManager.LoadScene(3);
+            else
+            {
+                PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage") + 5);// TODO: reward player with something better
+                fpsController.canMove = true;
+                player.LoadGameSettings();
+                player.inFight = false;
+                if (nextOpponent != null) nextOpponent.SetActive(true);
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -864,7 +865,7 @@ public class GameManagerFive : MonoBehaviour
         string history = "";
         foreach (var round in gameHistory)
         {
-            history += $"Player: {round.Item1} - {npcName}: {round.Item2}\n";
+            history += $"Player: {round.Item1} - {npc.npcName}: {round.Item2}\n";
         }
         return history;
     }
@@ -872,7 +873,7 @@ public class GameManagerFive : MonoBehaviour
     string StatsString()
     {
         return $"Player: Life: {player.lifePoints} Ammo: {player.loadCount}/{player.loadCapacity} Shields: {player.shieldCount}\n" +
-            $"{npcName}: Life: {npc.lifePoints} Ammo: {npc.loadCount}/{npc.loadCapacity} Shields: {npc.shieldCount}";
+            $"{npc.npcName}: Life: {npc.lifePoints} Ammo: {npc.loadCount}/{npc.loadCapacity} Shields: {npc.shieldCount}";
     }
 
     bool IsOnCooldown(Action action) => actionCooldowns[action] > 0;
@@ -910,7 +911,7 @@ public class GameManagerFive : MonoBehaviour
             {
                 highlightedButton.onClick.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking && !ttsSpeakerCommentary.IsSpeaking) // TODO: replace with handgesture
+            if (Input.GetKeyDown(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
             {
                 voiceExperience.Activate();
             }
@@ -937,6 +938,5 @@ public class GameManagerFive : MonoBehaviour
         }
         fpsController.canMove = !(paused || gameCanvas.activeSelf); // if the game is paused or the game is on, the player should not be able to move
         ttsSpeakerNPC.Stop();
-        ttsSpeakerCommentary.Stop();
     }
 }
