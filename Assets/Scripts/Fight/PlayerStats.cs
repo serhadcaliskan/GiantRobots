@@ -45,13 +45,26 @@ public class PlayerStats : Stats
     }
 
     /// <summary>
+    /// gets shootDamage, influenced by karma
+    /// </summary>
+    public new float shootDamage
+    {
+        get
+        {
+            float modifier = (KarmaScoreNormalized - 0.5f) * 10;          // Compute modifier [-5, 5]
+            int adjustedDamage = base.shootDamage + Mathf.RoundToInt(modifier);
+
+            return Mathf.Max(1, adjustedDamage); // Ensure damage is at least 1
+        }
+    }
+    /// <summary>
     /// Load the settings from PlayerPrefs, if not found, gets the default values
     /// </summary>
     public override void LoadGameSettings()
     {
         lifePoints = PlayerPrefs.GetInt("lifePoints", 100);
         shieldCount = PlayerPrefs.GetInt("shieldCount", 3);
-        shootDamage = PlayerPrefs.GetInt("shootDamage", 10);
+        base.shootDamage = PlayerPrefs.GetInt("shootDamage", 10);
         loadCapacity = PlayerPrefs.GetInt("loadCapacity", 3);
         base.dodgeSuccessRate = PlayerPrefs.GetFloat("dodgeSuccessRate", 0.5f);
         base.disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate", 0.5f);
