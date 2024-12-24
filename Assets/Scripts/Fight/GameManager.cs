@@ -140,7 +140,6 @@ public class GameManager : MonoBehaviour
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
-        ResetAllButtons(); // reset their color
         voiceExperience.Deactivate();
         playerAction = action;
         // TODO: remove comment for LLM-NPC
@@ -156,6 +155,7 @@ public class GameManager : MonoBehaviour
         }
         else npcAction = getKiAction(difficulty);
         gameHistory.Add((playerAction, npcAction));
+        ResetAllButtons(); // reset their color
         EvaluateRound();
 
     }
@@ -772,7 +772,7 @@ public class GameManager : MonoBehaviour
         if (buttonImage != null)
         {
             buttonImage.color = highlightedColor; // Set the highlight color
-            //button.onClick.Invoke(); // TODO: see if it need confirm or not
+            button.onClick.Invoke(); // TODO: see if it need confirm or not
         }
     }
     private void ResetAllButtons()
@@ -897,6 +897,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            player.Shoot(true);
+        }
         if (Time.timeScale == 0f && !paused)
         {
             TogglePauseGame();

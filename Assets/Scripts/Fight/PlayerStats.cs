@@ -47,7 +47,7 @@ public class PlayerStats : Stats
     /// <summary>
     /// gets shootDamage, influenced by karma
     /// </summary>
-    public new float shootDamage
+    public new int shootDamage
     {
         get
         {

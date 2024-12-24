@@ -57,7 +57,6 @@ public class Projectile : MonoBehaviour
     {
         if (other.transform == target || other.CompareTag("Shield"))
         {
-            Debug.Log(other.name);
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
