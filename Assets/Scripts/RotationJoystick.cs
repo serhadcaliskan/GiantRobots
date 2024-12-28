@@ -5,7 +5,7 @@ using Oculus.Interaction;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ForwardJoystick : MonoBehaviour
+public class RotationJoystick : MonoBehaviour
 {
     public Action<float> forwardAction;
     public Action<float> backwardAction;
