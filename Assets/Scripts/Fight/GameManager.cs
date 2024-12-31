@@ -817,14 +817,14 @@ public class GameManager : MonoBehaviour
         else if (npc.lifePoints <= 0)
         {
             //TODO: play die-animation of npc and the do rest
-            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount") + 1);
+            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount", 0) + 1);
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
             if (PlayerPrefs.GetInt("wonCount") == 3)
                 SceneManager.LoadScene(3);
             else
             {
-                PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage") + 5);// TODO: reward player with something better
+                PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money", 0) + 100);
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
