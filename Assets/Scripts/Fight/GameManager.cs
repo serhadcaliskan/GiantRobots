@@ -163,33 +163,7 @@ public class GameManager : MonoBehaviour
     // TODO: use Assistant API insted of Completions API
     async Task<GPTAction> GetGptAction()
     {
-        //chatHistory.Add(new Message
-        //{
-        //    role = "system",
-        //    content = "Game Rules: You play as " + npc.npcName + " against the user." + npc.fightBehaviour + "On your turn, choose one action:\nLoad-Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot-Fire at your opponent if you've loaded at least once. It deducts one load.\nShield-Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge-Avoid a shot. If successful(" + npc.dodgeSuccessRate + "%success), the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm-Reduce your opponent's load to zero(" + npc.disarmSuccessRate + "%success). It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponents load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
-        //});
-        string instructions = $@"Act as an NPC in a game where you take turns against the user, choosing from a specific set of actions. Follow the game rules and dynamic scenarios provided.
-- You play as the character {npc.npcName}
-- Your combat behavior is determined by: ""{npc.fightBehaviour}""
-- On your turn, choose one action from the list provided below.
-# Action Descriptions
-- **Load**: Prepare your weapon to shoot. Each load allows for one shot. You can load multiple times.
-- **Shoot**: Fire at your opponent if you've loaded at least once. It deducts one load.
-- **Shield**: Block damage from a shot or disarm, but you have a limited number of shields. Each usage deducts one shield.
-- **Dodge**: Avoid a shot with a success chance of ""npc.dodgeSuccessRate."" If unsuccessful, take full damage. Does not prevent disarm.
-- **Disarm**: Attempt to reduce your opponent's load to zero with a success chance of ""npc.disarmSuccessRate."" Works if they load, dodge, or attempt to disarm.
-# Turn Mechanics
-- Each player selects one action per turn, and actions are revealed simultaneously.
-- A shot hits if the opponent isn't shielding or successfully dodging, dealing damage based on weapon strength.
-- Disarming reduces the opponent's load to zero, preventing them from shooting until they reload.
-# Output Format
-Respond with your chosen action in the following format:
-
-{{""action"": ""Action""}}
-
-# Notes
-- Be strategic in your choice, considering the constraints and probabilities of success.
-- Track the number of loads, shields, and dodge attempts to plan your future actions effectively.";
+        string instructions = string.Format(PromptLibrary.GetGptFightAction, npc.name, npc.fightBehaviour, npc.dodgeSuccessRate, npc.disarmSuccessRate);
         chatHistory.Add(new Message
         {
             role = "system",

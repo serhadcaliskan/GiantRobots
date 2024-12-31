@@ -4788,7 +4788,7 @@ MonoBehaviour:
     or dodge depending on recent player actions. - Alternates between loading and
     shooting, ensuring a consistent attack strategy. - Uses the shield when they
     suspect an incoming attack, based on the player's patterns. - Dodges if they
-    have a high chance of success, based on their dodge success rate (0.4). - Occasionally
+    have a high chance of success, based on their dodge success rate. - Occasionally
     uses disarm, especially if the player has loaded multiple times.
 --- !u!114 &662778488
 MonoBehaviour:
@@ -10050,8 +10050,8 @@ MonoBehaviour:
     to maintain pressure on the player. - Shields or dodges strategically to maximize
     survival while countering the player's attacks. - Frequently uses disarm when
     the player loads, making it difficult for the player to attack. - Makes decisions
-    based on success probabilities (e.g., dodge 0.5, disarm 0.7) and remaining resources.
-    - Prioritizes actions that maximize damage while minimizing risk.
+    based on success probabilities and remaining resources. - Prioritizes actions
+    that maximize damage while minimizing risk.
 --- !u!114 &1539389355
 MonoBehaviour:
   m_ObjectHideFlags: 0
