@@ -175,8 +175,6 @@ public class VoiceScript : MonoBehaviour
                 string reply = response.choices[0].message.content;
                 if (reply != null && reply.Length > 0)
                 {
-                    Debug.Log("Karma update: " + reply);
-                    Debug.Log("Karma before: " + playerStats.KarmaScore);
                     if (reply.Contains("+"))
                     {
                         playerStats.KarmaScore += 5;
@@ -185,16 +183,12 @@ public class VoiceScript : MonoBehaviour
                     {
                         playerStats.KarmaScore -= 5;
                     }
-                    Debug.Log("Karma after: " + playerStats.KarmaScore);
                 }
                 else
                 {
                     Debug.LogError("Error: " + request.error);
                 }
             }
-            // TDOD: do we want to be able to talk further or just until the information got reveiled?
-            //chatHistory.Clear();
-            //chatHistory.Add(new Message { role = "system", content = string.Format(PromptLibrary.NPCConversation, npcName, playerStats.KarmaScoreNormalized, PromptLibrary.GetBehaviour(hasInfoAbout)) });
         }
     }
     // TODO refactor and use the TTSScript
