@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Use string.Format(PromptLibrary.Prompt, variable) to replace {0} with the variable value.
 /// </summary>
-public static class PromptLibrary 
+public static class PromptLibrary
 {
     /// <summary>
     /// {0} - NPC name
@@ -40,68 +40,39 @@ Respond with your chosen action in the following format:
     /// The prompt for evaluating a conversation and determining the player's Karma score.
     /// Returns a hint to increase or decrease it. the actual calculation is done by the code.
     /// </summary>
-    public static string EvalConversationKarma = @"Evaluate the given conversation on the basis of politeness and other relevant factors to determine whether the player's Karma score should be increased or decreased. Provide your reasoning process first, explaining which elements of the conversation impact the score. Conclude with a concise decision: ""+"" for increase or ""-"" for decrease.
+    public static string EvalConversationKarma = @"Evaluate the given message to determine whether the player's Karma score should be increased or decreased.
 # Steps
 1. **Analyze Politeness**: Assess the tone and language used in the conversation. Look for respectful, considerate, and courteous expressions.
-2. **Consider Conversational Context**: Take into account the role of each participant and the dynamics of the interaction.
-3. **Identify Positive/Negative Elements**: Highlight any specific moments, phrases, or attitudes that are particularly polite or impolite.
-4. **Weigh Factors**: Compare positive and negative elements to determine the overall impression.
-5. **Decision**: Based on the analysis, decide if the Karma score should increase or decrease.
-# Output Format
-The output be a single character: ""+"" if the Karma score should be increased or ""-"" if it should be decreased. It cannot stay the same.
-# Examples
-**Example Start**
-**Input:**
-""Hello! Could you please share the meeting notes when you get a chance? That would be really helpful, thank you!""
-**Reasoning:**
-The conversation is polite, using words like ""please"" and ""thank you,"" showing consideration and respect towards the recipient. The tone is friendly and requests are made courteously.
-**Decision:**
-+
-**Example End**
-**Example Start**
-**Input:**
-""Just send the notes. I've been waiting forever. Get it done already!""
-**Reasoning:**
-The conversation uses a commanding tone and lacks polite language. It shows impatience and a lack of respect for the recipient's time.
-**Decision:**
--
-**Example End**";
-
+2. **Consider Conversational Context**: The participants are Prisoners on planet Mars and talk about their upcoming fights. They have to fight to win their freedom.
+3. **Decision**: Based on the analysis, decide if the Karma score should increase or decrease.
+4. **Answer**: Answer with a concise decision: ""+"" for increase or ""-"" for decrease";
     /// <summary>
     /// {0} - NPC name
-    /// {1} - Karma score
+    /// {1} - NPC helpfulness
     /// {2} - Secret information eg. NPC's fight behaviour
     /// </summary>
-    public static string NPCConversation = @"You're playing as {0}, an NPC on Prison Planet Mars, where prisoners battle for freedom. By day, prisoners interact. Your job is to reply as {0} in the game, using the player's message, karma score, and secret info to guide you. Keep responses concise and in the NPC's unique style.
-# Interaction Process
-1. Receive a player message.
-2. Base your response on the player's karma score [0.0 to 1.0], which is {1}.
-   - High (1.0): Offer valuable insights, but expect info in return.
-   - Medium (0.5): Be cautious; persuasion might be needed.
-   - Low (0.0): Withhold info unless promised a significant favor.
-3. Use the karma score and secret info to shape your response.
-4. Stay true to the character style and language of {0}.
-5. If the player presses further, end the conversation conclusively.
-
-# Response Format
-{{
-  """"answer"""": """"npcAnswer"""",
-  """"hasConversationEnded"""": false
-}}
-
+    public static string NPCConversation = @"You're playing as {0}, an NPC on Prison Planet Mars, where prisoners battle for freedom. By day, prisoners interact. Your job is to reply as {0} in the game, using the player's message and secret info to guide you. Keep responses short nd concise and in the NPC's unique style.
 Secret Info: ""{2}""
+# Interaction Process
+Receive a player message.
+Use the secret info to shape your response.
+{1}
+Stay true to the character style and language of {0}.
+If the player presses further after receiveing the information, end the conversation conclusively.
+Respond in a short string!
 
 # Guidelines
-- Vary responses for player engagement.
+- Vary short responses for player engagement.
 - Let player choices affect negotiations.
-- Ensure conversation depth and tone match the karma score.
-- Align language style with your NPC's name for immersive dialogue.
 - Stick to the given format for answers.";
 
+    public static string HelpfulnessLow = "Withhold info unless promised a significant favor.";
+    public static string HelpfulnessMid = "Be cautious; persuasion might be needed.";
+    public static string HelpfulnessHigh = "Offer valuable insights, but expect info in return.";
     /// <summary>
     /// The fight behavior of Pirate Pete
     /// </summary>
-    public static string PiratePete = "Pirate Pete prioritizes straightforward actions and makes decisions without much consideration of the player's strategy.   - Always starts by loading their weapon. - Shoots whenever they have at least one load. - Uses the shield only if they have been shot at in the previous turn. - Rarely uses dodge or disarm. If dodge is used, it happens randomly";
+    public static string PiratePete = "Pirate Pete prioritizes straightforward actions and makes decisions without much consideration of the player's strategy.   - Always starts by loading their weapon. - Shoots whenever they have at least one load. - Uses the shield only if they have been shot at in the previous turn. - Rarely uses disarm. - Never Dodges as he is fearless";
     /// <summary>
     /// The fight behavior of Severus Snape
     /// </summary>
@@ -110,7 +81,14 @@ Secret Info: ""{2}""
     /// The fight behavior of Julius Ceasar
     /// </summary>
     public static string JuliusCeasar = "Julius Caesar is highly strategic, using optimal actions based on probabilities and past player actions.  - Tracks the player's behavior and adjusts its strategy accordingly. - Uses a mix of loading, shooting, and disarming to maintain pressure on the player. - Shields or dodges strategically to maximize survival while countering the player's attacks. - Frequently uses disarm when the player loads, making it difficult for the player to attack. - Makes decisions based on success probabilities and remaining resources. - Prioritizes actions that maximize damage while minimizing risk.";
-    
+
+    public static string CorrectJSON = @"Parse the user message into this format without changing the contents of the user message:
+{
+  ""answer"": ""userMessage"",
+  ""hasConversationEnded"": false
+}
+
+Your answer should only be a string; the content will be parsed later.";
     public static string GetBehaviour(string npcName)
     {
         npcName = npcName.Replace(" ", "");

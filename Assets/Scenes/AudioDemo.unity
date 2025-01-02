@@ -1877,7 +1877,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Hold "Right Shift" for Talking
 
-    Release to Send'
+    "Return" to Send'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2987,7 +2987,7 @@ MonoBehaviour:
     AppendedText: 
     voice: wit$Pirate
     style: default
-    speed: 115
+    speed: 125
     pitch: 100
   - SettingsId: WIT$PROSPECTOR
     PrependedText: 

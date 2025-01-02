@@ -38,12 +38,7 @@ public class Message
     public string role;
     public string content;
 }
-[System.Serializable]
-public class ConversationAnswer
-{
-    public string answer;
-    public bool hasConversationEnded;
-}
+
 /// <summary>
 /// Set the voce ID in the child TTS object of the gameobject
 /// </summary>
@@ -72,15 +67,14 @@ public class VoiceScript : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     public Transform player;
     public PlayerStats playerStats;
-
+    private string instructions = "";
     private void Start()
     {
+        PlayerPrefs.SetInt("karmaScore", 50);
         playerStats.LoadGameSettings();
 
         if (canvas != null)
             canvas.SetActive(false);
-        string instructions = string.Format(PromptLibrary.NPCConversation, npcName, playerStats.KarmaScoreNormalized, PromptLibrary.GetBehaviour(hasInfoAbout));
-        chatHistory.Add(new Message { role = "system", content = instructions });
     }
     void OnTTSButtonClick()
     {
@@ -88,57 +82,6 @@ public class VoiceScript : MonoBehaviour
             StartCoroutine(CallOpenAI(textField.text));
     }
 
-    //public void getChatGPTAnswer(string message, Action<string> onComplete)
-    //{
-    //    StartCoroutine(getGPTAnswer(message, onComplete));
-    //}
-    //private IEnumerator getGPTAnswer(string message, Action<string> onComplete)
-    //{
-    //    List<Message> messages = new() { new Message { role = "user", content = message } };
-
-    //    var requestData = new OpenAIRequest
-    //    {
-    //        model = "gpt-4o",
-    //        messages = messages
-    //    };
-
-    //    string jsonData = JsonConvert.SerializeObject(requestData);
-
-    //    // Set up the UnityWebRequest
-    //    using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
-    //    {
-    //        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-    //        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-    //        request.downloadHandler = new DownloadHandlerBuffer();
-    //        request.SetRequestHeader("Content-Type", "application/json");
-    //        if (keys != null)
-    //        {
-    //            request.SetRequestHeader("Authorization", "Bearer " + keys.OpenAIKey);
-    //        }
-
-    //        yield return request.SendWebRequest();
-
-    //        if (request.result == UnityWebRequest.Result.Success)
-    //        {
-    //            OpenAIResponse response = JsonConvert.DeserializeObject<OpenAIResponse>(request.downloadHandler.text);
-    //            string reply = response.choices[0].message.content;
-
-    //            // Call the callback with the reply
-    //            onComplete(reply);
-    //            if (!tts.IsSpeaking && textField.text?.Length > 0 && !dictationExperience.Active)
-    //            {
-    //                buttonText.text = "Loading...";
-    //                ttsButton.enabled = false;
-    //                yield return StartCoroutine(CallOpenAI(textField.text));
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Error: " + request.error);
-    //            onComplete("Error: " + request.error);
-    //        }
-    //    }
-    //}
     public void displayUserUtterance(string message)
     {
         textField.text += message;
@@ -147,6 +90,7 @@ public class VoiceScript : MonoBehaviour
     {
         buttonText.text = "Loading...";
         // Construct the message payload
+        //chatHistory.Add(new Message { role = "system", content = instructions });
         chatHistory.Add(new Message { role = "user", content = message });
 
         var requestData = new OpenAIRequest
@@ -154,7 +98,6 @@ public class VoiceScript : MonoBehaviour
             model = "gpt-4o",
             messages = chatHistory
         };
-
         string jsonData = JsonConvert.SerializeObject(requestData);
 
         // Set up the UnityWebRequest
@@ -178,39 +121,19 @@ public class VoiceScript : MonoBehaviour
                 reply = reply.Replace("json", "");
                 if (reply != null && reply.Length > 0)
                 {
-                    ConversationAnswer conversationAnswer;
-                    try
-                    {
-                        conversationAnswer = JsonConvert.DeserializeObject<ConversationAnswer>(reply);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log("Faulty reply: " + reply);
-                        Debug.LogError(e);
-                        conversationAnswer = new ConversationAnswer { answer = "No answer avialable", hasConversationEnded = false };
-                    }
                     buttonText.text = "Button";
-                    answerTextField.text = conversationAnswer.answer;
-                    chatHistory.Add(new Message { role = "assistant", content = conversationAnswer.answer });
-                    if (conversationAnswer.answer.Length > 280)
+                    answerTextField.text = reply;
+                    chatHistory.Add(new Message { role = "assistant", content = reply });
+                    if (reply.Length > 280)
                     {
                         List<string> textChunks = SplitTextIntoChunks(answerTextField.text, 275);
                         StartCoroutine(PlayChunksSequentially(textChunks));
                     }
                     else
                     {
-                        tts.Speak(conversationAnswer.answer);
-                        while (tts.IsSpeaking)
-                        {
-                            yield return null;
-                        }
-                        startRecording();
+                        tts.Speak(reply);
                     }
-                    if (conversationAnswer.hasConversationEnded && !updatedKarma)
-                    {
-                        updatedKarma = true;
-                        StartCoroutine(UpdateKarma());
-                    }
+                    StartCoroutine(UpdateKarma(message));
                 }
                 else
                 {
@@ -220,16 +143,14 @@ public class VoiceScript : MonoBehaviour
             }
         }
     }
-    private IEnumerator UpdateKarma()
+    private IEnumerator UpdateKarma(string lastMessage)
     { // Construct the message payload
         Message prompt = new Message { role = "system", content = PromptLibrary.EvalConversationKarma };
-        List<Message> conversation = new List<Message>(chatHistory);
-        conversation.RemoveAt(0); // Remove the system message
-        Message userMessage = new Message { role = "user", content = chatHistoryAsString(conversation) };
+        Message userMessage = new Message { role = "user", content = lastMessage };
         var requestData = new OpenAIRequest
         {
             model = "gpt-4o",
-            messages = { prompt, userMessage }
+            messages = new List<Message> { prompt, userMessage }
         };
 
         string jsonData = JsonConvert.SerializeObject(requestData);
@@ -255,14 +176,16 @@ public class VoiceScript : MonoBehaviour
                 if (reply != null && reply.Length > 0)
                 {
                     Debug.Log("Karma update: " + reply);
+                    Debug.Log("Karma before: " + playerStats.KarmaScore);
                     if (reply.Contains("+"))
                     {
-                        playerStats.KarmaScore += 15;
+                        playerStats.KarmaScore += 5;
                     }
                     else if (reply.Contains("-"))
                     {
-                        playerStats.KarmaScore -= 15;
+                        playerStats.KarmaScore -= 5;
                     }
+                    Debug.Log("Karma after: " + playerStats.KarmaScore);
                 }
                 else
                 {
@@ -270,8 +193,8 @@ public class VoiceScript : MonoBehaviour
                 }
             }
             // TDOD: do we want to be able to talk further or just until the information got reveiled?
-            chatHistory.Clear();
-            chatHistory.Add(new Message { role = "system", content = string.Format(PromptLibrary.NPCConversation, npcName, playerStats.KarmaScoreNormalized, PromptLibrary.GetBehaviour(hasInfoAbout)) });
+            //chatHistory.Clear();
+            //chatHistory.Add(new Message { role = "system", content = string.Format(PromptLibrary.NPCConversation, npcName, playerStats.KarmaScoreNormalized, PromptLibrary.GetBehaviour(hasInfoAbout)) });
         }
     }
     // TODO refactor and use the TTSScript
@@ -325,17 +248,34 @@ public class VoiceScript : MonoBehaviour
             yield return new WaitUntil(() => !tts.IsSpeaking);
         }
         textField.text = "";
-        // Automatically start voice dictation after the TTS is done to have mor natural conversation
-        startRecording();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.transform == player)
         {
+            string helpfulness = PromptLibrary.HelpfulnessMid;
+            if (playerStats.KarmaScore < 33)
+                helpfulness = PromptLibrary.HelpfulnessLow;
+            else if (playerStats.KarmaScore > 66)
+                helpfulness = PromptLibrary.HelpfulnessHigh;
+
+            instructions = string.Format(PromptLibrary.NPCConversation, npcName, helpfulness, PromptLibrary.GetBehaviour(hasInfoAbout));
+            if (chatHistory.Count > 0)
+            {
+                List<Message> newHistory = new List<Message> { new Message { role = "system", content = instructions } };
+                foreach (Message message in chatHistory)
+                {
+                    if (message.role != "system")
+                        newHistory.Add(message);
+                }
+                chatHistory = newHistory;
+            }
+            else
+                chatHistory.Add(new Message { role = "system", content = instructions });
+
             ttsButton.onClick.AddListener(OnTTSButtonClick);
             ShowCanvasInFrontOfPlayer();
-            startRecording();
         }
     }
 
@@ -362,6 +302,7 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
+            ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
             tts.Stop();
@@ -388,12 +329,13 @@ public class VoiceScript : MonoBehaviour
     {
         if (canvas.activeSelf)
         {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return))
+            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
             {
                 stopRecording();
                 StartCoroutine(CallOpenAI(textField.text));
             }
 
+            // TODO: replace with ingame button/handgesture
             if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 textField.text = "";
@@ -404,18 +346,7 @@ public class VoiceScript : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
             {
                 stopRecording();
-                StartCoroutine(CallOpenAI(textField.text));
             }
-        }
-    }
-    public void OnStoppedListening()
-    {
-        Debug.Log("Stopped listening");
-        buttonText.text = "Button";
-        recordingHint.SetActive(false);
-        if (textField.text?.Length > 0 && !tts.IsSpeaking)
-        {
-            StartCoroutine(CallOpenAI(textField.text));
         }
     }
 }
