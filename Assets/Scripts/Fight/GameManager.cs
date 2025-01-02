@@ -909,6 +909,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            SceneManager.LoadScene("Epilog");
+        }
         if (Input.GetKeyDown(KeyCode.Return))
         {
             player.Shoot(true);
