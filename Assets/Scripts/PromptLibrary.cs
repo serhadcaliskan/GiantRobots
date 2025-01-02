@@ -66,8 +66,17 @@ Respond in a short string!
 - Let player choices affect negotiations.
 - Stick to the given format for answers.";
 
+    /// <summary>
+    /// Helpfulness levels for the NPC, for giving out the secret information
+    /// </summary>
     public static string HelpfulnessLow = "Withhold info unless promised a significant favor.";
+    /// <summary>
+    /// Helpfulness levels for the NPC, for giving out the secret information
+    /// </summary>
     public static string HelpfulnessMid = "Be cautious; persuasion might be needed.";
+    /// <summary>
+    /// Helpfulness levels for the NPC, for giving out the secret information
+    /// </summary>
     public static string HelpfulnessHigh = "Offer valuable insights, but expect info in return.";
     /// <summary>
     /// The fight behavior of Pirate Pete
