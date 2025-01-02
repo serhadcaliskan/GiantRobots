@@ -38,6 +38,7 @@ public class GPTReaction
     }
 }
 
+
 public class GameManager : MonoBehaviour
 {
     public GameObject nextOpponent;
@@ -163,7 +164,7 @@ public class GameManager : MonoBehaviour
     // TODO: use Assistant API insted of Completions API
     async Task<GPTAction> GetGptAction()
     {
-        string instructions = string.Format(PromptLibrary.GetGptFightAction, npc.name, npc.fightBehaviour, npc.dodgeSuccessRate, npc.disarmSuccessRate);
+        string instructions = string.Format(PromptLibrary.GetGptFightAction, npc.npcName, npc.FightBehaviour, npc.dodgeSuccessRate, npc.disarmSuccessRate);
         chatHistory.Add(new Message
         {
             role = "system",

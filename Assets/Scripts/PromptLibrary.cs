@@ -13,7 +13,7 @@ public static class PromptLibrary
     /// {2} - NPC dodge success rate
     /// {3} - NPC disarm success rate
     /// </summary>
-    public const string GetGptFightAction = @"Act as an NPC in a game where you take turns against the user, choosing from a specific set of actions. Follow the game rules and dynamic scenarios provided.
+    public static string GetGptFightAction = @"Act as an NPC in a game where you take turns against the user, choosing from a specific set of actions. Follow the game rules and dynamic scenarios provided.
 - You play as the character {0}
 - Your combat behavior is determined by: ""{1}""
 - On your turn, choose one action from the list provided below.
@@ -40,7 +40,7 @@ Respond with your chosen action in the following format:
     /// The prompt for evaluating a conversation and determining the player's Karma score.
     /// Returns a hint to increase or decrease it. the actual calculation is done by the code.
     /// </summary>
-    public const string EvalConversationKarma = @"Evaluate the given conversation on the basis of politeness and other relevant factors to determine whether the player's Karma score should be increased or decreased. Provide your reasoning process first, explaining which elements of the conversation impact the score. Conclude with a concise decision: ""+"" for increase or ""-"" for decrease.
+    public static string EvalConversationKarma = @"Evaluate the given conversation on the basis of politeness and other relevant factors to determine whether the player's Karma score should be increased or decreased. Provide your reasoning process first, explaining which elements of the conversation impact the score. Conclude with a concise decision: ""+"" for increase or ""-"" for decrease.
 # Steps
 1. **Analyze Politeness**: Assess the tone and language used in the conversation. Look for respectful, considerate, and courteous expressions.
 2. **Consider Conversational Context**: Take into account the role of each participant and the dynamics of the interaction.
@@ -48,7 +48,7 @@ Respond with your chosen action in the following format:
 4. **Weigh Factors**: Compare positive and negative elements to determine the overall impression.
 5. **Decision**: Based on the analysis, decide if the Karma score should increase or decrease.
 # Output Format
-The output be a single character: ""+"" if the Karma score should be increased or ""-"" if it should be decreased.
+The output be a single character: ""+"" if the Karma score should be increased or ""-"" if it should be decreased. It cannot stay the same.
 # Examples
 **Example Start**
 **Input:**
@@ -69,67 +69,60 @@ The conversation uses a commanding tone and lacks polite language. It shows impa
 
     /// <summary>
     /// {0} - NPC name
-    /// {1} - Secret information eg. NPC's fight behaviour
+    /// {1} - Karma score
+    /// {2} - Secret information eg. NPC's fight behaviour
     /// </summary>
-    public const string NPCConversation = @"Create a conversational response for an NPC named {0} in a game based on a given string message, player's karma score, and battle information, outputting the result in JSON format. Responses should reflect the character and language style of the NPC, influenced by the NPC's name.
+    public static string NPCConversation = @"You're playing as {0}, an NPC on Prison Planet Mars, where prisoners battle for freedom. By day, prisoners interact. Your job is to reply as {0} in the game, using the player's message, karma score, and secret info to guide you. Keep responses concise and in the NPC's unique style.
+# Interaction Process
+1. Receive a player message.
+2. Base your response on the player's karma score [0.0 to 1.0], which is {1}.
+   - High (1.0): Offer valuable insights, but expect info in return.
+   - Medium (0.5): Be cautious; persuasion might be needed.
+   - Low (0.0): Withhold info unless promised a significant favor.
+3. Use the karma score and secret info to shape your response.
+4. Stay true to the character style and language of {0}.
+5. If the player presses further, end the conversation conclusively.
 
-# Steps
-1. **Receive Input:** The NPC gets a string message from the player.
-2. **Evaluate Karma Score:** Base the NPC's response on the player's karma score (-1, 0, 1).
-   - High Score (1): NPC is more willing to provide useful information.
-   - Medium Score (0): NPC is cautious and may need persuasion.
-   - Low Score (-1): NPC is resistant to revealing any information.
-3. **Incorporate Battle Information:** Integrate relevant battle details into the NPC's response, ensuring alignment with the player's karma score.
-4. **Respond to Message:** Formulate an appropriate response according to the karma score and battle information.
-5. **Use Character Language:** Ensure the response reflects the character style and language of the NPC, influenced by the NPC's name.
-6. **End of Interaction:** If the conversation is over, provide a dismissive statement if more interaction is attempted.
-# Output Format
-The response should be formatted in JSON, specifically crafted according to the player's input, karma score, and battle information. An additional boolean field 'hasConversationEnded' should be included to indicate if the interaction has ended.
-Example JSON format:
-{
-  ""answer"": ""npcAnswer"",
-  ""hasConversationEnded"": false
-}
-# Secret Information
-""{1}""
-# Examples
-### Example 1:
-**String Message:** ""Do you have any tips for the battle?""  
-**Player Karma Score:** 1  
-**Battle Information:** ""Watch out for the guardian's surprise attack.""  
-**Interaction Result:**
-```json
-{
-  ""answer"": ""[NPC Name's response conveying trust and sharing relevant battle information."",
-  ""hasConversationEnded"": false
-}
-```
-### Example 2:
-**String Message:** ""Tell me everything you know.""  
-**Player Karma Score:** -1  
-**Battle Information:** ""There are traps hidden throughout the dungeon.""  
-**Interaction Result:**
-```json
-{
-  ""answer"": ""[NPC Name's cautious or resistant response with little to no information shared."",
-  ""hasConversationEnded"": false
-}
-```
-### End of Conversation:
-**Further Interaction Attempted:**  
-```json
-{
-  ""answer"": ""[NPC Name's dismissive response ending the interaction."",
-  ""hasConversationEnded"": true
-}
-```
-# Notes
-- Ensure variability in NPC responses to maintain player engagement.
-- Incorporate battle information related to the query effectively to add depth to responses.
-- Consider allowing players to influence negotiation outcomes through specific dialogue choices.
-- Use the karma score to realistically guide the conversation depth and response.
-- Adapt the language style according to the NPC’s name for nuanced interactions.";
+# Response Format
+{{
+  """"answer"""": """"npcAnswer"""",
+  """"hasConversationEnded"""": false
+}}
 
+Secret Info: ""{2}""
+
+# Guidelines
+- Vary responses for player engagement.
+- Let player choices affect negotiations.
+- Ensure conversation depth and tone match the karma score.
+- Align language style with your NPC's name for immersive dialogue.
+- Stick to the given format for answers.";
+
+    /// <summary>
+    /// The fight behavior of Pirate Pete
+    /// </summary>
+    public static string PiratePete = "Pirate Pete prioritizes straightforward actions and makes decisions without much consideration of the player's strategy.   - Always starts by loading their weapon. - Shoots whenever they have at least one load. - Uses the shield only if they have been shot at in the previous turn. - Rarely uses dodge or disarm. If dodge is used, it happens randomly";
+    /// <summary>
+    /// The fight behavior of Severus Snape
+    /// </summary>
+    public static string SeverusSnape = "Severus Snape balances offense and defense, adapting somewhat to the player's actions.  - Starts with loading their weapon but may choose to shield or dodge depending on recent player actions. - Alternates between loading and shooting, ensuring a consistent attack strategy. - Uses the shield when they suspect an incoming attack, based on the player's patterns. - Dodges if they have a high chance of success, based on their dodge success rate. - Occasionally uses disarm, especially if the player has loaded multiple times.";
+    /// <summary>
+    /// The fight behavior of Julius Ceasar
+    /// </summary>
+    public static string JuliusCeasar = "Julius Caesar is highly strategic, using optimal actions based on probabilities and past player actions.  - Tracks the player's behavior and adjusts its strategy accordingly. - Uses a mix of loading, shooting, and disarming to maintain pressure on the player. - Shields or dodges strategically to maximize survival while countering the player's attacks. - Frequently uses disarm when the player loads, making it difficult for the player to attack. - Makes decisions based on success probabilities and remaining resources. - Prioritizes actions that maximize damage while minimizing risk.";
+    
+    public static string GetBehaviour(string npcName)
+    {
+        npcName = npcName.Replace(" ", "");
+        var type = typeof(PromptLibrary);
+        var field = type.GetField(npcName);
+        if (field == null)
+        {
+            Debug.LogError("No prompt found for " + npcName);
+            return "";
+        }
+        return (string)field.GetValue(null);
+    }
     // TODO: the prompt needs placeholders for the inventory avialable and the karma score
     public static string ShopNPC = @"As a shop owner, you are to simulate a situation where a user wants to purchase a shield or potions to increase a skill. You can engage in negotiations, but adjust the difficulty of negotiation based on the user's karma score. Your response should detail the negotiation outcome and what items are sold, including their prices.
 # Steps

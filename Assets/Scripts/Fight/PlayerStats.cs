@@ -17,7 +17,11 @@ public class PlayerStats : Stats
     public int KarmaScore
     {
         get => karmaScore;
-        set => karmaScore = Mathf.Clamp(value, 0, 100);
+        set
+        {
+            karmaScore = Mathf.Clamp(value, 0, 100);
+            PlayerPrefs.SetInt("karmaScore", karmaScore);
+        }
     }
 
     public float KarmaScoreNormalized
