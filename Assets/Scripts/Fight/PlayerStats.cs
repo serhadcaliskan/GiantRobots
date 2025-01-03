@@ -10,7 +10,7 @@ public class PlayerStats : Stats
     /// </summary>
     private float karmaWeight = 0.8f;
 
-    private int karmaScore;
+    private int karmaScore = 50;
     /// <summary>
     /// Karma score above 50 incresaes the probability of dodging and disarming, below decrerses it, 50 is neutral
     /// </summary>
@@ -21,6 +21,7 @@ public class PlayerStats : Stats
         {
             karmaScore = Mathf.Clamp(value, 0, 100);
             PlayerPrefs.SetInt("karmaScore", karmaScore);
+            PlayerPrefs.Save();
         }
     }
 
@@ -61,6 +62,25 @@ public class PlayerStats : Stats
             return Mathf.Max(1, adjustedDamage); // Ensure damage is at least 1
         }
     }
+
+    /// <summary>
+    /// get price of the items, influenced by karma, default is 100
+    /// </summary>
+    /// <returns></returns>
+    public int itemPrice()
+    {
+        return 100 + Mathf.RoundToInt((KarmaScoreNormalized - 0.5f) * -100); // Compute modifier [-50, 50]
+    }
+
+    /// <summary>
+    /// adds Pricemoney to Player, influenced by karma
+    /// </summary>
+    public void addFightReward()
+    {
+        int reward = 100 + Mathf.RoundToInt((KarmaScoreNormalized - 0.5f) * 100); // Compute modifier [-50, 50]
+        PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money", 0) + reward);
+    }
+
     /// <summary>
     /// Load the settings from PlayerPrefs, if not found, gets the default values
     /// </summary>
@@ -73,5 +93,14 @@ public class PlayerStats : Stats
         base.dodgeSuccessRate = PlayerPrefs.GetFloat("dodgeSuccessRate", 0.5f);
         base.disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate", 0.5f);
         karmaScore = PlayerPrefs.GetInt("karmaScore", 50);
+        PlayerPrefs.SetInt("Money", 0);
+        Debug.Log("Life Points: " + lifePoints);
+        Debug.Log("Shield Count: " + shieldCount);
+        Debug.Log("Shoot Damage: " + shootDamage);
+        Debug.Log("Load Capacity: " + loadCapacity);
+        Debug.Log("Dodge Success Rate: " + dodgeSuccessRate);
+        Debug.Log("Disarm Success Rate: " + disarmSuccessRate);
+        Debug.Log("Karma Score: " + karmaScore);
+        Debug.Log("Money: " + PlayerPrefs.GetInt("Money"));
     }
 }

@@ -45,8 +45,6 @@ public class Message
 public class VoiceScript : MonoBehaviour
 {
     public AppDictationExperience dictationExperience;
-    //private float silenceTimeout = 3f; // Timeout in seconds
-    //private float lastSpokenTime;
     public TTSSpeaker tts;
     public Button ttsButton;
     public TMP_Text textField;
@@ -62,7 +60,6 @@ public class VoiceScript : MonoBehaviour
     APIKeys keys = APIKeys.Load();
     public float displayDistance = 10.0f;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
-    private bool updatedKarma = false;
 
     private List<Message> chatHistory = new List<Message>();
     public Transform player;
@@ -70,9 +67,6 @@ public class VoiceScript : MonoBehaviour
     private string instructions = "";
     private void Start()
     {
-        PlayerPrefs.SetInt("karmaScore", 50);
-        playerStats.LoadGameSettings();
-
         if (canvas != null)
             canvas.SetActive(false);
     }
@@ -126,8 +120,8 @@ public class VoiceScript : MonoBehaviour
                     chatHistory.Add(new Message { role = "assistant", content = reply });
                     if (reply.Length > 280)
                     {
-                        List<string> textChunks = SplitTextIntoChunks(answerTextField.text, 275);
-                        StartCoroutine(PlayChunksSequentially(textChunks));
+                        List<string> textChunks = PromptLibrary.SplitTextIntoChunks(answerTextField.text, 275);
+                        StartCoroutine(PromptLibrary.PlayChunksSequentially(textChunks, tts, textField));
                     }
                     else
                     {
@@ -192,34 +186,6 @@ public class VoiceScript : MonoBehaviour
         }
     }
     // TODO refactor and use the TTSScript
-    private List<string> SplitTextIntoChunks(string text, int chunkLength)
-    {
-        List<string> chunks = new List<string>();
-        int currentIndex = 0;
-
-        while (currentIndex < text.Length)
-        {
-            // Calculate the tentative end of the chunk
-            int nextChunkEnd = Mathf.Min(currentIndex + chunkLength, text.Length);
-
-            // Find the last space within this range, avoiding cutting words
-            int lastSpaceIndex = text.LastIndexOf(' ', nextChunkEnd - 1, nextChunkEnd - currentIndex);
-
-            // If there's no space within this range, cut at the chunk length
-            if (lastSpaceIndex == -1 || lastSpaceIndex <= currentIndex)
-            {
-                lastSpaceIndex = nextChunkEnd;
-            }
-
-            // Extract the chunk safely
-            string chunk = text.Substring(currentIndex, lastSpaceIndex - currentIndex).Trim();
-            chunks.Add(chunk);
-
-            // Move to the next chunk, skipping the space after the last word
-            currentIndex = lastSpaceIndex + 1;
-        }
-        return chunks;
-    }
 
     private string chatHistoryAsString(List<Message> messages)
     {
@@ -231,23 +197,12 @@ public class VoiceScript : MonoBehaviour
         return output;
     }
 
-    private IEnumerator PlayChunksSequentially(List<string> chunks)
-    {
-        Debug.Log(chunks);
-        foreach (string chunk in chunks)
-        {
-            tts.SpeakQueued(chunk); // Play the TTS for the current chunk
-
-            // Wait for the current chunk to finish playing before proceeding
-            yield return new WaitUntil(() => !tts.IsSpeaking);
-        }
-        textField.text = "";
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.transform == player)
         {
+            PlayerPrefs.SetInt("karmaScore", 50);
+            playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
             if (playerStats.KarmaScore < 33)
                 helpfulness = PromptLibrary.HelpfulnessLow;
