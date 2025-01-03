@@ -27,6 +27,7 @@ public class NPCShopAnswer
 }
 public class Shop : MonoBehaviour
 {
+    public GameObject parent;
     public AppDictationExperience dictationExperience;
     public TTSSpeaker tts;
     public TMP_Text textField;
@@ -107,11 +108,13 @@ public class Shop : MonoBehaviour
                     NPCShopAnswer npcShopAnswer;
                     try
                     {
+                        GameObject goToDestroy = new GameObject();
                         npcShopAnswer = JsonConvert.DeserializeObject<NPCShopAnswer>(reply);
                         chatHistory.Add(new Message { role = "assistant", content = reply });
                         answerTextField.text = npcShopAnswer.answer;
                         if (npcShopAnswer.boughtItems != null && npcShopAnswer.boughtItems.Count > 0)
                         {
+                            goToDestroy = parent;
                             foreach (string item in npcShopAnswer.boughtItems)
                             {
                                 switch (item)
@@ -145,10 +148,12 @@ public class Shop : MonoBehaviour
                         if (npcShopAnswer.answer.Length > 280)
                         {
                             List<string> textChunks = PromptLibrary.SplitTextIntoChunks(npcShopAnswer.answer, 275);
+                            StartCoroutine(WaitForTTSToFinishAndDestroy(goToDestroy));
                             StartCoroutine(PromptLibrary.PlayChunksSequentially(textChunks, tts, textField));
                         }
                         else
                         {
+                            StartCoroutine(WaitForTTSToFinishAndDestroy(goToDestroy));
                             tts.Speak(npcShopAnswer.answer);
                         }
                     }
@@ -166,6 +171,19 @@ public class Shop : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator WaitForTTSToFinishAndDestroy(GameObject gameObjectToDestroy)
+    {
+        while (!tts.IsSpeaking)
+        {
+            yield return null; // Wait until the next frame.
+        }
+        while (tts.IsSpeaking)
+        {
+            yield return null; // Wait until the next frame.
+        }
+        Destroy(gameObjectToDestroy);
     }
     private void updatePrompt()
     {
@@ -243,9 +261,6 @@ public class Shop : MonoBehaviour
     {
         if (other.transform == player.transform)
         {
-            PlayerPrefs.SetInt("karmaScore", 50);
-            PlayerPrefs.SetInt("Money", 313);
-            PlayerPrefs.Save();
             updatePrompt();
             ShowCanvasInFrontOfPlayer();
         }
@@ -280,9 +295,9 @@ public class Shop : MonoBehaviour
     }
     private void startRecording()
     {
-        buttonText.text = "Listening...";
-        recordingHint.SetActive(true);
-        dictationExperience.Activate();
+        //buttonText.text = "Listening...";
+        //recordingHint.SetActive(true);
+        //dictationExperience.Activate();
     }
 
     private void stopRecording()
@@ -297,24 +312,23 @@ public class Shop : MonoBehaviour
     {
         if (canvas.activeSelf)
         {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
+            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking && !dictationExperience.Active)
             {
                 stopRecording();
                 StartCoroutine(CallOpenAI(textField.text));
             }
 
             // TODO: replace with ingame button/handgesture
-            if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
+            if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
             {
-                textField.text = "";
-                startRecording();
-            }
-
-            // Stop voice dictation when the key is released & get the answer
-            if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
-            {
-                stopRecording();
+                dictationExperience.Activate();
             }
         }
+    }
+
+    public void AutomaticGPTAnswer()
+    {
+        Debug.Log("AutomaticGPTAnswer");
+        StartCoroutine(CallOpenAI(textField.text));
     }
 }

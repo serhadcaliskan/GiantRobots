@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour
     private Transform target; // Opponent's transform
     private Vector3 initTargetPosition;
     private bool hit = true;
+    private bool hasImpacted = false;
 
     // Set the target for the projectile
     public void SetTarget(Transform opponent, bool hit)
@@ -26,6 +27,8 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
+        if (hasImpacted)
+            return;
         if (target != null)
         {
             Vector3 direction;
@@ -57,6 +60,8 @@ public class Projectile : MonoBehaviour
     {
         if (other.transform == target || other.CompareTag("Shield"))
         {
+            hasImpacted = true;
+            DestroyChildren();
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
@@ -76,5 +81,14 @@ public class Projectile : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         Destroy(gameObject);
+    }
+
+    void DestroyChildren()
+    {
+        // Iterate through all child objects and destroy them
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }

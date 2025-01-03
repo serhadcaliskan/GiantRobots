@@ -285,17 +285,17 @@ public class VoiceScript : MonoBehaviour
             }
 
             // TODO: replace with ingame button/handgesture
-            if (Input.GetKeyDown(KeyCode.RightShift) && !dictationExperience.Active && !tts.IsSpeaking)
+            if ((Input.GetKeyUp(KeyCode.RightShift)|| OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 textField.text = "";
                 startRecording();
             }
 
             // Stop voice dictation when the key is released & get the answer
-            if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
-            {
-                stopRecording();
-            }
+            //if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
+            //{
+            //    stopRecording();
+            //}
         }
     }
 }

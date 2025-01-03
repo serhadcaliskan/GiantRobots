@@ -4,17 +4,29 @@ using UnityEngine;
 
 public class ShieldCollision : MonoBehaviour
 {
-    private AudioSource audioSource;
+    public AudioSource audioSource;
     public AudioClip shieldBreakSound;
     public AudioClip deactivateShield;
     public AudioClip activateShield;
 
     public ShieldBlinkEffect blinkEffect;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    audioSource = GetComponentInChildren<AudioSource>();
+    //    Debug.Log("ShieldCollision audioSource: " + audioSource);
+    //}
+    void Start()
     {
-        audioSource = GetComponentInChildren<AudioSource>();
-        Debug.Log("ShieldCollision audioSource: " + audioSource);
+        if (audioSource == null)
+        {
+            audioSource = GetComponentInChildren<AudioSource>();
+        }
+
+        if (activateShield == null)
+        {
+            Debug.LogWarning("ShieldActivateSound is not assigned in the Inspector.");
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -27,7 +39,14 @@ public class ShieldCollision : MonoBehaviour
 
     public void Activate()
     {
-        audioSource.PlayOneShot(activateShield);
+        if (activateShield != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(activateShield);
+        }
+        else
+        {
+            Debug.LogWarning("ShieldActivateSound or AudioSource is not assigned!");
+        }
     }
 
     public void Deactivate()

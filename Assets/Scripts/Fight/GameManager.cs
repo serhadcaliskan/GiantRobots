@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text npcLifeText;
     public TMP_Text actionLog;
+    public GameObject parent; // the parent we destroy when game is over
 
     public Button loadButton;
     public Button shootButton;
@@ -122,6 +123,7 @@ public class GameManager : MonoBehaviour
             Cursor.visible = true;
             fpsController.canMove = false;
             npc.startFight();
+            player.opponent = transform.Find("NPCBoxCollider"); // setup the opponent for the player
             player.startFight();
             voiceExperience.Activate();
             UpdateUI();
@@ -425,7 +427,10 @@ public class GameManager : MonoBehaviour
                             player.loadCount--;
                             player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
-                            actionLog.text = $"You shot {npc.npcName}! {npc.npcName} loaded a round!";
+                            if (npc.lifePoints <= 0)
+                                actionLog.text = $"You shot {npc.npcName}! {npc.npcName} loaded a round and is dead!";
+                            else
+                                actionLog.text = $"You shot {npc.npcName}! {npc.npcName} loaded a round!";
                         }
                         break;
 
@@ -444,6 +449,8 @@ public class GameManager : MonoBehaviour
                             npc.loadCount--;
                             npc.Shoot(true);
                             actionLog.text += $"{npc.npcName} shot you!";
+                            if (npc.lifePoints <= 0)
+                                actionLog.text += $"{npc.name} is dead!";
                         }
                         else actionLog.text += $"{npc.npcName} tried to shoot without ammo!";
                         break;
@@ -461,7 +468,10 @@ public class GameManager : MonoBehaviour
                             else
                             {
                                 npc.TakeDamage(player.shootDamage);
-                                actionLog.text = $"{npc.npcName} tried to shield without having shields and you shot {npc.npcName}!";
+                                if (npc.lifePoints <= 0)
+                                    actionLog.text = $"{npc.npcName} tried to shield without having shields and you shot {npc.npcName}! {npc.npcName} is dead!";
+                                else
+                                    actionLog.text = $"{npc.npcName} tried to shield without having shields and you shot {npc.npcName}!";
                             }
                         }
                         else actionLog.text += npc.isShielding ? $"{npc.npcName} wasted a shield!" : $"{npc.npcName} tried to shield without having shields.";
@@ -481,7 +491,10 @@ public class GameManager : MonoBehaviour
                             {
                                 npc.TakeDamage(player.shootDamage);
                                 player.Shoot(true);
-                                actionLog.text = $"{npc.npcName}'s dodge failed! You shot {npc.npcName}!";
+                                if (npc.lifePoints <= 0)
+                                    actionLog.text = $"{npc.npcName} failed to dodge and you shot {npc.npcName}! {npc.npcName} is dead!";
+                                else
+                                    actionLog.text = $"{npc.npcName} failed to dodge and you shot {npc.npcName}!";
                             }
                         }
                         break;
@@ -492,7 +505,10 @@ public class GameManager : MonoBehaviour
                             player.loadCount--;
                             player.Shoot(true);
                             npc.TakeDamage(player.shootDamage);
-                            actionLog.text = $"{npc.npcName} failed to disarm you because you shot {npc.npcName}!";
+                            if (npc.lifePoints <= 0)
+                                actionLog.text = $"You shot {npc.npcName}! {npc.npcName} tried to disarm you and is dead!";
+                            else
+                                actionLog.text = $"{npc.npcName} failed to disarm you because you shot {npc.npcName}!";
                         }
                         else actionLog.text += $"{npc.npcName} tried to disarm you!";
                         break;
@@ -830,7 +846,7 @@ public class GameManager : MonoBehaviour
                 player.LoadGameSettings();
                 player.inFight = false;
                 if (nextOpponent != null) nextOpponent.SetActive(true);
-                Destroy(gameObject);
+                Destroy(parent);
             }
         }
     }
@@ -909,7 +925,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             SceneManager.LoadScene("Epilog");
         }
@@ -917,6 +933,7 @@ public class GameManager : MonoBehaviour
         {
             player.Shoot(true);
         }
+
         if (Time.timeScale == 0f && !paused)
         {
             TogglePauseGame();

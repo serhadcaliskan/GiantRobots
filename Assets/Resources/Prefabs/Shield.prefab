@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 376e6b2b3e9b22b4f96d6c0549898525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 5250497294101645363}
   shieldBreakSound: {fileID: 8300000, guid: 3318b0648ba68a847bca277a74d12002, type: 3}
   deactivateShield: {fileID: 8300000, guid: 53d86b421260ad741a9ee82fc8c76e9e, type: 3}
   activateShield: {fileID: 8300000, guid: 1306e6d8de26a4840993854989a73630, type: 3}

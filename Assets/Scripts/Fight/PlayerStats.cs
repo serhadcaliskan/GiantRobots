@@ -88,7 +88,7 @@ public class PlayerStats : Stats
     {
         lifePoints = PlayerPrefs.GetInt("lifePoints", 100);
         shieldCount = PlayerPrefs.GetInt("shieldCount", 3);
-        base.shootDamage = PlayerPrefs.GetInt("shootDamage", 10);
+        base.shootDamage = PlayerPrefs.GetInt("shootDamage", 20);
         loadCapacity = PlayerPrefs.GetInt("loadCapacity", 3);
         base.dodgeSuccessRate = PlayerPrefs.GetFloat("dodgeSuccessRate", 0.5f);
         base.disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate", 0.5f);
