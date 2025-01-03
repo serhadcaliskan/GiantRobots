@@ -94,13 +94,13 @@ public class PlayerStats : Stats
         base.disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate", 0.5f);
         karmaScore = PlayerPrefs.GetInt("karmaScore", 50);
         PlayerPrefs.SetInt("Money", 0);
-        Debug.Log("Life Points: " + lifePoints);
-        Debug.Log("Shield Count: " + shieldCount);
-        Debug.Log("Shoot Damage: " + shootDamage);
-        Debug.Log("Load Capacity: " + loadCapacity);
-        Debug.Log("Dodge Success Rate: " + dodgeSuccessRate);
-        Debug.Log("Disarm Success Rate: " + disarmSuccessRate);
-        Debug.Log("Karma Score: " + karmaScore);
-        Debug.Log("Money: " + PlayerPrefs.GetInt("Money"));
+        //Debug.Log("Life Points: " + lifePoints);
+        //Debug.Log("Shield Count: " + shieldCount);
+        //Debug.Log("Shoot Damage: " + shootDamage);
+        //Debug.Log("Load Capacity: " + loadCapacity);
+        //Debug.Log("Dodge Success Rate: " + dodgeSuccessRate);
+        //Debug.Log("Disarm Success Rate: " + disarmSuccessRate);
+        //Debug.Log("Karma Score: " + karmaScore);
+        //Debug.Log("Money: " + PlayerPrefs.GetInt("Money"));
     }
 }
