@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -71,6 +72,7 @@ public class FPSController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, (Input.GetAxis("Mouse X")!=0 ? Input.GetAxis("Mouse X"): -rotationSpeed/5) * lookSpeed, 0);
         }
     }
+
     public void ForwardBackwardMotion(float value)
     {
         forwardBackwardSpeed = value;

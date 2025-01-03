@@ -20,7 +20,7 @@ public class Epilog : PrologEpilogHandler
             PlayerPrefs.SetInt("wonCount", 0);
             PlayerPrefs.SetInt("lifePoints", 100);
             PlayerPrefs.SetInt("shieldCount", 3);
-            PlayerPrefs.SetInt("shootDamage", 10);
+            PlayerPrefs.SetInt("shootDamage", 20);
             PlayerPrefs.SetInt("loadCapacity", 3);
             PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
             PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);

@@ -1,6 +1,9 @@
+using Meta.WitAi.TTS.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// Use string.Format(PromptLibrary.Prompt, variable) to replace {0} with the variable value.
@@ -46,6 +49,13 @@ Respond with your chosen action in the following format:
 2. **Consider Conversational Context**: The participants are Prisoners on planet Mars and talk about their upcoming fights. They have to fight to win their freedom.
 3. **Decision**: Based on the analysis, decide if the Karma score should increase or decrease.
 4. **Answer**: Answer with a concise decision: ""+"" for increase or ""-"" for decrease";
+
+    public static string EvalShopKarma = @"Evaluate the given message to determine whether the player's Karma score should be increased or decreased.
+# Steps
+**Consider Conversational Context**: The participants are Prisoners on planet Mars and talk about their upcoming fights. They have to fight to win their freedom.
+**Decision**: Decide if the Karma score should increase or decrease. Dont be too harsh as this only is a shop. Only deduct karma if the player is really rude. Generally it should increase.
+**Answer**: Answer with your decision: ""+"" for increase or ""-"" for decrease";
+
     /// <summary>
     /// {0} - NPC name
     /// {1} - NPC helpfulness
@@ -110,62 +120,61 @@ Your answer should only be a string; the content will be parsed later.";
         }
         return (string)field.GetValue(null);
     }
-    // TODO: the prompt needs placeholders for the inventory avialable and the karma score
-    public static string ShopNPC = @"As a shop owner, you are to simulate a situation where a user wants to purchase a shield or potions to increase a skill. You can engage in negotiations, but adjust the difficulty of negotiation based on the user's karma score. Your response should detail the negotiation outcome and what items are sold, including their prices.
-# Steps
-1. **Analyze Karma Score**: Assess the user's karma score to determine the negotiation difficulty.
-   - High karma score: Easier negotiation, more favorable terms.
-   - Low karma score: Harder negotiation, less favorable terms.
-2. **Present Options**: List available items (shields, potions) that the user can choose to buy.
-3. **Negotiate**: Engage in a negotiation dialogue considering the user's karma score.
-4. **Conclude Transaction**: Confirm the items sold, include their prices, and finalize transaction terms.
-# Output Format
-Response should be in the following JSON format:
-```json
-{
-  ""answer"": ""string detailing the negotiation outcome and terms"",
-  ""items_sold"": [
-    {
-      ""name"": ""item name"",
-      ""price"": ""item price""
-    }
-  ]
-}
-```
-# Examples
-**Input**: User requests to buy with a karma score of 85.
-**Output**:
-```json
-{
-  ""answer"": ""With your positive karma, I'm happy to offer you a discount on the grand shield and a strength potion."",
-  ""items_sold"": [
-    {
-      ""name"": ""Grand Shield"",
-      ""price"": ""$100""
-    },
-    {
-      ""name"": ""Strength Potion"",
-      ""price"": ""$40""
-    }
-  ]
-}
-```
-**Input**: User requests to buy with a karma score of 30.
 
-**Output**:
-```json
-{
-  ""answer"": ""Given your karma score, the negotiation will be tough, but I can offer you the basic shield without extra charges."",
-  ""items_sold"": [
+    /// <summary>
+    /// {0} - The shop inventory
+    /// {1} - negotiation level
+    /// </summary>
+    public static string shop = @"You are a shop owner on the Prison Planet Mars. The Customers are Prisoners who have to win fights to earn their freedom.
+They can come to you to buy improvments for their next fights. You can sell them shields, potions, or other items to help them in their fights.
+Becaus we use Speech to text, the message you receive is sometimes a litte bit wrong. You have to interpret the message and answer accordingly. Always get a confirmation from the user before selling something.
+{1}
+This is your inventory 
+{0}Answer the prisoners message with a short string strictly in the following format:
+{{""answer"": ""your response to the prisoner"",
+""boughtItems"": [""List of names of the items the prisoner bought strictly from the list, empty if negotiation not ended""],
+""price"": Price as Integer}}";
+    public static string NegotiationLow = "Some room for negotiation, but prices are mostly firm.";
+    public static string NegotiationMid = "Some room for negotiation.";
+    public static string NegotiationHigh = "Prices are flexible, and players are encouraged to negotiate.";
+    public static List<string> SplitTextIntoChunks(string text, int chunkLength)
     {
-      ""name"": ""Basic Shield"",
-      ""price"": ""$50""
+        List<string> chunks = new List<string>();
+        int currentIndex = 0;
+
+        while (currentIndex < text.Length)
+        {
+            // Calculate the tentative end of the chunk
+            int nextChunkEnd = Mathf.Min(currentIndex + chunkLength, text.Length);
+
+            // Find the last space within this range, avoiding cutting words
+            int lastSpaceIndex = text.LastIndexOf(' ', nextChunkEnd - 1, nextChunkEnd - currentIndex);
+
+            // If there's no space within this range, cut at the chunk length
+            if (lastSpaceIndex == -1 || lastSpaceIndex <= currentIndex)
+            {
+                lastSpaceIndex = nextChunkEnd;
+            }
+
+            // Extract the chunk safely
+            string chunk = text.Substring(currentIndex, lastSpaceIndex - currentIndex).Trim();
+            chunks.Add(chunk);
+
+            // Move to the next chunk, skipping the space after the last word
+            currentIndex = lastSpaceIndex + 1;
+        }
+        return chunks;
     }
-  ]
-}
-```
-# Notes
-- Ensure the negotiation process reflects the user's karma score effectively in the dialogue.
-- Consider offering a variety of items to match different skill enhancement needs.
-- The negotiation outcome should always lead to a clear transaction conclusion.";
+    public static IEnumerator PlayChunksSequentially(List<string> chunks, TTSSpeaker tts, TMP_Text textField)
+    {
+        Debug.Log(chunks);
+        foreach (string chunk in chunks)
+        {
+            tts.SpeakQueued(chunk); // Play the TTS for the current chunk
+
+            // Wait for the current chunk to finish playing before proceeding
+            yield return new WaitUntil(() => !tts.IsSpeaking);
+        }
+        textField.text = "";
+    }
 }
