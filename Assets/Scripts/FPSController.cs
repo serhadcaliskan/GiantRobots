@@ -81,5 +81,4 @@ public class FPSController : MonoBehaviour
     {
         rotationSpeed = value;
     }
-
 }
