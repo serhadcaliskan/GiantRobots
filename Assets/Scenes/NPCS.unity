@@ -10033,7 +10033,7 @@ MonoBehaviour:
   shield: {fileID: 1032178508}
   projectilePrefab: {fileID: 7942092390904961014, guid: 2c2037d4ce73e5d42a9e55794ee9e830, type: 3}
   opponent: {fileID: 674587984}
-  npcName: "Julius C\xE4sar"
+  npcName: Julius Ceasar
   fightBehaviour: 
 --- !u!114 &1539389355
 MonoBehaviour:

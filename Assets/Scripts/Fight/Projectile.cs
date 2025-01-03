@@ -57,13 +57,24 @@ public class Projectile : MonoBehaviour
     {
         if (other.transform == target || other.CompareTag("Shield"))
         {
-            Debug.Log(other.name);
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
+                StartCoroutine(ChainExplosion());
             }
-
-            Destroy(gameObject);
         }
+    }
+
+    IEnumerator ChainExplosion()
+    {
+        yield return new WaitForSeconds(0.2f);
+        for (int i = 0; i < 2; i++)
+        {
+            float xOffset = Random.value > 0.5f ? -5f * (i + 1) : 5f * (i + 1);
+            float zRotation = 90 * (i + 1);
+            Instantiate(impactEffect, transform.position + new Vector3(xOffset, 5f * (i + 1), 0), Quaternion.Euler(0, 0, zRotation));
+            yield return new WaitForSeconds(0.2f);
+        }
+        Destroy(gameObject);
     }
 }

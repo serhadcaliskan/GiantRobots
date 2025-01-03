@@ -39,6 +39,7 @@ public class GPTReaction
     }
 }
 
+
 public class GameManager : MonoBehaviour
 {
     public GameObject nextOpponent;
@@ -153,7 +154,6 @@ public class GameManager : MonoBehaviour
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
-        ResetAllButtons(); // reset their color
         voiceExperience.Deactivate();
         playerAction = action;
         // TODO: remove comment for LLM-NPC
@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour
         }
         else npcAction = getKiAction(difficulty);
         gameHistory.Add((playerAction, npcAction));
+        ResetAllButtons(); // reset their color
         EvaluateRound();
 
     }
@@ -176,11 +177,13 @@ public class GameManager : MonoBehaviour
     // TODO: use Assistant API insted of Completions API
     async Task<GPTAction> GetGptAction()
     {
+        string instructions = string.Format(PromptLibrary.GetGptFightAction, npc.npcName, npc.FightBehaviour, npc.dodgeSuccessRate, npc.disarmSuccessRate);
         chatHistory.Add(new Message
         {
             role = "system",
-            content = "Game Rules: You play as " + npc.npcName + " against the user."+npc.fightBehaviour+"On your turn, choose one action:\nLoad-Prepare your weapon to shoot. You can load multiple times, each allowing one shot.\nShoot-Fire at your opponent if you've loaded at least once. It deducts one load.\nShield-Block damage from a shot or disarm. Limited shields. Using Shield deducts one from your count.\nDodge-Avoid a shot. If successful(" + npc.dodgeSuccessRate + "%success), the shot misses. Failing takes full damage. Does not prevent disarm.\nDisarm-Reduce your opponent's load to zero(" + npc.disarmSuccessRate + "%success). It works if they load, dodge, or try to disarm.\nTurn Mechanics:\nPlayers choose one action per turn. Actions are revealed simultaneously.\nShot: Hits if the opponent isn't shielding or dodging (or dodging fails), dealing damage based on weapon strength.\nDisarm: Zeroes the opponents load, preventing them from shooting until they reload.\nResponse Format: {\"action\": \"Action\"}"
+            content = instructions,
         });
+        Debug.Log(instructions);
         string userMessage = $"Histroy: {GameHistoryAsString()}\n Stats: {StatsString()}";
         Debug.Log(userMessage);
         chatHistory.Add(new Message { role = "user", content = userMessage });
@@ -190,7 +193,16 @@ public class GameManager : MonoBehaviour
             messages = chatHistory
         };
         string jsonData = JsonConvert.SerializeObject(requestData);
-        GPTAction gptAction = JsonConvert.DeserializeObject<GPTAction>(await GetOpenAIResponseAsync(jsonData));
+        GPTAction gptAction;
+        try
+        {
+            gptAction = JsonConvert.DeserializeObject<GPTAction>(await GetOpenAIResponseAsync(jsonData));
+        }
+        catch (JsonException ex)
+        {
+            Debug.LogError($"JSON Deserialization error: {ex.Message}");
+            gptAction = new GPTAction(getKiAction(1).ToString());
+        }
         return gptAction;
     }
 
@@ -785,7 +797,7 @@ public class GameManager : MonoBehaviour
         if (buttonImage != null)
         {
             buttonImage.color = highlightedColor; // Set the highlight color
-            //button.onClick.Invoke(); // TODO: see if it need confirm or not
+            button.onClick.Invoke(); // TODO: see if it need confirm or not
         }
     }
     private void ResetAllButtons()
@@ -819,14 +831,14 @@ public class GameManager : MonoBehaviour
         else if (npc.lifePoints <= 0)
         {
             //TODO: play die-animation of npc and the do rest
-            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount") + 1);
+            PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount", 0) + 1);
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
             if (PlayerPrefs.GetInt("wonCount") == 3)
                 SceneManager.LoadScene(3);
             else
             {
-                PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage") + 5);// TODO: reward player with something better
+                PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money", 0) + 100);
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
@@ -910,6 +922,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            SceneManager.LoadScene("Epilog");
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            player.Shoot(true);
+        }
         if (Time.timeScale == 0f && !paused)
         {
             TogglePauseGame();

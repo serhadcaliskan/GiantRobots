@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class NpcStats : Stats
 {
+    /// <summary>
+    /// this name has to be the same as the variable in Promptlibrary, see FightBehaviour for clarification
+    /// </summary>
     public string npcName;
-    public string fightBehaviour;
+
+    [HideInInspector]
+    public string FightBehaviour
+    {
+        get
+        {
+            return PromptLibrary.GetBehaviour(npcName);
+        }
+    }
 }

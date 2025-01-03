@@ -55,6 +55,11 @@ public class Menu : MonoBehaviour
         }));
     }
 
+    public void OnAudioDemoButton()
+    {
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(4)));
+    }
+
     public void OnPauseButton()
     {
         StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
