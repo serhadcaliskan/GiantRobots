@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Oculus.Interaction;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -60,6 +61,12 @@ public class GameManager : MonoBehaviour
     public Button disarmButton;
     private Button highlightedButton;
 
+    public InteractableUnityEventWrapper loadButtonEvent;
+    public InteractableUnityEventWrapper shootButtonEvent;
+    public InteractableUnityEventWrapper shieldButtonEvent;
+    public InteractableUnityEventWrapper dodgeButtonEvent;
+    public InteractableUnityEventWrapper disarmButtonEvent;
+    
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
     private int difficulty = 2;
@@ -110,6 +117,12 @@ public class GameManager : MonoBehaviour
         shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
         dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
         disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
+        
+        loadButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Load));
+        shootButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shoot));
+        shieldButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shield));
+        dodgeButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Dodge));
+        disarmButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Disarm));
     }
     public void EnterGame(Collider other)
     {
