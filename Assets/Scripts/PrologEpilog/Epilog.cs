@@ -14,7 +14,7 @@ public class Epilog : PrologEpilogHandler
     public override void Start()
     {
         base.Start();
-        StartCoroutine(TypeTextWithBlink(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
+        TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
             // Reset the game settings to default for next game
             PlayerPrefs.SetInt("wonCount", 0);
@@ -34,6 +34,6 @@ public class Epilog : PrologEpilogHandler
 #else
         Application.Quit();
 #endif
-        }));
+        });
     }
 }
