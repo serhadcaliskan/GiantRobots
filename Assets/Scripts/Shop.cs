@@ -1,5 +1,6 @@
 using Meta.WitAi.TTS.Utilities;
 using Newtonsoft.Json;
+using Oculus.Interaction;
 using Oculus.Voice.Dictation;
 using System;
 using System.Collections;
@@ -43,6 +44,10 @@ public class Shop : MonoBehaviour
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private string prompt = "";
     private List<Message> chatHistory = new List<Message>();
+    [SerializeField]
+    private ActiveStateSelector[] sendMessagePose;
+    [SerializeField]
+    private ActiveStateSelector[] activateMicPose;
     // Start is called before the first frame update
     void Start()
     {
@@ -261,6 +266,14 @@ public class Shop : MonoBehaviour
     {
         if (other.transform == player.transform)
         {
+            for (int i = 0; i<activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected += () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
+            }
             updatePrompt();
             ShowCanvasInFrontOfPlayer();
         }
@@ -269,6 +282,14 @@ public class Shop : MonoBehaviour
     {
         if (other.transform == player.transform)
         {
+            for (int i = 0; i < activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected -= () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected -= () => CallOpenAIWithHand();
+            }
             canvas.SetActive(false);
             stopRecording();
             tts.Stop();
@@ -298,6 +319,29 @@ public class Shop : MonoBehaviour
         //buttonText.text = "Listening...";
         //recordingHint.SetActive(true);
         //dictationExperience.Activate();
+    }
+
+    /// <summary>
+    /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
+    /// </summary>
+    public void CallOpenAIWithHand()
+    {
+        if (canvas.activeSelf && textField.text?.Length > 0 && !tts.IsSpeaking)
+        {
+            stopRecording();
+            StartCoroutine(CallOpenAI(textField.text));
+        }
+    }
+
+    /// <summary>
+    /// This is called by the hand gesture detector for fist to confirm the selected Button
+    /// </summary>
+    public void TalkingWithHand()
+    {
+        if (canvas.activeSelf && !dictationExperience.Active && !tts.IsSpeaking)
+        {
+            dictationExperience.Activate();
+        }
     }
 
     private void stopRecording()

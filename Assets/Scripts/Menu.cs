@@ -57,7 +57,7 @@ public class Menu : MonoBehaviour
 
     public void OnAudioDemoButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(4)));
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("AudioDemo")));
     }
 
     public void OnPauseButton()

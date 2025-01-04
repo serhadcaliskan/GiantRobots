@@ -13,6 +13,7 @@ using Meta.WitAi.TTS.Integrations;
 using System;
 using Unity.VisualScripting;
 using System.Linq;
+using Oculus.Interaction;
 
 [System.Serializable]
 public class OpenAIResponse
@@ -65,6 +66,10 @@ public class VoiceScript : MonoBehaviour
     public Transform player;
     public PlayerStats playerStats;
     private string instructions = "";
+    [SerializeField]
+    private ActiveStateSelector sendMessagePose;
+    [SerializeField]
+    private ActiveStateSelector activateMicPose;
     private void Start()
     {
         if (canvas != null)
@@ -201,7 +206,8 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
-            PlayerPrefs.SetInt("karmaScore", 50);
+            activateMicPose.WhenSelected += () => TalkingWithHand();
+            sendMessagePose.WhenSelected += () => CallOpenAIWithHand();
             playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
             if (playerStats.KarmaScore < 33)
@@ -251,6 +257,8 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
+            activateMicPose.WhenSelected -= () => TalkingWithHand();
+            sendMessagePose.WhenSelected -= () => CallOpenAIWithHand();
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
@@ -303,7 +311,7 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (textField.text?.Length > 0 && !tts.IsSpeaking)
+        if (canvas.activeSelf && textField.text?.Length > 0 && !tts.IsSpeaking)
         {
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
@@ -315,7 +323,7 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void TalkingWithHand()
     {
-        if (!dictationExperience.Active && !tts.IsSpeaking)
+        if (canvas.activeSelf && !dictationExperience.Active && !tts.IsSpeaking)
         {
             dictationExperience.Activate();
         }
