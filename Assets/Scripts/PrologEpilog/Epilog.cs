@@ -26,6 +26,7 @@ public class Epilog : PrologEpilogHandler
             PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
             PlayerPrefs.SetInt("karmaScore", 50);
             PlayerPrefs.SetInt("Money", 0);
+            PlayerPrefs.SetInt("TutorialCompleted", -1);
             PlayerPrefs.Save();
 
             // TODO: wait until user takes off the mask
