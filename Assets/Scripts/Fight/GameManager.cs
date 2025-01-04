@@ -938,14 +938,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            SceneManager.LoadScene("Epilog");
-        }
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            player.Shoot(true);
-        }
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    SceneManager.LoadScene("Epilog");
+        //}
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //{
+        //    player.Shoot(true);
+        //}
 
         if (Time.timeScale == 0f && !paused)
         {
@@ -961,15 +961,15 @@ public class GameManager : MonoBehaviour
             {
                 highlightedButton.onClick.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
+            if (Input.GetKeyUp(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
             {
                 voiceExperience.Activate();
             }
 
-            if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
-            {
-                voiceExperience.Deactivate();
-            }
+            //if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
+            //{
+            //    voiceExperience.Deactivate();
+            //}
         }
     }
 
