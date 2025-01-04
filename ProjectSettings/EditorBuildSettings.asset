@@ -29,6 +29,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/CharacterMovement 2.unity
     guid: db889fee9c2939149ba2b9d6f37d3af9
+  - enabled: 0
+    path: "Assets/Samples/Meta XR Interaction \u200BSDK/69.0.2/Example Scenes/PoseExamples.unity"
+    guid: 4fe358b21fe17764db89a9ab9f202327
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 91fb6f2628115d34a8492b9bee98aeed, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: c7aa27fa14613d44b9ff5073cd8f174c, type: 2}

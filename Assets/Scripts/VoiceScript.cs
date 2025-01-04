@@ -285,7 +285,7 @@ public class VoiceScript : MonoBehaviour
             }
 
             // TODO: replace with ingame button/handgesture
-            if ((Input.GetKeyUp(KeyCode.RightShift)|| OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
+            if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
             {
                 textField.text = "";
                 startRecording();
@@ -296,6 +296,28 @@ public class VoiceScript : MonoBehaviour
             //{
             //    stopRecording();
             //}
+        }
+    }
+    /// <summary>
+    /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
+    /// </summary>
+    public void CallOpenAIWithHand()
+    {
+        if (textField.text?.Length > 0 && !tts.IsSpeaking)
+        {
+            stopRecording();
+            StartCoroutine(CallOpenAI(textField.text));
+        }
+    }
+
+    /// <summary>
+    /// This is called by the hand gesture detector for fist to confirm the selected Button
+    /// </summary>
+    public void TalkingWithHand()
+    {
+        if (!dictationExperience.Active && !tts.IsSpeaking)
+        {
+            dictationExperience.Activate();
         }
     }
 }

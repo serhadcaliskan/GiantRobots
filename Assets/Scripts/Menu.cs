@@ -17,19 +17,19 @@ public class Menu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(false);
-        OVRManager.HMDMounted += PauseGame;
+        //OVRManager.HMDMounted += PauseGame;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
-        {
-            if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
-                OnQuitButton();
-            else
-                ToggleGame();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
+    //    {
+    //        if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
+    //            OnQuitButton();
+    //        else
+    //            ToggleGame();
+    //    }
+    //}
     public void OnPlayButton()
     {
         if (!IsConnectedToInternet())
@@ -104,8 +104,8 @@ public class Menu : MonoBehaviour
         return true; // Connection is available
     }
 
-    private void OnDestroy()
-    {
-        OVRManager.HMDMounted -= PauseGame;
-    }
+    //private void OnDestroy()
+    //{
+    //    OVRManager.HMDMounted -= PauseGame;
+    //}
 }
