@@ -71,6 +71,16 @@ public class Menu : MonoBehaviour
         StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
     }
 
+    public void OnCombatButton()
+    {
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("CombatScene")));
+
+    }
+    public void OnWanderingButton()
+    {
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
+    }
+
     //public void OnPauseButton()
     //{
     //    StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
