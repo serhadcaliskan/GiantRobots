@@ -38,7 +38,7 @@ EditorBuildSettings:
   - enabled: 0
     path: "Assets/Samples/Meta XR Interaction \u200BSDK/69.0.2/Example Scenes/RayExamples.unity"
     guid: 1b2d3f90c0f50b94cb910c66c773d00d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CombatScene_old.unity
     guid: 0d0a963bc58eb4d438e8cbe497c24c01
   m_configObjects:

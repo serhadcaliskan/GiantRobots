@@ -12,6 +12,7 @@ public class Menu : MonoBehaviour
     public Button startButton;
     public Canvas pauseCanvas;
     public GameObject noConnectionHint;
+    private Microphone mic;
 
     private void Start()
     {
@@ -23,6 +24,9 @@ public class Menu : MonoBehaviour
         {
             startButton.gameObject.SetActive(false);
         }
+        PlayerPrefs.SetInt("MicCount", Microphone.devices.Length);
+        if (Microphone.devices.Length > 0)
+            PlayerPrefs.SetString("MicName", Microphone.devices[0]);  
         //OVRManager.HMDMounted += PauseGame;
     }
 

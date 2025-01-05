@@ -59,7 +59,6 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public string hasInfoAbout;
     APIKeys keys = APIKeys.Load();
-    public float displayDistance = 1.0f;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     private List<Message> chatHistory = new List<Message>();
@@ -133,6 +132,7 @@ public class VoiceScript : MonoBehaviour
                 else
                 {
                     Debug.LogError("Error: " + request.error);
+                    answerTextField.text = "Error: " + request.error;
                 }
                 ttsButton.enabled = true;
             }
@@ -240,13 +240,6 @@ public class VoiceScript : MonoBehaviour
     {
         if (canvas != null && player != null)
         {
-            // Calculate the position for the canvas to appear directly in front of the player
-            //Vector3 playerForward = player.forward; // Direction player is facing
-            //Vector3 canvasPosition = player.position + playerForward * displayDistance;
-            //canvasPosition.y += 1.5f;
-
-            //// Position and face the canvas toward the player
-            //canvas.transform.position = canvasPosition;
             canvas.transform.LookAt(player); // Make the canvas face the player
             canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.position); // Adjust for proper facing
 
@@ -274,14 +267,6 @@ public class VoiceScript : MonoBehaviour
         }
     }
 
-    private void startRecording()
-    {
-        buttonText.text = "Listening...";
-        //lastSpokenTime = Time.time;
-        recordingHint.SetActive(true);
-        //dictationExperience.Activate();
-    }
-
     private void stopRecording()
     {
         buttonText.text = "Button";
@@ -289,38 +274,15 @@ public class VoiceScript : MonoBehaviour
         dictationExperience.Deactivate();
     }
 
-    // Update is called once per frame
-    //void Update()
-    //{
-    //    if (canvas.activeSelf)
-    //    {
-    //        if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
-    //        {
-    //            stopRecording();
-    //            StartCoroutine(CallOpenAI(textField.text));
-    //        }
-
-    //        // TODO: replace with ingame button/handgesture
-    //        if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
-    //        {
-    //            textField.text = "";
-    //            startRecording();
-    //        }
-
-    //        // Stop voice dictation when the key is released & get the answer
-    //        //if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
-    //        //{
-    //        //    stopRecording();
-    //        //}
-    //    }
-    //}
     /// <summary>
     /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (canvas.activeSelf && textField.text?.Length > 0 && !tts.IsSpeaking)
+        if (canvas.activeSelf && !tts.IsSpeaking)
         {
+            if (textField.text?.Length == 0)
+                textField.text = "This is a testcall!";
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
         }
@@ -331,8 +293,10 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void TalkingWithHand()
     {
+        answerTextField.text = "Called Mic!";
         if (canvas.activeSelf && !dictationExperience.Active && !tts.IsSpeaking)
         {
+            answerTextField.text = "Called Mic! inside if ";
             dictationExperience.Activate();
         }
     }
