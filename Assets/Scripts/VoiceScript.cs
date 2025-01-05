@@ -67,9 +67,9 @@ public class VoiceScript : MonoBehaviour
     public PlayerStats playerStats;
     private string instructions = "";
     [SerializeField]
-    private ActiveStateSelector sendMessagePose;
+    private ActiveStateSelector[] sendMessagePose;
     [SerializeField]
-    private ActiveStateSelector activateMicPose;
+    private ActiveStateSelector[] activateMicPose;
     private void Start()
     {
         if (canvas != null)
@@ -206,8 +206,14 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
-            activateMicPose.WhenSelected += () => TalkingWithHand();
-            sendMessagePose.WhenSelected += () => CallOpenAIWithHand();
+            for (int i = 0; i < activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected += () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
+            }
             playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
             if (playerStats.KarmaScore < 33)
@@ -257,8 +263,14 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
-            activateMicPose.WhenSelected -= () => TalkingWithHand();
-            sendMessagePose.WhenSelected -= () => CallOpenAIWithHand();
+            for (int i = 0; i < activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected -= () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected -= () => CallOpenAIWithHand();
+            }
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
