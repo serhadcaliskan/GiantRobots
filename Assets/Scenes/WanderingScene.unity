@@ -7922,12 +7922,12 @@ GameObject:
   - component: {fileID: 757209609}
   - component: {fileID: 757209610}
   m_Layer: 0
-  m_Name: App Dictation Experience
+  m_Name: App Dictation Experience Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &757209609
 Transform:
   m_ObjectHideFlags: 0
@@ -18910,7 +18910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7486266563101408548, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
