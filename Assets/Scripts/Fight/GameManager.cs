@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
     public InteractableUnityEventWrapper shieldButtonEvent;
     public InteractableUnityEventWrapper dodgeButtonEvent;
     public InteractableUnityEventWrapper disarmButtonEvent;
-    
+
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
     private int difficulty = 2;
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
         dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
         disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
-        
+
         loadButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Load));
         shootButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shoot));
         shieldButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shield));
@@ -938,38 +938,58 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            SceneManager.LoadScene("Epilog");
-        }
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            player.Shoot(true);
-        }
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    SceneManager.LoadScene("Epilog");
+        //}
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //{
+        //    player.Shoot(true);
+        //}
 
-        if (Time.timeScale == 0f && !paused)
-        {
-            TogglePauseGame();
-        }
-        else if (Time.timeScale == 1f && paused)
-        {
-            TogglePauseGame();
-        }
+        //if (Time.timeScale == 0f && !paused)
+        //{
+        //    TogglePauseGame();
+        //}
+        //else if (Time.timeScale == 1f && paused)
+        //{
+        //    TogglePauseGame();
+        //}
         if (gameCanvas.activeSelf && isPlayerTurn)
         {
             if (Input.GetKeyDown(KeyCode.Return) && highlightedButton != null) // TODO: replace with handgesture
             {
                 highlightedButton.onClick.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
+            if (Input.GetKeyUp(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
             {
                 voiceExperience.Activate();
             }
 
-            if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
-            {
-                voiceExperience.Deactivate();
-            }
+            //if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
+            //{
+            //    voiceExperience.Deactivate();
+            //}
+        }
+    }
+
+    /// <summary>
+    /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
+    /// </summary>
+    public void ConfirmWithHand()
+    {
+        if (highlightedButton != null)
+            highlightedButton.onClick.Invoke();
+    }
+
+    /// <summary>
+    /// This is called by the hand gesture detector for fist to confirm the selected Button
+    /// </summary>
+    public void TalkingWithHand()
+    {
+        if (!voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking)
+        {
+            voiceExperience.Activate();
         }
     }
 

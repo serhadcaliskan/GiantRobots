@@ -14,7 +14,7 @@ public class Epilog : PrologEpilogHandler
     public override void Start()
     {
         base.Start();
-        StartCoroutine(TypeTextWithBlink(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
+        TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
             // Reset the game settings to default for next game
             PlayerPrefs.SetInt("wonCount", 0);
@@ -26,6 +26,7 @@ public class Epilog : PrologEpilogHandler
             PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
             PlayerPrefs.SetInt("karmaScore", 50);
             PlayerPrefs.SetInt("Money", 0);
+            PlayerPrefs.SetInt("TutorialCompleted", -1);
             PlayerPrefs.Save();
 
             // TODO: wait until user takes off the mask
@@ -34,6 +35,6 @@ public class Epilog : PrologEpilogHandler
 #else
         Application.Quit();
 #endif
-        }));
+        });
     }
 }

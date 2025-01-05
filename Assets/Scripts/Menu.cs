@@ -3,33 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
     public AudioClip clickSound;
     public AudioSource audioSource;
+    public Button startButton;
     public Canvas pauseCanvas;
     public GameObject noConnectionHint;
 
     private void Start()
     {
         Time.timeScale = 1f; // Unpause the game if it was paused
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
         if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(false);
-        OVRManager.HMDMounted += PauseGame;
+        if (PlayerPrefs.GetInt("TutorialCompleted", -1) != 1)
+        {
+            startButton.gameObject.SetActive(false);
+        }
+        //OVRManager.HMDMounted += PauseGame;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
-        {
-            if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
-                OnQuitButton();
-            else
-                ToggleGame();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
+    //    {
+    //        if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
+    //            OnQuitButton();
+    //        else
+    //            ToggleGame();
+    //    }
+    //}
     public void OnPlayButton()
     {
         if (!IsConnectedToInternet())
@@ -57,26 +63,31 @@ public class Menu : MonoBehaviour
 
     public void OnAudioDemoButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(4)));
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("AudioDemo")));
     }
 
-    public void OnPauseButton()
+    public void OnTutorialButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
+        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
     }
 
-    private void ToggleGame()
-    {
-        Time.timeScale = Time.timeScale == 0f ? 1f : 0f; // Pause or unpause the game
-        pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
+    //public void OnPauseButton()
+    //{
+    //    StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
+    //}
 
-        Debug.Log("Game is " + (Time.timeScale == 0f ? "paused" : "unpaused"));
-    }
-    private void PauseGame()
-    {
-        Time.timeScale = 0f;
-        if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(true); ;
-    }
+    //private void ToggleGame()
+    //{
+    //    Time.timeScale = Time.timeScale == 0f ? 1f : 0f; // Pause or unpause the game
+    //    pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
+
+    //    Debug.Log("Game is " + (Time.timeScale == 0f ? "paused" : "unpaused"));
+    //}
+    //private void PauseGame()
+    //{
+    //    Time.timeScale = 0f;
+    //    if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(true); ;
+    //}
 
     private IEnumerator PlaySoundAndExecute(System.Action callback)
     {
@@ -104,8 +115,8 @@ public class Menu : MonoBehaviour
         return true; // Connection is available
     }
 
-    private void OnDestroy()
-    {
-        OVRManager.HMDMounted -= PauseGame;
-    }
+    //private void OnDestroy()
+    //{
+    //    OVRManager.HMDMounted -= PauseGame;
+    //}
 }
