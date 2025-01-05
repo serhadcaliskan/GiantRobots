@@ -27,7 +27,7 @@ public static class PromptLibrary
 - **Dodge**: Avoid a shot with a success chance of {2}. If unsuccessful, take full damage. Does not prevent disarm.
 - **Disarm**: Attempt to reduce your opponent's load to zero with a success chance of {3}. Works if they load, dodge, or attempt to disarm.
 # Turn Mechanics
-- Each player selects one action per turn, and actions are revealed simultaneously. 
+- Each player selects one action per turn, and actions are revealed simultaneously.
 - A shot hits if the opponent isn't shielding or successfully dodging, dealing damage based on weapon strength.
 - Disarming reduces the opponent's load to zero, preventing them from shooting until they reload.
 # Output Format
