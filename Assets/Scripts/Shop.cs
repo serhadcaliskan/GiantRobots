@@ -301,12 +301,12 @@ public class Shop : MonoBehaviour
         if (canvas != null && player != null)
         {
             // Calculate the position for the canvas to appear directly in front of the player
-            Vector3 playerForward = player.transform.forward; // Direction player is facing
-            Vector3 canvasPosition = player.transform.position + playerForward * displayDistance;
-            canvasPosition.y += 15.0f;
+            //Vector3 playerForward = player.transform.forward; // Direction player is facing
+            //Vector3 canvasPosition = player.transform.position + playerForward * displayDistance;
+            //canvasPosition.y += 15.0f;
 
-            // Position and face the canvas toward the player
-            canvas.transform.position = canvasPosition;
+            //// Position and face the canvas toward the player
+            //canvas.transform.position = canvasPosition;
             canvas.transform.LookAt(player.transform); // Make the canvas face the player
             canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.transform.position); // Adjust for proper facing
 

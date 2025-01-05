@@ -81,13 +81,9 @@ public class VoiceScript : MonoBehaviour
             StartCoroutine(CallOpenAI(textField.text));
     }
 
-    public void displayUserUtterance(string message)
-    {
-        textField.text += message;
-    }
     private IEnumerator CallOpenAI(string message)
     {
-        buttonText.text = "Loading...";
+        buttonText.text = "Loading answer...";
         // Construct the message payload
         //chatHistory.Add(new Message { role = "system", content = instructions });
         chatHistory.Add(new Message { role = "user", content = message });
@@ -283,7 +279,7 @@ public class VoiceScript : MonoBehaviour
         buttonText.text = "Listening...";
         //lastSpokenTime = Time.time;
         recordingHint.SetActive(true);
-        dictationExperience.Activate();
+        //dictationExperience.Activate();
     }
 
     private void stopRecording()
@@ -294,30 +290,30 @@ public class VoiceScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (canvas.activeSelf)
-        {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
-            {
-                stopRecording();
-                StartCoroutine(CallOpenAI(textField.text));
-            }
+    //void Update()
+    //{
+    //    if (canvas.activeSelf)
+    //    {
+    //        if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
+    //        {
+    //            stopRecording();
+    //            StartCoroutine(CallOpenAI(textField.text));
+    //        }
 
-            // TODO: replace with ingame button/handgesture
-            if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
-            {
-                textField.text = "";
-                startRecording();
-            }
+    //        // TODO: replace with ingame button/handgesture
+    //        if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
+    //        {
+    //            textField.text = "";
+    //            startRecording();
+    //        }
 
-            // Stop voice dictation when the key is released & get the answer
-            //if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
-            //{
-            //    stopRecording();
-            //}
-        }
-    }
+    //        // Stop voice dictation when the key is released & get the answer
+    //        //if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
+    //        //{
+    //        //    stopRecording();
+    //        //}
+    //    }
+    //}
     /// <summary>
     /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
     /// </summary>
