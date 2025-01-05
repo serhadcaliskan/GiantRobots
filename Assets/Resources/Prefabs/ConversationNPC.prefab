@@ -228,11 +228,11 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3297740850674864091}
-  m_Father: {fileID: 4438453703708393610}
+  m_Father: {fileID: 3339634829908652733}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.56}
+  m_AnchoredPosition: {x: 0, y: -15}
   m_SizeDelta: {x: 50, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8202854634205197559
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &8310658258608009526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,6 +502,7 @@ RectTransform:
   - {fileID: 3970015261634108382}
   - {fileID: 6146042044155065433}
   - {fileID: 1007005009324983767}
+  - {fileID: 4888555012223928005}
   m_Father: {fileID: 4861503346631564114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1928,7 +1929,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4402763256527786676}
-  - {fileID: 4888555012223928005}
   m_Father: {fileID: 4861503346631564114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2567032110233705792
@@ -2050,8 +2050,10 @@ MonoBehaviour:
   displayDistance: 50
   player: {fileID: 0}
   playerStats: {fileID: 0}
-  sendMessagePose: {fileID: 0}
-  activateMicPose: {fileID: 0}
+  sendMessagePose:
+  - {fileID: 0}
+  activateMicPose:
+  - {fileID: 0}
 --- !u!54 &5070337108009323529
 Rigidbody:
   m_ObjectHideFlags: 0

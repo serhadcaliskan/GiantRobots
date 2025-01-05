@@ -59,7 +59,7 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public string hasInfoAbout;
     APIKeys keys = APIKeys.Load();
-    public float displayDistance = 10.0f;
+    public float displayDistance = 1.0f;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     private List<Message> chatHistory = new List<Message>();
@@ -245,12 +245,12 @@ public class VoiceScript : MonoBehaviour
         if (canvas != null && player != null)
         {
             // Calculate the position for the canvas to appear directly in front of the player
-            Vector3 playerForward = player.forward; // Direction player is facing
-            Vector3 canvasPosition = player.position + playerForward * displayDistance;
-            canvasPosition.y += 15.0f;
+            //Vector3 playerForward = player.forward; // Direction player is facing
+            //Vector3 canvasPosition = player.position + playerForward * displayDistance;
+            //canvasPosition.y += 1.5f;
 
-            // Position and face the canvas toward the player
-            canvas.transform.position = canvasPosition;
+            //// Position and face the canvas toward the player
+            //canvas.transform.position = canvasPosition;
             canvas.transform.LookAt(player); // Make the canvas face the player
             canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.position); // Adjust for proper facing
 
