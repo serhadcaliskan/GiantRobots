@@ -234,6 +234,7 @@ public class VoiceScript : MonoBehaviour
                 chatHistory.Add(new Message { role = "system", content = instructions });
 
             ttsButton.onClick.AddListener(OnTTSButtonClick);
+            transform.LookAt(player);
             ShowCanvasInFrontOfPlayer();
         }
     }
