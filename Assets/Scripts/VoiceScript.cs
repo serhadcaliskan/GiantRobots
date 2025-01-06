@@ -82,7 +82,7 @@ public class VoiceScript : MonoBehaviour
 
     private IEnumerator CallOpenAI(string message)
     {
-        buttonText.text = "Loading answer...";
+        buttonText.text = "Thinking...";
         // Construct the message payload
         //chatHistory.Add(new Message { role = "system", content = instructions });
         chatHistory.Add(new Message { role = "user", content = message });

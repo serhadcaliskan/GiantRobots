@@ -77,7 +77,7 @@ public class Shop : MonoBehaviour
 
     private IEnumerator CallOpenAI(string message)
     {
-        buttonText.text = "Loading...";
+        buttonText.text = "Thinking...";
         chatHistory.Add(new Message { role = "user", content = $"Prisoners balance {PlayerPrefs.GetInt("Money", 0)} coins." });
         chatHistory.Add(new Message { role = "user", content = message });
 
