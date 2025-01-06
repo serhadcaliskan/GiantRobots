@@ -860,15 +860,16 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
             if (PlayerPrefs.GetInt("wonCount") == 3)
-                SceneManager.LoadScene(3);
+                SceneManager.LoadScene("Epilog");
             else
             {
                 PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money", 0) + 100);
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
-                if (nextOpponent != null) nextOpponent.SetActive(true);
-                Destroy(parent);
+                SceneManager.LoadScene("WanderingScene");
+                //if (nextOpponent != null) nextOpponent.SetActive(true); // this is done by CombatLevelLoader now
+                //Destroy(parent);
             }
         }
     }
