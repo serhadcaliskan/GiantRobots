@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
     public InteractableUnityEventWrapper dodgeButtonEvent;
     public InteractableUnityEventWrapper disarmButtonEvent;
 
+    public PokeInteractable[] buttons;
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
     private int difficulty = 2;
@@ -117,12 +118,16 @@ public class GameManager : MonoBehaviour
         shieldButton.onClick.AddListener(() => SelectAction(Action.Shield));
         dodgeButton.onClick.AddListener(() => SelectAction(Action.Dodge));
         disarmButton.onClick.AddListener(() => SelectAction(Action.Disarm));
-
         loadButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Load));
         shootButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shoot));
         shieldButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Shield));
         dodgeButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Dodge));
         disarmButtonEvent.WhenSelect.AddListener(() => SelectAction(Action.Disarm));
+
+        foreach (var interactableButton in buttons)
+        {
+            interactableButton.enabled = false;
+        }
     }
     public void EnterGame(Collider other)
     {
@@ -140,6 +145,10 @@ public class GameManager : MonoBehaviour
             player.startFight();
             voiceExperience.Activate();
             UpdateUI();
+            foreach (var interactableButtons in buttons)
+            {
+                interactableButtons.enabled = true;
+            }
         }
     }
 
