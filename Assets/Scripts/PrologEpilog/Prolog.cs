@@ -17,7 +17,7 @@ public class Prolog : PrologEpilogHandler
     {
         base.Start();
         //StartCoroutine(TypeTextWithBlink(prologText, uiText, () => { SceneManager.LoadScene(2); }));
-        TypeTextWithBlinkAsync(prologText, uiText, () => { SceneManager.LoadScene(2); }); 
+        TypeTextWithBlinkAsync(prologText, uiText, () => { SceneManager.LoadScene("WanderingScene"); }); 
     }
 }
 

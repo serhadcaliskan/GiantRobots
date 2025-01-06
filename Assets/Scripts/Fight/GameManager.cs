@@ -859,7 +859,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount", 0) + 1);
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
-            if (PlayerPrefs.GetInt("wonCount") == 3)
+            // TODO: after demo reset this to 3
+            if (PlayerPrefs.GetInt("wonCount") == 1)
                 SceneManager.LoadScene("Epilog");
             else
             {

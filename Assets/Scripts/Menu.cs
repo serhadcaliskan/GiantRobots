@@ -33,7 +33,8 @@ public class Menu : MonoBehaviour
         PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
         PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
         PlayerPrefs.SetInt("karmaScore", 50);
-        PlayerPrefs.SetInt("Money", 0);
+        // TODO: after demo reset to 0
+        PlayerPrefs.SetInt("Money", 100);
         PlayerPrefs.Save();
     }
 
@@ -45,7 +46,7 @@ public class Menu : MonoBehaviour
             return;
         }
         else
-            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene(1)));
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Prolog")));
     }
 
     public void OnQuitButton()
@@ -104,24 +105,6 @@ public class Menu : MonoBehaviour
         else
             StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
-
-    //public void OnPauseButton()
-    //{
-    //    StartCoroutine(PlaySoundAndExecute(() => ToggleGame()));
-    //}
-
-    //private void ToggleGame()
-    //{
-    //    Time.timeScale = Time.timeScale == 0f ? 1f : 0f; // Pause or unpause the game
-    //    pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
-
-    //    Debug.Log("Game is " + (Time.timeScale == 0f ? "paused" : "unpaused"));
-    //}
-    //private void PauseGame()
-    //{
-    //    Time.timeScale = 0f;
-    //    if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(true); ;
-    //}
 
     private IEnumerator PlaySoundAndExecute(System.Action callback)
     {
