@@ -1361,7 +1361,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _webSocketProvider: {fileID: 0}
-  _topicId: 
 --- !u!1 &4096396334010974335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1790,7 +1789,19 @@ MonoBehaviour:
         m_Calls: []
     _onResponse:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 5151951695685969609}
+          m_TargetAssemblyTypeName: VoiceScript, Assembly-CSharp
+          m_MethodName: AutomaticGPTAnswer
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 1
     _onError:
       m_PersistentCalls:
         m_Calls: []
@@ -1911,6 +1922,12 @@ MonoBehaviour:
             m_StringArgument: Button
             m_BoolArgument: 0
           m_CallState: 1
+    _onUserPartialTranscription:
+      m_PersistentCalls:
+        m_Calls: []
+    _onUserFullTranscription:
+      m_PersistentCalls:
+        m_Calls: []
     _onDictationSessionStarted:
       m_PersistentCalls:
         m_Calls: []
@@ -1919,11 +1936,11 @@ MonoBehaviour:
         m_Calls: []
   runtimeConfiguration:
     witConfiguration: {fileID: 11400000, guid: 18fea00ed3666b744a3cf7d0114ae5f2, type: 2}
-    minKeepAliveVolume: 0.0005
-    minKeepAliveTimeInSeconds: 2
+    minKeepAliveVolume: 0.005
+    minKeepAliveTimeInSeconds: 1.5
     minTranscriptionKeepAliveTimeInSeconds: 3
     maxRecordingTime: 20
-    soundWakeThreshold: 0.0005
+    soundWakeThreshold: 0.005
     sampleLengthInMs: 10
     micBufferLengthInSeconds: 1
     maxConcurrentRequests: 5
@@ -1931,8 +1948,15 @@ MonoBehaviour:
     customTranscriptionProvider: {fileID: 0}
     alwaysRecord: 0
     preferredActivationOffset: -0.5
-    pubSubTopicId: 
     transcribeOnly: 0
+    pubSubSettings:
+      PubSubTopicId: 
+      PublishOptions:
+        transcriptionResponses: 1
+        composerResponses: 1
+      SubscribeOptions:
+        transcriptionResponses: 1
+        composerResponses: 1
     dictationConfiguration:
       multiPhrase: 0
       scenario: default
@@ -1954,7 +1978,6 @@ GameObject:
   - component: {fileID: 9219565574778733289}
   - component: {fileID: 370493012933965203}
   - component: {fileID: 5151951695685969609}
-  - component: {fileID: 5070337108009323529}
   m_Layer: 0
   m_Name: NPC_Capsule
   m_TagString: Untagged
@@ -2101,33 +2124,6 @@ MonoBehaviour:
   - {fileID: 0}
   activateMicPose:
   - {fileID: 0}
---- !u!54 &5070337108009323529
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8349436771941749283}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &9129673126782955650
 GameObject:
   m_ObjectHideFlags: 0

@@ -279,10 +279,8 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (canvas.activeSelf && !tts.IsSpeaking)
+        if (canvas.activeSelf && textField.text.Length > 0 && !tts.IsSpeaking)
         {
-            if (textField.text?.Length == 0)
-                textField.text = "This is a testcall!";
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
         }
@@ -293,11 +291,14 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void TalkingWithHand()
     {
-        answerTextField.text = "Called Mic!";
         if (canvas.activeSelf && !dictationExperience.Active && !tts.IsSpeaking)
         {
-            answerTextField.text = "Called Mic! inside if ";
             dictationExperience.Activate();
         }
+    }
+    public void AutomaticGPTAnswer()
+    {
+        Debug.Log("AutomaticGPTAnswer");
+        StartCoroutine(CallOpenAI(textField.text));
     }
 }

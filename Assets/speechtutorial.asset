@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: speechtutorial
   m_EditorClassIdentifier: 
   _clientAccessToken: EQTL4KGLAJGTIN5YM7QARV3AGYGKD2GD
+  editorVersionTag: 
+  buildVersionTag: 
   _appInfo:
     name: tutorial
     id: 2092546914495208

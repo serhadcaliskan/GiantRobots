@@ -351,25 +351,6 @@ public class Shop : MonoBehaviour
         dictationExperience.Deactivate();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (canvas.activeSelf)
-        {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking && !dictationExperience.Active)
-            {
-                stopRecording();
-                StartCoroutine(CallOpenAI(textField.text));
-            }
-
-            // TODO: replace with ingame button/handgesture
-            if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
-            {
-                dictationExperience.Activate();
-            }
-        }
-    }
-
     public void AutomaticGPTAnswer()
     {
         Debug.Log("AutomaticGPTAnswer");

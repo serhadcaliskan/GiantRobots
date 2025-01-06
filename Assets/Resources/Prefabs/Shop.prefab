@@ -147,7 +147,6 @@ GameObject:
   - component: {fileID: 4375478687677024705}
   - component: {fileID: 3932348897499884590}
   - component: {fileID: 1888898476143911841}
-  - component: {fileID: 6734675114486335625}
   - component: {fileID: 1963321715784543967}
   m_Layer: 0
   m_Name: NPC_Capsule
@@ -267,33 +266,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &6734675114486335625
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2097109056019032280}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1963321715784543967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1866,6 +1838,12 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
+    _onUserPartialTranscription:
+      m_PersistentCalls:
+        m_Calls: []
+    _onUserFullTranscription:
+      m_PersistentCalls:
+        m_Calls: []
     _onDictationSessionStarted:
       m_PersistentCalls:
         m_Calls: []
@@ -1874,11 +1852,11 @@ MonoBehaviour:
         m_Calls: []
   runtimeConfiguration:
     witConfiguration: {fileID: 11400000, guid: 18fea00ed3666b744a3cf7d0114ae5f2, type: 2}
-    minKeepAliveVolume: 0.0005
-    minKeepAliveTimeInSeconds: 2
+    minKeepAliveVolume: 0.005
+    minKeepAliveTimeInSeconds: 1.5
     minTranscriptionKeepAliveTimeInSeconds: 3
     maxRecordingTime: 20
-    soundWakeThreshold: 0.0005
+    soundWakeThreshold: 0.005
     sampleLengthInMs: 10
     micBufferLengthInSeconds: 1
     maxConcurrentRequests: 5
@@ -1886,8 +1864,15 @@ MonoBehaviour:
     customTranscriptionProvider: {fileID: 0}
     alwaysRecord: 0
     preferredActivationOffset: -0.5
-    pubSubTopicId: 
     transcribeOnly: 0
+    pubSubSettings:
+      PubSubTopicId: 
+      PublishOptions:
+        transcriptionResponses: 1
+        composerResponses: 1
+      SubscribeOptions:
+        transcriptionResponses: 1
+        composerResponses: 1
     dictationConfiguration:
       multiPhrase: 0
       scenario: default
@@ -2269,4 +2254,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _webSocketProvider: {fileID: 0}
-  _topicId: 

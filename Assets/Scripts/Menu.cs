@@ -67,22 +67,45 @@ public class Menu : MonoBehaviour
 
     public void OnAudioDemoButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
     public void OnTutorialButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
     }
 
     public void OnCombatButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("CombatScene")));
-
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("CombatScene")));
     }
     public void OnWanderingButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
     //public void OnPauseButton()
