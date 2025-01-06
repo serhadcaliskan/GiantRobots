@@ -24,22 +24,20 @@ public class Menu : MonoBehaviour
         {
             startButton.gameObject.SetActive(false);
         }
-        //PlayerPrefs.SetInt("MicCount", Microphone.devices.Length);
-        //if (Microphone.devices.Length > 0)
-        //    PlayerPrefs.SetString("MicName", Microphone.devices[0]);  
-        //OVRManager.HMDMounted += PauseGame;
+        // Reset the game settings to default for the game
+        PlayerPrefs.SetInt("wonCount", 0);
+        PlayerPrefs.SetInt("lifePoints", 100);
+        PlayerPrefs.SetInt("shieldCount", 3);
+        PlayerPrefs.SetInt("shootDamage", 20);
+        PlayerPrefs.SetInt("loadCapacity", 3);
+        PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
+        PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
+        PlayerPrefs.SetInt("karmaScore", 50);
+        PlayerPrefs.SetInt("Money", 0);
+        PlayerPrefs.SetInt("TutorialCompleted", -1);
+        PlayerPrefs.Save();
     }
 
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
-    //    {
-    //        if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
-    //            OnQuitButton();
-    //        else
-    //            ToggleGame();
-    //    }
-    //}
     public void OnPlayButton()
     {
         if (!IsConnectedToInternet())

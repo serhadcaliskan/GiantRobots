@@ -54,6 +54,7 @@ public class VoiceScript : MonoBehaviour
     public GameObject canvas;
     public GameObject recordingHint;
     public string npcName;
+    public RandomWander wanderScript;
     /// <summary>
     /// The name of the opponent this one has information about
     /// </summary>
@@ -210,6 +211,7 @@ public class VoiceScript : MonoBehaviour
             {
                 sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
             }
+            wanderScript.canWander = false;
             playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
             if (playerStats.KarmaScore < 33)
@@ -260,6 +262,7 @@ public class VoiceScript : MonoBehaviour
             {
                 sendMessagePose[i].WhenSelected -= () => CallOpenAIWithHand();
             }
+            wanderScript.canWander = true;
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();

@@ -24,7 +24,7 @@ public class APIKeys
         //}
         return new APIKeys
         {
-            OpenAIKey = "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",
+            OpenAIKey = "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",
         };
     }
 }

@@ -16,25 +16,17 @@ public class Epilog : PrologEpilogHandler
         base.Start();
         TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
-            // Reset the game settings to default for next game
-            PlayerPrefs.SetInt("wonCount", 0);
-            PlayerPrefs.SetInt("lifePoints", 100);
-            PlayerPrefs.SetInt("shieldCount", 3);
-            PlayerPrefs.SetInt("shootDamage", 20);
-            PlayerPrefs.SetInt("loadCapacity", 3);
-            PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
-            PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
-            PlayerPrefs.SetInt("karmaScore", 50);
-            PlayerPrefs.SetInt("Money", 0);
-            PlayerPrefs.SetInt("TutorialCompleted", -1);
-            PlayerPrefs.Save();
-
             // TODO: wait until user takes off the mask
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+            OVRManager.HMDUnmounted += UnmountHandler;
         });
+    }
+    void UnmountHandler()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
+        OVRManager.HMDUnmounted -= UnmountHandler;  // Unsubscribe
     }
 }

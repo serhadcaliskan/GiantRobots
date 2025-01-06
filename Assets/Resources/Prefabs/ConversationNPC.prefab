@@ -1674,6 +1674,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4861503346631564114}
+  - component: {fileID: 6306043130981048273}
+  - component: {fileID: 6218345404100843983}
   m_Layer: 0
   m_Name: ConversationNPC
   m_TagString: Untagged
@@ -1698,6 +1700,43 @@ Transform:
   - {fileID: 939121254150130128}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &6306043130981048273
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7104542516727713455}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 0.1
+  m_Acceleration: 0.1
+  avoidancePriority: 50
+  m_AngularSpeed: 5
+  m_StoppingDistance: 0.5
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &6218345404100843983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7104542516727713455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9f726b7a1c26c640847429dc3a81f6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wanderRadius: 50
+  wanderTimer: 5
+  canWander: 1
 --- !u!1 &7486266563101408548
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,6 +2156,7 @@ MonoBehaviour:
   canvas: {fileID: 1821543992532289865}
   recordingHint: {fileID: 1267625986668968663}
   npcName: Pirate Pete
+  wanderScript: {fileID: 6218345404100843983}
   hasInfoAbout: Severus Snape
   player: {fileID: 0}
   playerStats: {fileID: 0}
