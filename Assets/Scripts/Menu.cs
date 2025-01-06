@@ -34,7 +34,6 @@ public class Menu : MonoBehaviour
         PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
         PlayerPrefs.SetInt("karmaScore", 50);
         PlayerPrefs.SetInt("Money", 0);
-        PlayerPrefs.SetInt("TutorialCompleted", -1);
         PlayerPrefs.Save();
     }
 

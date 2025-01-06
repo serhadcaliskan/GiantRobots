@@ -455,7 +455,7 @@ MonoBehaviour:
   PrependedText: 
   AppendedText: 
   _ttsService: {fileID: 1085471806705698637}
-  presetVoiceID: WIT$PIRATE
+  presetVoiceID: WIT$WIZARD
   customWitVoiceSettings:
     SettingsId: 
     PrependedText: 
@@ -1313,7 +1313,7 @@ MonoBehaviour:
     AppendedText: 
     voice: wit$Wizard
     style: default
-    speed: 100
+    speed: 119
     pitch: 100
 --- !u!114 &6651511222171454775
 MonoBehaviour:
@@ -1709,17 +1709,17 @@ NavMeshAgent:
   m_GameObject: {fileID: 7104542516727713455}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 0.1
-  m_Acceleration: 0.1
+  m_Radius: 5.5
+  m_Speed: 1
+  m_Acceleration: 1
   avoidancePriority: 50
   m_AngularSpeed: 5
-  m_StoppingDistance: 0.5
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &6218345404100843983
@@ -2033,7 +2033,7 @@ Transform:
   m_GameObject: {fileID: 8349436771941749283}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2155,14 +2155,16 @@ MonoBehaviour:
   buttonText: {fileID: 8628619829722640755}
   canvas: {fileID: 1821543992532289865}
   recordingHint: {fileID: 1267625986668968663}
-  npcName: Pirate Pete
+  npcName: Socrates
   wanderScript: {fileID: 6218345404100843983}
-  hasInfoAbout: Severus Snape
+  hasInfoAbout: Julius Ceasar
   player: {fileID: 0}
   playerStats: {fileID: 0}
   sendMessagePose:
   - {fileID: 0}
+  - {fileID: 0}
   activateMicPose:
+  - {fileID: 0}
   - {fileID: 0}
 --- !u!1 &9129673126782955650
 GameObject:
@@ -2229,7 +2231,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Name
+  m_text: Sokrates
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2256,7 +2258,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.85
+  m_fontSize: 22.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

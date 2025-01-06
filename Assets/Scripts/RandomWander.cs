@@ -20,7 +20,7 @@ public class RandomWander : MonoBehaviour
 
     void Update()
     {
-        if (canWander)  // Check if wandering is allowed
+        if (canWander)  // Check if wandering is allowed 
         {
             timer += Time.deltaTime;
 

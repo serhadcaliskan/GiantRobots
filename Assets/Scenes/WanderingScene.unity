@@ -8054,260 +8054,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hmd: {fileID: 487400343}
   _hand: {fileID: 380626984}
---- !u!1 &757209608
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 757209609}
-  - component: {fileID: 757209610}
-  m_Layer: 0
-  m_Name: App Dictation Experience Test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &757209609
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 757209608}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 830978012186614580}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &757209610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 757209608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6da0ed72f4541d7b52607891bafa6f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShouldWrap: 1
-  ShouldLog: 1
-  dictationEvents:
-    _onRequestOptionSetup:
-      m_PersistentCalls:
-        m_Calls: []
-    _onRequestInitialized:
-      m_PersistentCalls:
-        m_Calls: []
-    _onRequestCreated:
-      m_PersistentCalls:
-        m_Calls: []
-    _onSend:
-      m_PersistentCalls:
-        m_Calls: []
-    _onMinimumWakeThresholdHit:
-      m_PersistentCalls:
-        m_Calls: []
-    _onMicDataSent:
-      m_PersistentCalls:
-        m_Calls: []
-    _onStoppedListeningDueToDeactivation:
-      m_PersistentCalls:
-        m_Calls: []
-    _onStoppedListeningDueToInactivity:
-      m_PersistentCalls:
-        m_Calls: []
-    _onStoppedListeningDueToTimeout:
-      m_PersistentCalls:
-        m_Calls: []
-    _onAborting:
-      m_PersistentCalls:
-        m_Calls: []
-    _onAborted:
-      m_PersistentCalls:
-        m_Calls: []
-    _onCanceled:
-      m_PersistentCalls:
-        m_Calls: []
-    _onRawResponse:
-      m_PersistentCalls:
-        m_Calls: []
-    _onPartialResponse:
-      m_PersistentCalls:
-        m_Calls: []
-    _onResponse:
-      m_PersistentCalls:
-        m_Calls: []
-    _onError:
-      m_PersistentCalls:
-        m_Calls: []
-    _onRequestCompleted:
-      m_PersistentCalls:
-        m_Calls: []
-    _onComplete:
-      m_PersistentCalls:
-        m_Calls: []
-    _onStartListening:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 830978012186614583}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: Listening...
-            m_BoolArgument: 0
-          m_CallState: 1
-        - m_Target: {fileID: 830978012186614582}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 1
-        - m_Target: {fileID: 830978012186614581}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 1
-    _onStoppedListening:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 830978012186614583}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: Processing...
-            m_BoolArgument: 0
-          m_CallState: 1
-        - m_Target: {fileID: 830978012186614582}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 1
-    _onMicLevelChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    _onPartialTranscription:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 830978012186614581}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 1
-    _onFullTranscription:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 830978012186614581}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 1
-        - m_Target: {fileID: 830978012186614583}
-          m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-          m_MethodName: set_text
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: Button
-            m_BoolArgument: 0
-          m_CallState: 1
-    _onUserPartialTranscription:
-      m_PersistentCalls:
-        m_Calls: []
-    _onUserFullTranscription:
-      m_PersistentCalls:
-        m_Calls: []
-    _onDictationSessionStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    _onDictationSessionStopped:
-      m_PersistentCalls:
-        m_Calls: []
-  runtimeConfiguration:
-    witConfiguration: {fileID: 11400000, guid: 18fea00ed3666b744a3cf7d0114ae5f2, type: 2}
-    minKeepAliveVolume: 0.0005
-    minKeepAliveTimeInSeconds: 2
-    minTranscriptionKeepAliveTimeInSeconds: 3
-    maxRecordingTime: 20
-    soundWakeThreshold: 0.0005
-    sampleLengthInMs: 10
-    micBufferLengthInSeconds: 1
-    maxConcurrentRequests: 5
-    sendAudioToWit: 1
-    customTranscriptionProvider: {fileID: 0}
-    alwaysRecord: 0
-    preferredActivationOffset: -0.5
-    transcribeOnly: 0
-    pubSubSettings:
-      PubSubTopicId: 
-      PublishOptions:
-        transcriptionResponses: 1
-        composerResponses: 1
-      SubscribeOptions:
-        transcriptionResponses: 1
-        composerResponses: 1
-    dictationConfiguration:
-      multiPhrase: 0
-      scenario: default
-      inputType: text_default
-  usePlatformServices: 0
-  doNotFallbackToWit: 0
-  enableConsoleLogging: 0
 --- !u!1 &759016146
 GameObject:
   m_ObjectHideFlags: 0
@@ -18966,11 +18712,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -20
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18978,11 +18724,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -18
+      value: -17.25
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -40
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -19070,44 +18816,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 757209609}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
---- !u!4 &830978012186614580 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-  m_PrefabInstance: {fileID: 830978012186614579}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &830978012186614581 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5370155347028486974, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-  m_PrefabInstance: {fileID: 830978012186614579}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &830978012186614582 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1267625986668968663, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-  m_PrefabInstance: {fileID: 830978012186614579}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &830978012186614583 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8628619829722640755, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-  m_PrefabInstance: {fileID: 830978012186614579}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &920241525049821224
 Transform:
   m_ObjectHideFlags: 0
@@ -19527,23 +19238,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -20
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -40
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -18
+      value: -17.25
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -20312,33 +20027,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1085471806705698637, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: _presetVoiceSettings.Array.data[29].speed
-      value: 119
-      objectReference: {fileID: 0}
     - target: {fileID: 2790997200173818037, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 690584247}
-    - target: {fileID: 3101314915578941342, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: presetVoiceID
-      value: WIT$WIZARD
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438453703708393610, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -18
+      value: -17.25
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4861503346631564114, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -20368,46 +20071,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4888555012223928005, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4888555012223928005, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4888555012223928005, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 920241525049821224}
     - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: npcName
-      value: Socrates
-      objectReference: {fileID: 0}
-    - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: playerStats
       value: 
       objectReference: {fileID: 8369935907880960868}
-    - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: hasInfoAbout
-      value: Julius Ceasar
-      objectReference: {fileID: 0}
-    - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: displayDistance
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: activateMicPose.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: sendMessagePose.Array.size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5151951695685969609, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: activateMicPose.Array.data[0]
       value: 
@@ -20427,14 +20098,6 @@ PrefabInstance:
     - target: {fileID: 7104542516727713455, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
       propertyPath: m_Name
       value: SocratesConversation
-      objectReference: {fileID: 0}
-    - target: {fileID: 7104542516727713455, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7194546739210508883, guid: bdf52a8308c7b414295495e3f502368b, type: 3}
-      propertyPath: m_text
-      value: Sokrates
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

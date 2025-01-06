@@ -16,6 +16,8 @@ public class Epilog : PrologEpilogHandler
         base.Start();
         TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
+            PlayerPrefs.SetInt("TutorialCompleted", -1);
+            PlayerPrefs.Save();
             // TODO: wait until user takes off the mask
             OVRManager.HMDUnmounted += UnmountHandler;
         });
