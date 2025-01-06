@@ -12,6 +12,7 @@ public class Menu : MonoBehaviour
     public Button startButton;
     public Canvas pauseCanvas;
     public GameObject noConnectionHint;
+    //private Microphone mic;
 
     private void Start()
     {
@@ -23,19 +24,19 @@ public class Menu : MonoBehaviour
         {
             startButton.gameObject.SetActive(false);
         }
-        //OVRManager.HMDMounted += PauseGame;
+        // Reset the game settings to default for the game
+        PlayerPrefs.SetInt("wonCount", 0);
+        PlayerPrefs.SetInt("lifePoints", 100);
+        PlayerPrefs.SetInt("shieldCount", 3);
+        PlayerPrefs.SetInt("shootDamage", 20);
+        PlayerPrefs.SetInt("loadCapacity", 3);
+        PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
+        PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
+        PlayerPrefs.SetInt("karmaScore", 50);
+        PlayerPrefs.SetInt("Money", 0);
+        PlayerPrefs.Save();
     }
 
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Escape)) // TODO: add some handgesture to pause the game
-    //    {
-    //        if (SceneManager.GetActiveScene().buildIndex == 0) // when in main menu just quit the game
-    //            OnQuitButton();
-    //        else
-    //            ToggleGame();
-    //    }
-    //}
     public void OnPlayButton()
     {
         if (!IsConnectedToInternet())
@@ -63,22 +64,45 @@ public class Menu : MonoBehaviour
 
     public void OnAudioDemoButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("AudioDemo")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
     public void OnTutorialButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("Tutorial")));
     }
 
     public void OnCombatButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("CombatScene")));
-
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("CombatScene")));
     }
     public void OnWanderingButton()
     {
-        StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
+        if (!IsConnectedToInternet())
+        {
+            StartCoroutine(ShowNoConnectionHint());
+            return;
+        }
+        else
+            StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
     //public void OnPauseButton()

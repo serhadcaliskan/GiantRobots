@@ -54,12 +54,12 @@ public class VoiceScript : MonoBehaviour
     public GameObject canvas;
     public GameObject recordingHint;
     public string npcName;
+    public RandomWander wanderScript;
     /// <summary>
     /// The name of the opponent this one has information about
     /// </summary>
     public string hasInfoAbout;
     APIKeys keys = APIKeys.Load();
-    public float displayDistance = 10.0f;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     private List<Message> chatHistory = new List<Message>();
@@ -67,9 +67,9 @@ public class VoiceScript : MonoBehaviour
     public PlayerStats playerStats;
     private string instructions = "";
     [SerializeField]
-    private ActiveStateSelector sendMessagePose;
+    private ActiveStateSelector[] sendMessagePose;
     [SerializeField]
-    private ActiveStateSelector activateMicPose;
+    private ActiveStateSelector[] activateMicPose;
     private void Start()
     {
         if (canvas != null)
@@ -81,13 +81,9 @@ public class VoiceScript : MonoBehaviour
             StartCoroutine(CallOpenAI(textField.text));
     }
 
-    public void displayUserUtterance(string message)
-    {
-        textField.text += message;
-    }
     private IEnumerator CallOpenAI(string message)
     {
-        buttonText.text = "Loading...";
+        buttonText.text = "Thinking...";
         // Construct the message payload
         //chatHistory.Add(new Message { role = "system", content = instructions });
         chatHistory.Add(new Message { role = "user", content = message });
@@ -137,6 +133,7 @@ public class VoiceScript : MonoBehaviour
                 else
                 {
                     Debug.LogError("Error: " + request.error);
+                    answerTextField.text = "Error: " + request.error;
                 }
                 ttsButton.enabled = true;
             }
@@ -206,8 +203,15 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
-            activateMicPose.WhenSelected += () => TalkingWithHand();
-            sendMessagePose.WhenSelected += () => CallOpenAIWithHand();
+            for (int i = 0; i < activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected += () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
+            }
+            wanderScript.canWander = false;
             playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
             if (playerStats.KarmaScore < 33)
@@ -238,13 +242,6 @@ public class VoiceScript : MonoBehaviour
     {
         if (canvas != null && player != null)
         {
-            // Calculate the position for the canvas to appear directly in front of the player
-            Vector3 playerForward = player.forward; // Direction player is facing
-            Vector3 canvasPosition = player.position + playerForward * displayDistance;
-            canvasPosition.y += 15.0f;
-
-            // Position and face the canvas toward the player
-            canvas.transform.position = canvasPosition;
             canvas.transform.LookAt(player); // Make the canvas face the player
             canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.position); // Adjust for proper facing
 
@@ -257,21 +254,20 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
-            activateMicPose.WhenSelected -= () => TalkingWithHand();
-            sendMessagePose.WhenSelected -= () => CallOpenAIWithHand();
+            for (int i = 0; i < activateMicPose.Length; i++)
+            {
+                activateMicPose[i].WhenSelected -= () => TalkingWithHand();
+            }
+            for (int i = 0; i < sendMessagePose.Length; i++)
+            {
+                sendMessagePose[i].WhenSelected -= () => CallOpenAIWithHand();
+            }
+            wanderScript.canWander = true;
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
             tts.Stop();
         }
-    }
-
-    private void startRecording()
-    {
-        buttonText.text = "Listening...";
-        //lastSpokenTime = Time.time;
-        recordingHint.SetActive(true);
-        dictationExperience.Activate();
     }
 
     private void stopRecording()
@@ -281,37 +277,12 @@ public class VoiceScript : MonoBehaviour
         dictationExperience.Deactivate();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (canvas.activeSelf)
-        {
-            if (textField.text?.Length > 0 && Input.GetKeyDown(KeyCode.Return) && !tts.IsSpeaking)
-            {
-                stopRecording();
-                StartCoroutine(CallOpenAI(textField.text));
-            }
-
-            // TODO: replace with ingame button/handgesture
-            if ((Input.GetKeyUp(KeyCode.RightShift) || OVRInput.GetUp(OVRInput.Button.One)) && !dictationExperience.Active && !tts.IsSpeaking)
-            {
-                textField.text = "";
-                startRecording();
-            }
-
-            // Stop voice dictation when the key is released & get the answer
-            //if (Input.GetKeyUp(KeyCode.RightShift) && dictationExperience.Active)
-            //{
-            //    stopRecording();
-            //}
-        }
-    }
     /// <summary>
     /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (canvas.activeSelf && textField.text?.Length > 0 && !tts.IsSpeaking)
+        if (canvas.activeSelf && textField.text.Length > 0 && !tts.IsSpeaking)
         {
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
@@ -327,5 +298,10 @@ public class VoiceScript : MonoBehaviour
         {
             dictationExperience.Activate();
         }
+    }
+    public void AutomaticGPTAnswer()
+    {
+        Debug.Log("AutomaticGPTAnswer");
+        StartCoroutine(CallOpenAI(textField.text));
     }
 }

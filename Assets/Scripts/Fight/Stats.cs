@@ -37,7 +37,7 @@ public class Stats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        shield.SetActive(false);
+        if (shield != null) shield.SetActive(false);
         audioSource = GetComponentInChildren<AudioSource>();
         shootSound = Resources.Load<AudioClip>("Audio/shoot");
         reloadSound = Resources.Load<AudioClip>("Audio/reload");
