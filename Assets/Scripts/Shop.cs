@@ -275,6 +275,7 @@ public class Shop : MonoBehaviour
                 sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
             }
             updatePrompt();
+            transform.LookAt(player.transform);
             ShowCanvasInFrontOfPlayer();
         }
     }
