@@ -14,7 +14,8 @@ public class Epilog : PrologEpilogHandler
     public override void Start()
     {
         base.Start();
-        TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 3 ? epilogTextWon : epilogTextLost, uiText, () =>
+        // TODO: after demo reset that to 3
+        TypeTextWithBlinkAsync(PlayerPrefs.GetInt("wonCount") == 1 ? epilogTextWon : epilogTextLost, uiText, () =>
         {
             PlayerPrefs.SetInt("TutorialCompleted", -1);
             PlayerPrefs.Save();
