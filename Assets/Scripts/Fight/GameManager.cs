@@ -874,8 +874,6 @@ public class GameManager : MonoBehaviour
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
-                if (nextOpponent != null) nextOpponent.SetActive(true);
-                Destroy(parent);
             }
         }
     }
