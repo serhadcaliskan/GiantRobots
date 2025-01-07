@@ -52,7 +52,6 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text npcLifeText;
     public TMP_Text actionLog;
-    public Transform NPCBoxCollider;
     
 
     public Button loadButton;
@@ -141,7 +140,7 @@ public class GameManager : MonoBehaviour
             Cursor.visible = true;
             fpsController.canMove = false;
             npc.startFight();
-            player.opponent = NPCBoxCollider; // setup the opponent for the player
+            player.opponent = transform.Find("NPCBoxCollider"); // setup the opponent for the player
             player.startFight();
             //voiceExperience.Activate();
             UpdateUI();
@@ -208,7 +207,6 @@ public class GameManager : MonoBehaviour
         try
         {
             gptAction = JsonConvert.DeserializeObject<GPTAction>(await GetOpenAIResponseAsync(jsonData));
-            //gptAction.action = Action.Dodge.ToString();
         }
         catch (JsonException ex)
         {
@@ -865,8 +863,7 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("wonCount", PlayerPrefs.GetInt("wonCount", 0) + 1);
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
-            // TODO: after demo reset this to 3
-            if (PlayerPrefs.GetInt("wonCount") == 1)
+            if (PlayerPrefs.GetInt("wonCount") == 3)
                 SceneManager.LoadScene("Epilog");
             else
             {
@@ -874,7 +871,8 @@ public class GameManager : MonoBehaviour
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
-            }
+                SceneManager.LoadScene("WanderingScene");
+            } 
         }
     }
 

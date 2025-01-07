@@ -7,7 +7,7 @@ public class CombatLevelLoader : MonoBehaviour
 {
     public GameObject easyOpponent, mediumOpponent, hardOpponent;
     
-    public PlayerStats fpsPlayerStats;
+    public PlayerStats fpsPlayerStats; 
 
     //private void Awake()
     //{
