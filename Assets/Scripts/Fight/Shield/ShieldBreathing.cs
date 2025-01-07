@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShieldBreathing : MonoBehaviour
 {
     public float scaleSpeed = 3f;
-    public float scaleAmount = 1f;
+    public float scaleAmount = 0.01f;
 
     private Vector3 originalScale;
 

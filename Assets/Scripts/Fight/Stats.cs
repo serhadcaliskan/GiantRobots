@@ -84,6 +84,7 @@ public class Stats : MonoBehaviour
         Projectile projScript = projectile.GetComponent<Projectile>();
         if (projScript != null)
         {
+            Debug.Log(opponent);
             projScript.SetTarget(opponent, hit);
         }
         if (audioSource != null && shootSound != null)

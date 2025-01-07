@@ -42,7 +42,7 @@ public class GPTReaction
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject nextOpponent;
+    //public GameObject nextOpponent;
     public PlayerStats player;
     public NpcStats npc;
     public Transform playerObj;
@@ -52,7 +52,8 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text npcLifeText;
     public TMP_Text actionLog;
-    public GameObject parent; // the parent we destroy when game is over
+    public Transform NPCBoxCollider;
+    
 
     public Button loadButton;
     public Button shootButton;
@@ -75,7 +76,7 @@ public class GameManager : MonoBehaviour
     private Action npcAction;
     private Color defaultColor;
     public Color highlightedColor = Color.green;
-    public AppVoiceExperience voiceExperience;
+    //public AppVoiceExperience voiceExperience;
     private bool isPlayerTurn = true; // gets edited in toggleButtons
     public bool useKI = false;
     [SerializeField]
@@ -102,7 +103,6 @@ public class GameManager : MonoBehaviour
     private List<Message> chatHistory = new List<Message>();
     private GPTAction gptAction;
 
-    private bool paused = false;
     private void Start()
     {
         if (gameCanvas != null)
@@ -141,9 +141,9 @@ public class GameManager : MonoBehaviour
             Cursor.visible = true;
             fpsController.canMove = false;
             npc.startFight();
-            player.opponent = transform.Find("NPCBoxCollider"); // setup the opponent for the player
+            player.opponent = gameObject.transform; // setup the opponent for the player
             player.startFight();
-            voiceExperience.Activate();
+            //voiceExperience.Activate();
             UpdateUI();
             foreach (var interactableButtons in buttons)
             {
@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
     async void SelectAction(Action action)
     {
         toggleButtons(); // make them unclickable
-        voiceExperience.Deactivate();
+        //voiceExperience.Deactivate();
         playerAction = action;
         // TODO: remove comment for LLM-NPC
         if (useKI)
@@ -208,6 +208,7 @@ public class GameManager : MonoBehaviour
         try
         {
             gptAction = JsonConvert.DeserializeObject<GPTAction>(await GetOpenAIResponseAsync(jsonData));
+            //gptAction.action = Action.Dodge.ToString();
         }
         catch (JsonException ex)
         {
@@ -772,7 +773,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time); // Pause to be sure shield is deactivated
         toggleButtons();
-        voiceExperience.Activate();
+        //voiceExperience.Activate();
     }
 
     void toggleButtons()
@@ -782,7 +783,12 @@ public class GameManager : MonoBehaviour
         shieldButton.interactable = !shieldButton.interactable;
         dodgeButton.interactable = !dodgeButton.interactable;
         disarmButton.interactable = !disarmButton.interactable;
-        isPlayerTurn = !isPlayerTurn;
+        isPlayerTurn = !isPlayerTurn;    
+        // Make red buttons unclickable
+        foreach (var interactableButton in buttons)
+        {
+            interactableButton.enabled = !interactableButton.enabled;
+        }
     }
 
     public void SelectButton(string action)
@@ -816,7 +822,7 @@ public class GameManager : MonoBehaviour
 
     private void HighlightButton(Button button)
     {
-        voiceExperience.Deactivate();
+        //voiceExperience.Deactivate();
         highlightedButton = button;
         Image buttonImage = button.GetComponent<Image>();
         if (buttonImage != null)
@@ -846,7 +852,7 @@ public class GameManager : MonoBehaviour
         if (player.lifePoints <= 0 && npc.lifePoints <= 0)
         {
             actionLog.text = "It's a draw!";
-            SceneManager.LoadScene("Epilog");
+            SceneManager.LoadScene("Epilog"); 
         }
         else if (player.lifePoints <= 0)
         {
@@ -860,15 +866,14 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
             actionLog.text = "You Win!";
             if (PlayerPrefs.GetInt("wonCount") == 3)
-                SceneManager.LoadScene(3);
+                SceneManager.LoadScene("Epilog");
             else
             {
                 PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money", 0) + 100);
                 fpsController.canMove = true;
                 player.LoadGameSettings();
                 player.inFight = false;
-                if (nextOpponent != null) nextOpponent.SetActive(true);
-                Destroy(parent);
+                SceneManager.LoadScene("WanderingScene");
             }
         }
     }
@@ -943,79 +948,5 @@ public class GameManager : MonoBehaviour
             if (actionCooldowns[action] > 0)
                 actionCooldowns[action]--;
         }
-    }
-
-    void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    SceneManager.LoadScene("Epilog");
-        //}
-        //if (Input.GetKeyDown(KeyCode.Return))
-        //{
-        //    player.Shoot(true);
-        //}
-
-        //if (Time.timeScale == 0f && !paused)
-        //{
-        //    TogglePauseGame();
-        //}
-        //else if (Time.timeScale == 1f && paused)
-        //{
-        //    TogglePauseGame();
-        //}
-        if (gameCanvas.activeSelf && isPlayerTurn)
-        {
-            if (Input.GetKeyDown(KeyCode.Return) && highlightedButton != null) // TODO: replace with handgesture
-            {
-                highlightedButton.onClick.Invoke();
-            }
-            if (Input.GetKeyUp(KeyCode.RightShift) && !voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking) // TODO: replace with handgesture
-            {
-                voiceExperience.Activate();
-            }
-
-            //if (Input.GetKeyUp(KeyCode.RightShift) && voiceExperience.Active)
-            //{
-            //    voiceExperience.Deactivate();
-            //}
-        }
-    }
-
-    /// <summary>
-    /// This is called by the hand gesture detector for thumbs up to confirm the selected Button
-    /// </summary>
-    public void ConfirmWithHand()
-    {
-        if (highlightedButton != null)
-            highlightedButton.onClick.Invoke();
-    }
-
-    /// <summary>
-    /// This is called by the hand gesture detector for fist to confirm the selected Button
-    /// </summary>
-    public void TalkingWithHand()
-    {
-        if (!voiceExperience.Active && !ttsSpeakerNPC.IsSpeaking)
-        {
-            voiceExperience.Activate();
-        }
-    }
-
-    void TogglePauseGame()
-    {
-        paused = !paused;
-        if (paused || gameCanvas.activeSelf)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else if (!paused && !gameCanvas.activeSelf)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        fpsController.canMove = !(paused || gameCanvas.activeSelf); // if the game is paused or the game is on, the player should not be able to move
-        ttsSpeakerNPC.Stop();
     }
 }
