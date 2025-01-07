@@ -9,10 +9,10 @@ public class CombatLevelLoader : MonoBehaviour
     
     public PlayerStats fpsPlayerStats;
 
-    private void Awake()
-    {
-        PlayerPrefs.SetInt("wonCount", 2);
-    }
+    //private void Awake()
+    //{
+    //    PlayerPrefs.SetInt("wonCount", 2);
+    //}
 
     void Start()
     {

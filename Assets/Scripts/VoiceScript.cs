@@ -207,10 +207,10 @@ public class VoiceScript : MonoBehaviour
             {
                 activateMicPose[i].WhenSelected += () => TalkingWithHand();
             }
-            for (int i = 0; i < sendMessagePose.Length; i++)
-            {
-                sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
-            }
+            //for (int i = 0; i < sendMessagePose.Length; i++)
+            //{
+            //    sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
+            //}
             wanderScript.canWander = false;
             playerStats.LoadGameSettings();
             string helpfulness = PromptLibrary.HelpfulnessMid;
@@ -234,6 +234,7 @@ public class VoiceScript : MonoBehaviour
                 chatHistory.Add(new Message { role = "system", content = instructions });
 
             ttsButton.onClick.AddListener(OnTTSButtonClick);
+            transform.LookAt(player);
             ShowCanvasInFrontOfPlayer();
         }
     }
@@ -282,7 +283,7 @@ public class VoiceScript : MonoBehaviour
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (canvas.activeSelf && textField.text.Length > 0 && !tts.IsSpeaking)
+        if (canvas.activeSelf && !dictationExperience.Active && textField.text.Length > 0 && !tts.IsSpeaking)
         {
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
