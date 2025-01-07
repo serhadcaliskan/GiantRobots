@@ -11801,7 +11801,7 @@ GameObject:
   - component: {fileID: 562832086}
   m_Layer: 0
   m_Name: NPCBoxCollider
-  m_TagString: Untagged
+  m_TagString: Opponent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11840,8 +11840,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.5250335, y: 2.7844162, z: 1}
-  m_Center: {x: 0.03952789, y: -0.03320838, z: -3.382547e-11}
+  m_Size: {x: 6.2575746, y: 2.7844162, z: 1}
+  m_Center: {x: -0.04837782, y: -0.03320834, z: 6.5950856e-11}
 --- !u!1 &564737140
 GameObject:
   m_ObjectHideFlags: 0
@@ -47780,7 +47780,7 @@ MonoBehaviour:
   - {fileID: 1407408867}
   - {fileID: 1826398001}
   highlightedColor: {r: 0.6986472, g: 0.9433962, b: 0.6986472, a: 1}
-  useKI: 0
+  useKI: 1
 --- !u!114 &6553993895864585290
 MonoBehaviour:
   m_ObjectHideFlags: 0

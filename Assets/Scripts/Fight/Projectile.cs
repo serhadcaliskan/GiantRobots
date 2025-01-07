@@ -58,7 +58,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.transform == target || other.CompareTag("Shield") || other.CompareTag("Floor"))
+        if (other.transform == target || other.CompareTag("Shield") || other.CompareTag("Floor") || other.CompareTag("Opponent"))
         {
             hasImpacted = true;
             DestroyChildren();

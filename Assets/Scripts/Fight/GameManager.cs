@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour
             Cursor.visible = true;
             fpsController.canMove = false;
             npc.startFight();
-            player.opponent = gameObject.transform; // setup the opponent for the player
+            player.opponent = NPCBoxCollider; // setup the opponent for the player
             player.startFight();
             //voiceExperience.Activate();
             UpdateUI();
