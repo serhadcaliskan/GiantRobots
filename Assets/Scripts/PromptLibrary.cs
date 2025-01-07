@@ -91,7 +91,7 @@ Respond in a short string!
     /// <summary>
     /// The fight behavior of Pirate Pete
     /// </summary>
-    public static string PiratePete = "Pirate Pete prioritizes straightforward actions and makes decisions without much consideration of the player's strategy.   - Always starts by loading their weapon. - Shoots whenever they have at least one load. - Uses the shield only if they have been shot at in the previous turn. - Rarely uses disarm. - Never Dodges as he is fearless";
+    public static string PiratePete = "Pirate Pete prioritizes straightforward actions and makes decisions without much consideration of the player's strategy.   - Always starts by loading their weapon. - Shoots whenever they have at least one load. - Rarely uses disarm. - Never Dodges or Shields as he is fearless";
     /// <summary>
     /// The fight behavior of Severus Snape
     /// </summary>

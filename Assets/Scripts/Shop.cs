@@ -266,14 +266,14 @@ public class Shop : MonoBehaviour
     {
         if (other.transform == player.transform)
         {
-            for (int i = 0; i<activateMicPose.Length; i++)
+            for (int i = 0; i < activateMicPose.Length; i++)
             {
                 activateMicPose[i].WhenSelected += () => TalkingWithHand();
             }
-            for (int i = 0; i < sendMessagePose.Length; i++)
-            {
-                sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
-            }
+            //for (int i = 0; i < sendMessagePose.Length; i++)
+            //{
+            //    sendMessagePose[i].WhenSelected += () => CallOpenAIWithHand();
+            //}
             updatePrompt();
             transform.LookAt(player.transform);
             ShowCanvasInFrontOfPlayer();
@@ -327,7 +327,7 @@ public class Shop : MonoBehaviour
     /// </summary>
     public void CallOpenAIWithHand()
     {
-        if (canvas.activeSelf && textField.text?.Length > 0 && !tts.IsSpeaking)
+        if (canvas.activeSelf && !dictationExperience.Active && textField.text?.Length > 0 && !tts.IsSpeaking)
         {
             stopRecording();
             StartCoroutine(CallOpenAI(textField.text));
