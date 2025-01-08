@@ -84,6 +84,10 @@ public class Stats : MonoBehaviour
         Projectile projScript = projectile.GetComponent<Projectile>();
         if (projScript != null)
         {
+            Debug.Log(opponent);
+            Debug.Log(opponent.localPosition.x + " " + opponent.localPosition.y + " " + opponent.localPosition.z);
+            Debug.Log(opponent.position.x + " " + opponent.position.y + " " + opponent.position.z);
+            Debug.Log("xxxxxxxxxxxxxxxx");
             projScript.SetTarget(opponent, hit);
         }
         if (audioSource != null && shootSound != null)

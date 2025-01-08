@@ -19,6 +19,8 @@ TagManager:
   - QDSUIDestructiveButton
   - QDSUIToggleSwitch
   - PrologEpilogHandler
+  - Floor
+  - Opponent
   layers:
   - Default
   - TransparentFX
@@ -26,7 +28,7 @@ TagManager:
   - HiddenMesh
   - Water
   - UI
-  - 
+  - Floor
   - 
   - 
   - 

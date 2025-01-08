@@ -58,14 +58,17 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.transform == target || other.CompareTag("Shield"))
+        if (other.transform == target || other.CompareTag("Shield") || other.CompareTag("Floor") || other.CompareTag("Opponent"))
         {
             hasImpacted = true;
             DestroyChildren();
-            if (impactEffect != null)
+            if (impactEffect != null && hit)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
                 StartCoroutine(ChainExplosion());
+            }else
+            {
+                Destroy(gameObject);
             }
         }
     }

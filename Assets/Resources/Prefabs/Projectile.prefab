@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e5f9ee4dca5e28479400323c72d2580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 90
+  speed: 300
   impactEffect: {fileID: 188803999412558196, guid: a9d0f948498a6b741a097cc6e4ef0f14, type: 3}
 --- !u!54 &7729982881377700823
 Rigidbody:
