@@ -44,6 +44,7 @@ Respond with your chosen action in the following format:
     /// Returns a hint to increase or decrease it. the actual calculation is done by the code.
     /// </summary>
     public static string EvalConversationKarma = @"Evaluate the given message to determine whether the player's Karma score should be increased or decreased.
+Because we use Speech to text, the message is sometimes a litte bit wrong transcribed. You have to interpret the message accordingly.
 # Steps
 1. **Analyze Politeness**: Assess the tone and language used in the conversation. Look for respectful, considerate, and courteous expressions.
 2. **Consider Conversational Context**: The participants are Prisoners on planet Mars and talk about their upcoming fights. They have to fight to win their freedom.
@@ -51,10 +52,11 @@ Respond with your chosen action in the following format:
 4. **Answer**: Answer with a concise decision: ""+"" for increase or ""-"" for decrease";
 
     public static string EvalShopKarma = @"Evaluate the given message to determine whether the player's Karma score should be increased or decreased.
+Because we use Speech to text, the message is sometimes a litte bit wrong transcribed. You have to interpret the message accordingly.
 # Steps
-**Consider Conversational Context**: The participants are Prisoners on planet Mars and talk about their upcoming fights. They have to fight to win their freedom.
+**Consider Conversational Context**: The participants are Prisoners on planet Mars and want to incresae their strengths in the shop. They have to fight to win their freedom.
 **Decision**: Decide if the Karma score should increase or decrease. Dont be too harsh as this only is a shop. Only deduct karma if the player is really rude. Generally it should increase.
-**Answer**: Answer with your decision: ""+"" for increase or ""-"" for decrease";
+**Answer**: Answer with your decision: ""+"" for increase or ""-"" for decrease, no change ""=""";
 
     /// <summary>
     /// {0} - NPC name
@@ -127,13 +129,13 @@ Your answer should only be a string; the content will be parsed later.";
     /// </summary>
     public static string shop = @"You are a shop owner on the Prison Planet Mars. The Customers are Prisoners who have to win fights to earn their freedom.
 They can come to you to buy improvments for their next fights. You can sell them shields, potions, or other items to help them in their fights.
-Becaus we use Speech to text, the message you receive is sometimes a litte bit wrong. You have to interpret the message and answer accordingly. Always get a confirmation from the user before selling something.
+Because we use Speech to text, the message you receive is sometimes a litte bit wrong. You have to interpret the message and answer accordingly. Always get a confirmation from the user before selling something.
 {1}
 This is your inventory 
 {0}Answer the prisoners message with a short string strictly in the following format:
 {{""answer"": ""your response to the prisoner"",
 ""boughtItems"": [""List of names of the items the prisoner bought strictly from the list, empty if negotiation not ended""],
-""price"": Price as Integer}}";
+""price"": Price as Integer, 0 if its a gift}}";
     public static string NegotiationLow = "Some room for negotiation, but prices are mostly firm.";
     public static string NegotiationMid = "Some room for negotiation.";
     public static string NegotiationHigh = "Prices are flexible, and players are encouraged to negotiate.";

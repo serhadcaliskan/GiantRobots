@@ -28705,8 +28705,8 @@ MonoBehaviour:
   lifePoints: 200
   shieldCount: 5
   shootDamage: 35
-  loadCapacity: 5
-  dodgeSuccessRate: 0.5
+  loadCapacity: 3
+  dodgeSuccessRate: 0.6
   disarmSuccessRate: 0.7
   isDodging: 0
   inFight: 0
@@ -40287,9 +40287,9 @@ MonoBehaviour:
   lifePoints: 150
   shieldCount: 4
   shootDamage: 25
-  loadCapacity: 4
+  loadCapacity: 3
   dodgeSuccessRate: 0.4
-  disarmSuccessRate: 0.9
+  disarmSuccessRate: 0.7
   isDodging: 0
   inFight: 0
   isShielding: 0

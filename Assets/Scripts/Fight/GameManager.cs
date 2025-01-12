@@ -166,7 +166,6 @@ public class GameManager : MonoBehaviour
         toggleButtons(); // make them unclickable
         //voiceExperience.Deactivate();
         playerAction = action;
-        // TODO: remove comment for LLM-NPC
         if (useKI)
             gptAction = await GetGptAction();
         if (gptAction != null)
@@ -175,9 +174,9 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log(gptAction.action);
             }
-            else npcAction = getKiAction(difficulty);
+            else npcAction = getKiAction(PlayerPrefs.GetInt("wonCount", 0) + 1);
         }
-        else npcAction = getKiAction(difficulty);
+        else npcAction = getKiAction(PlayerPrefs.GetInt("wonCount", 0) + 1);
         gameHistory.Add((playerAction, npcAction));
         ResetAllButtons(); // reset their color
         EvaluateRound();
@@ -365,7 +364,7 @@ public class GameManager : MonoBehaviour
             new Message
             {
                 role = "system",
-                content = $"You are {npc.npcName}, playing against the user. Your task is to send me a short reaction of {npc.npcName} to the outcome of the current round. Keep it short and dont spoil information about next moves. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
+                content = $"You are {npc.npcName}, playing against the user. You both are on Prison Plannet Mars, fighting for your freedom. Your task is to send me a short reaction of {npc.npcName} to the outcome of the current round. Keep it short and dont spoil information about next moves. \"You\" is the user. Answer strictly in format \"{{ \"reaction\": \"your-reaction\"}}\""
             },
             new Message
             {
