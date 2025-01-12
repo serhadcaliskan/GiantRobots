@@ -362,12 +362,12 @@ public class Shop : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // check if "W" is pressed and start mic
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TalkingWithHand();
-        }
-    }
+    //private void Update()
+    //{
+    //    // check if "W" is pressed and start mic
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        TalkingWithHand();
+    //    }
+    //}
 }
