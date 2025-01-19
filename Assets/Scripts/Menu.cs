@@ -33,8 +33,7 @@ public class Menu : MonoBehaviour
         PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
         PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
         PlayerPrefs.SetInt("karmaScore", 50);
-        // TODO: after demo reset to 0
-        PlayerPrefs.SetInt("Money", 100);
+        PlayerPrefs.SetInt("Money", 0);
         PlayerPrefs.Save();
     }
 
