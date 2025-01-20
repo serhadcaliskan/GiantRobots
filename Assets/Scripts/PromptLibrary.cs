@@ -134,7 +134,7 @@ Because we use Speech to text, the message you receive is sometimes a litte bit 
 This is your inventory 
 {0}Answer the prisoners message with a short string strictly in the following format:
 {{""answer"": ""your response to the prisoner"",
-""boughtItems"": [""List of names of the items the prisoner bought strictly from the list, empty if negotiation not ended""],
+""boughtItems"": [""List of names of the items the prisoner bought strictly from the list, empty if negotiation not ended, if item was bought multiple times add name multiple times""],
 ""price"": Price as Integer, 0 if its a gift}}";
     public static string NegotiationLow = "Some room for negotiation, but prices are mostly firm.";
     public static string NegotiationMid = "Some room for negotiation.";
