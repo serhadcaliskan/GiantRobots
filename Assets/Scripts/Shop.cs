@@ -59,7 +59,7 @@ public class Shop : MonoBehaviour
         int itemPrice = playerStats.itemPrice();
         shopItems = new List<ShopItem>()
         {
-            new ShopItem() { name = "Chainreaction", description = "Chainweapon does more damage", price = itemPrice},
+            new ShopItem() { name = "Chainreaction", description = "Chainweapon does 10 more damage", price = itemPrice},
             new ShopItem() { name = "Shield", description = "One more shield per fight", price = itemPrice },
             new ShopItem() { name = "Dodgedrink", description = "Increases your dodgingstrength by 10%", price = itemPrice },
             new ShopItem() { name = "Disarmpotion", description = "Increases your disarmstrength by 10%", price = itemPrice }
@@ -125,7 +125,7 @@ public class Shop : MonoBehaviour
                                 switch (item)
                                 {
                                     case "Chainreaction":
-                                        PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage", 10) + 7);
+                                        PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage", 10) + 10);
                                         shopItems.RemoveAll(x => x.name == "Chainreaction");
                                         break;
                                     case "Shield":
