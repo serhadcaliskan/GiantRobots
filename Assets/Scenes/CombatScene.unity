@@ -28702,12 +28702,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224164ce7758a864daa504a245d0ad56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifePoints: 200
-  shieldCount: 5
-  shootDamage: 35
+  lifePoints: 150
+  shieldCount: 3
+  shootDamage: 20
   loadCapacity: 3
   dodgeSuccessRate: 0.6
-  disarmSuccessRate: 0.7
+  disarmSuccessRate: 0.6
   isDodging: 0
   inFight: 0
   isShielding: 0
@@ -40284,12 +40284,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224164ce7758a864daa504a245d0ad56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifePoints: 150
-  shieldCount: 4
-  shootDamage: 25
+  lifePoints: 120
+  shieldCount: 3
+  shootDamage: 15
   loadCapacity: 3
-  dodgeSuccessRate: 0.4
-  disarmSuccessRate: 0.7
+  dodgeSuccessRate: 0.5
+  disarmSuccessRate: 0.5
   isDodging: 0
   inFight: 0
   isShielding: 0
