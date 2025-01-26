@@ -28,6 +28,7 @@ public class Stats : MonoBehaviour
     public GameObject shield;
     public GameObject projectilePrefab;
     public Transform opponent;
+    public Animator animator;
 
     private AudioSource audioSource;
     private AudioClip shootSound;
@@ -59,6 +60,10 @@ public class Stats : MonoBehaviour
         inFight = true;
         initialPosition = transform.position;
         LoadGameSettings();
+        if (animator != null)
+        {
+            animator.SetBool("isGameStarted", true);
+        }
     }
 
     public virtual void LoadGameSettings()
@@ -72,6 +77,12 @@ public class Stats : MonoBehaviour
     /// <param name="damage"> How much damage to give. </param>
     public void TakeDamage(int damage)
     {
+        if (animator != null)
+        {
+            animator.SetBool("getHit", true);
+            StartCoroutine(SetBoolWithDelay("getHit", false, 0.5f)); // Delay of 0.5 seconds
+
+        }
         lifePoints -= damage;
         if (lifePoints < 0)
             lifePoints = 0;
@@ -84,21 +95,29 @@ public class Stats : MonoBehaviour
         Projectile projScript = projectile.GetComponent<Projectile>();
         if (projScript != null)
         {
-            Debug.Log(opponent);
-            Debug.Log(opponent.localPosition.x + " " + opponent.localPosition.y + " " + opponent.localPosition.z);
-            Debug.Log(opponent.position.x + " " + opponent.position.y + " " + opponent.position.z);
-            Debug.Log("xxxxxxxxxxxxxxxx");
             projScript.SetTarget(opponent, hit);
         }
         if (audioSource != null && shootSound != null)
         {
             audioSource.PlayOneShot(shootSound);
         }
+        if (animator != null)
+        {
+            animator.SetBool("isShooting", true);
+            StartCoroutine(SetBoolWithDelay("isShooting", false, 0.5f)); // Delay of 0.5 seconds
+
+        }
     }
     public void Dodge()
     {
         if (isDodging)
         {
+            if (animator != null)
+            {
+                animator.SetBool("isDodging", true);
+                StartCoroutine(SetBoolWithDelay("isDodging", false, 0.5f)); // Delay of 0.5 seconds
+
+            }
             Vector3 dodgePosition = initialPosition + new Vector3(dodgeDistance * dodgeDirection, 0, 0);
 
             transform.position = Vector3.Lerp(transform.position, dodgePosition, dodgeSpeed * Time.deltaTime);
@@ -138,6 +157,12 @@ public class Stats : MonoBehaviour
             loadCount++;
             if (audioSource != null && reloadSound != null)
                 audioSource.PlayOneShot(reloadSound);
+            if (animator != null)
+            {
+                animator.SetBool("isReloading", true);
+                StartCoroutine(SetBoolWithDelay("isReloading", false, 0.5f)); // Delay of 0.5 seconds
+
+            }
         }
     }
 
@@ -171,5 +196,11 @@ public class Stats : MonoBehaviour
         isShielding = false;
         if (deactivateSound)
             shield.GetComponent<ShieldCollision>().Deactivate();
+    }
+    
+    private IEnumerator SetBoolWithDelay(string parameterName, bool value, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        animator.SetBool(parameterName, value);
     }
 }

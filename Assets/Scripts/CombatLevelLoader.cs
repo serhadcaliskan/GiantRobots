@@ -8,7 +8,8 @@ public class CombatLevelLoader : MonoBehaviour
     public GameObject easyOpponent, mediumOpponent, hardOpponent;
     
     public PlayerStats fpsPlayerStats; 
-
+    
+    
     //private void Awake()
     //{
     //    PlayerPrefs.SetInt("wonCount", 2);

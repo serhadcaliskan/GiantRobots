@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     public AudioClip clickSound;
     public AudioSource audioSource;
     public Button startButton;
+    public Button resetButton;
     public Canvas pauseCanvas;
     public GameObject noConnectionHint;
     //private Microphone mic;
@@ -22,7 +23,7 @@ public class Menu : MonoBehaviour
         if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(false);
         if (PlayerPrefs.GetInt("TutorialCompleted", -1) != 1)
         {
-            startButton.gameObject.SetActive(false);
+            startButton.gameObject.SetActive(false); 
         }
         // Reset the game settings to default for the game
         PlayerPrefs.SetInt("wonCount", 0);
@@ -105,6 +106,11 @@ public class Menu : MonoBehaviour
             StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
+    public void OnResetButton()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+    
     private IEnumerator PlaySoundAndExecute(System.Action callback)
     {
         audioSource.PlayOneShot(clickSound);
