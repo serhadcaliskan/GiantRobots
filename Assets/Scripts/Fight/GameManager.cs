@@ -70,7 +70,6 @@ public class GameManager : MonoBehaviour
     public PokeInteractable[] buttons;
     private enum Action { Load, Shoot, Shield, Dodge, Disarm }
     private Action playerAction;
-    private int difficulty = 2;
     private float shieldSoundLength = 0f;
     private Action npcAction;
     private Color defaultColor;

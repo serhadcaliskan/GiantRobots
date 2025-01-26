@@ -952,7 +952,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Activate the Mic by forming a fist, dont need to hold while recording
+  m_text: <color=#FF0000>Activate Mic</color> by forming a fist, dont need to hold
+    while recording
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2293,8 +2294,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Teleport by pinching your thumb and indexfinger in the direction you want
-    (There is visual feedback)
+  m_text: <color=#FF0000>Teleport</color> by pinching your thumb and indexfinger
+    in the direction you want (There is visual feedback)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2886,16 +2887,17 @@ MonoBehaviour:
   m_text: 'When you are not fighting you can talk to other NPCs or go to the shop.
 
     They
-    might have useful information for your next fight so it is worth to interact
-    with them.
+    might give you useful information for your next fight so it is worth to talk
+    to them.
+
 
     But be careful, each interaction influences your Karma score,
-    which influences the helpfulness of the NPCs, the pricenegotiations and also
-    the effectivness of your fight choices.
+    which influences the helpfulness of the NPCs, the price negotiations and also
+    the effectivness & strengts of your fight attacks.
 
 
-    As always, being polite is rewarded
-    and being rude punished.'
+    Even in prison, <color=#FF0000>being
+    polite is rewarded</color> and being rude punished.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3217,8 +3219,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Reset view by pinching and holding your thumb and indexfinger while looking
-    at your palm
+  m_text: <color=#FF0000>Reset view</color> by pinching and holding your thumb and
+    indexfinger while looking at your palm
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3352,7 +3354,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Try them out!
+  m_text: Try them!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3581,25 +3583,31 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Load: Prepare your weapon to shoot. Each load allows for one shot. You
-    can load multiple times.
-
-    Shoot: Fire at your opponent if you''ve loaded
-    at least once.
-
-    Shield: Block damage from a shot or disarm, but you have
-    a limited number of shields. Each usage deducts one shield.
-
-    Dodge: Avoid
-    a shot with a success chance depending on your Karma. If unsuccessful, take full
-    damage. Does not prevent disarm.
-
-    Disarm: Attempt to reduce your opponent''s
-    load to zero with a success chance influenced by your Karma. Works if they load,
-    dodge, or attempt to disarm.
+  m_text: '<color=#FF0000>Round based</color> battle, so take your time to choose
+    your next strategic move.
 
 
-    To win the game you have to win 3 fights!'
+    <color=#FF0000>Load</color>: Prepare your weapon
+    to shoot. Each load allows for one shot. You can load multiple times.
+
+    <color=#FF0000>Shoot</color>:
+    Fire at your opponent if you''ve loaded at least once.
+
+    <color=#FF0000>Shield</color>:
+    Block damage from a shot or disarm, but you have a limited number of shields.
+    Each usage deducts one shield.
+
+    <color=#FF0000>Dodge</color>: Avoid a shot
+    with a success chance depending on your Karma. If unsuccessful, take full damage.
+    Does not prevent disarm.
+
+    <color=#FF0000>Disarm</color>: Attempt to reduce
+    your opponent''s load to zero with a success chance influenced by your Karma.
+    Works if they load, dodge, or attempt to disarm.
+
+
+    To win the game you have
+    to <color=#FF0000> win 3 fights</color>!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4017,8 +4025,8 @@ MonoBehaviour:
 
 
 
-    Talk to NPCs when you are close to
-    them and see a canvas'
+    You can talk to NPCs when you are
+    colose and a canvas popped up'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
