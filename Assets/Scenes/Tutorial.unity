@@ -1519,7 +1519,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _allowTeleport: 1
+  _allowTeleport: 0
   _equalDistanceToBlockerOverride: 0
   _tieBreakerScore: 0
   _surface: {fileID: 705772007}
