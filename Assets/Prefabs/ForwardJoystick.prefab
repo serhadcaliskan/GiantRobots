@@ -140,7 +140,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 3089951504750048964, guid: 091196c6d7fd95e4681685ff1f4f9419, type: 3}
+  - {fileID: 2100000, guid: 03471d6d6e1a37d4da76eddc2021552b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -670,7 +670,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ec717a39f4be1a54f81abd7925157de6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1646,5 +1646,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32e9c8da809b734db5d8fb7c7e55c97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionEvent:
+    m_PersistentCalls:
+      m_Calls: []
   JoystickRod: {fileID: 3156476380427053787}
   oneGrabRotateTransformer: {fileID: 3451261939953068647}
