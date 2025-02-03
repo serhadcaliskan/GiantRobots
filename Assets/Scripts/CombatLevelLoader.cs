@@ -24,7 +24,7 @@ public class CombatLevelLoader : MonoBehaviour
         switch (PlayerPrefs.GetInt("wonCount",0))
         {
             case 0:
-                easyOpponent.SetActive(true);
+                easyOpponent.SetActive(true); 
                 fpsPlayerStats.opponent = easyOpponent.transform;
                 break;
             case 1:

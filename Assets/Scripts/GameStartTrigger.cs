@@ -11,7 +11,7 @@ public class TriggerChild : MonoBehaviour
 
     private GameManager selectedGameManager;
 
-    private void Start()
+    private void Awake()
     {
         switch (PlayerPrefs.GetInt("wonCount",0))
         {

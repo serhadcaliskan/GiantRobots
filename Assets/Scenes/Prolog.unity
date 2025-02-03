@@ -445,6 +445,14 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 191143511}
+    - target: {fileID: 4126862865972956059, guid: ded3f8d619e5ae24696d67e2d6478c0e, type: 3}
+      propertyPath: m_fontSize
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4126862865972956059, guid: ded3f8d619e5ae24696d67e2d6478c0e, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4157480741099391466, guid: ded3f8d619e5ae24696d67e2d6478c0e, type: 3}
       propertyPath: m_Name
       value: PrologHandler
