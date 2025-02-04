@@ -16244,7 +16244,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &646174337
 Transform:
   m_ObjectHideFlags: 0
@@ -16255,7 +16255,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.99952245, z: -0, w: 0.030902058}
   m_LocalPosition: {x: -0, y: 0.87, z: 0}
-  m_LocalScale: {x: 2.44, y: 2.44, z: 2.44}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1677418911}
@@ -33542,8 +33542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   easyOpponent: {fileID: 5627116984314520132}
-  mediumOpponent: {fileID: 640732129}
-  hardOpponent: {fileID: 1634332978}
+  mediumOpponent: {fileID: 1973868319}
+  hardOpponent: {fileID: 933169356}
   fpsPlayerStats: {fileID: 2050602663}
 --- !u!1 &1294610866
 GameObject:
@@ -42478,7 +42478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1673238249
 Transform:
   m_ObjectHideFlags: 0
@@ -55555,7 +55555,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1189122955814272860
 GameObject:
   m_ObjectHideFlags: 0

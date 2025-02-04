@@ -469,7 +469,7 @@ public class GameManager : MonoBehaviour
                             npc.Shoot(true);
                             actionLog.text += $"{npc.npcName} shot you!";
                             if (npc.lifePoints <= 0)
-                                actionLog.text += $"{npc.name} is dead!";
+                                actionLog.text += $"{npc.npcName} is dead!";
                         }
                         else actionLog.text += $"{npc.npcName} tried to shoot without ammo!";
                         break;

@@ -272,6 +272,8 @@ public class VoiceScript : MonoBehaviour
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
+            textField.text = "";
+            answerTextField.text = "";
         }
     }
 

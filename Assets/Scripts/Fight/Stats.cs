@@ -84,8 +84,16 @@ public class Stats : MonoBehaviour
 
         }
         lifePoints -= damage;
-        if (lifePoints < 0)
-            lifePoints = 0;
+        if (lifePoints < 0){
+            lifePoints = 0; 
+        }
+        if (lifePoints == 0)
+        {
+            if (animator != null)
+            {
+                animator.SetBool("isDead", true);
+            }
+        }
     }
 
     public void Shoot(bool hit)

@@ -70,13 +70,13 @@ public class Menu : MonoBehaviour
 
     public void OnLevel2Button()
     {
-        PlayerPrefs.SetInt("wonCount", 2);
+        PlayerPrefs.SetInt("wonCount", 1);
 
     }
 
     public void OnLevel3Button()
     {
-        PlayerPrefs.SetInt("wonCount", 3);
+        PlayerPrefs.SetInt("wonCount", 2);
 
     }
     
