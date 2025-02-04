@@ -62,7 +62,24 @@ public class Menu : MonoBehaviour
 #endif
         }));
     }
+    
+    public void OnLevel1Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 0);
+    }
 
+    public void OnLevel2Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 2);
+
+    }
+
+    public void OnLevel3Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 3);
+
+    }
+    
     public void OnAudioDemoButton()
     {
         if (!IsConnectedToInternet())
