@@ -19,7 +19,7 @@ public class PrologEpilogHandler : MonoBehaviour
     {
         ttsScript = GetComponent<TTSScript>();
         canvas.gameObject.SetActive(true);
-        uiText.text = "";
+        uiText.text = $"Karmascore: {PlayerPrefs.GetInt("karmaScore")}/100\n";
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class PrologEpilogHandler : MonoBehaviour
     {
         ttsScript.Speak(prologText.Replace("\n", " "), speaker);
         prologText += "...";
-        uiText.text = "|";
+        uiText.text += "|";
         await BlinkAsync(uiText, 6, 300);
         foreach (char c in prologText)
         {

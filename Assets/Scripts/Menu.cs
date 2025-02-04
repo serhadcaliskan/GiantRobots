@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     public AudioClip clickSound;
     public AudioSource audioSource;
     public Button startButton;
+    public Button resetButton;
     public Canvas pauseCanvas;
     public GameObject noConnectionHint;
     //private Microphone mic;
@@ -22,7 +23,7 @@ public class Menu : MonoBehaviour
         if (pauseCanvas != null) pauseCanvas.gameObject.SetActive(false);
         if (PlayerPrefs.GetInt("TutorialCompleted", -1) != 1)
         {
-            startButton.gameObject.SetActive(false);
+            startButton.gameObject.SetActive(false); 
         }
         // Reset the game settings to default for the game
         PlayerPrefs.SetInt("wonCount", 0);
@@ -33,8 +34,7 @@ public class Menu : MonoBehaviour
         PlayerPrefs.SetFloat("dodgeSuccessRate", 0.5f);
         PlayerPrefs.SetFloat("disarmSuccessRate", 0.5f);
         PlayerPrefs.SetInt("karmaScore", 50);
-        // TODO: after demo reset to 0
-        PlayerPrefs.SetInt("Money", 100);
+        PlayerPrefs.SetInt("Money", 0);
         PlayerPrefs.Save();
     }
 
@@ -62,7 +62,24 @@ public class Menu : MonoBehaviour
 #endif
         }));
     }
+    
+    public void OnLevel1Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 0);
+    }
 
+    public void OnLevel2Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 1);
+
+    }
+
+    public void OnLevel3Button()
+    {
+        PlayerPrefs.SetInt("wonCount", 2);
+
+    }
+    
     public void OnAudioDemoButton()
     {
         if (!IsConnectedToInternet())
@@ -106,6 +123,11 @@ public class Menu : MonoBehaviour
             StartCoroutine(PlaySoundAndExecute(() => SceneManager.LoadScene("WanderingScene")));
     }
 
+    public void OnResetButton()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+    
     private IEnumerator PlaySoundAndExecute(System.Action callback)
     {
         audioSource.PlayOneShot(clickSound);

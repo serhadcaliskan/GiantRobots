@@ -42,12 +42,13 @@ public class Shop : MonoBehaviour
     private List<ShopItem> shopItems;
     APIKeys keys = APIKeys.Load();
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
-    private string prompt = "";
+    private Message prompt;
     private List<Message> chatHistory = new List<Message>();
     [SerializeField]
     private ActiveStateSelector[] sendMessagePose;
     [SerializeField]
     private ActiveStateSelector[] activateMicPose;
+    private bool locked = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -58,7 +59,7 @@ public class Shop : MonoBehaviour
         int itemPrice = playerStats.itemPrice();
         shopItems = new List<ShopItem>()
         {
-            new ShopItem() { name = "Chainreaction", description = "Chainweapon does more damage", price = itemPrice},
+            new ShopItem() { name = "Chainreaction", description = "Chainweapon does 10 more damage", price = itemPrice},
             new ShopItem() { name = "Shield", description = "One more shield per fight", price = itemPrice },
             new ShopItem() { name = "Dodgedrink", description = "Increases your dodgingstrength by 10%", price = itemPrice },
             new ShopItem() { name = "Disarmpotion", description = "Increases your disarmstrength by 10%", price = itemPrice }
@@ -80,7 +81,6 @@ public class Shop : MonoBehaviour
         buttonText.text = "Thinking...";
         chatHistory.Add(new Message { role = "user", content = $"Prisoners balance {PlayerPrefs.GetInt("Money", 0)} coins." });
         chatHistory.Add(new Message { role = "user", content = message });
-
         var requestData = new OpenAIRequest
         {
             model = "gpt-4o",
@@ -125,7 +125,7 @@ public class Shop : MonoBehaviour
                                 switch (item)
                                 {
                                     case "Chainreaction":
-                                        PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage", 10) + 7);
+                                        PlayerPrefs.SetInt("shootDamage", PlayerPrefs.GetInt("shootDamage", 10) + 10);
                                         shopItems.RemoveAll(x => x.name == "Chainreaction");
                                         break;
                                     case "Shield":
@@ -175,7 +175,13 @@ public class Shop : MonoBehaviour
                     Debug.LogError("Error: " + request.error);
                 }
             }
+            else
+            {
+                answerTextField.text = "Sorry, I cannot talk right now. Please try again later.";
+                tts.Speak(answerTextField.text);
+            }
         }
+        locked = false;
     }
 
     private IEnumerator WaitForTTSToFinishAndDestroy(GameObject gameObjectToDestroy)
@@ -197,20 +203,20 @@ public class Shop : MonoBehaviour
             negotiationLvl = PromptLibrary.NegotiationLow;
         else if (playerStats.KarmaScore > 66)
             negotiationLvl = PromptLibrary.NegotiationHigh;
-        prompt = string.Format(PromptLibrary.shop, inventoryString().Length > 0 ? inventoryString() : "Inventory is empty!", negotiationLvl);
+        string inventory = inventoryString();
+        prompt = new Message
+        {
+            role = "system",
+            content = string.Format(PromptLibrary.shop, inventory.Length > 0 ? inventory : "Inventory is empty!", negotiationLvl)
+        };
         Debug.Log(prompt);
         if (chatHistory.Count > 0)
         {
-            List<Message> newHistory = new List<Message> { new Message { role = "system", content = prompt } };
-            foreach (Message message in chatHistory)
-            {
-                if (message.role != "system")
-                    newHistory.Add(message);
-            }
-            chatHistory = newHistory;
+            // first element is always the prompt
+            chatHistory[0] = prompt;
         }
         else
-            chatHistory.Add(new Message { role = "system", content = prompt });
+            chatHistory.Add(prompt);
     }
     private IEnumerator UpdateKarma(string lastMessage)
     {
@@ -283,6 +289,8 @@ public class Shop : MonoBehaviour
     {
         if (other.transform == player.transform)
         {
+            locked = false;
+            tts.Stop();
             for (int i = 0; i < activateMicPose.Length; i++)
             {
                 activateMicPose[i].WhenSelected -= () => TalkingWithHand();
@@ -293,7 +301,6 @@ public class Shop : MonoBehaviour
             }
             canvas.SetActive(false);
             stopRecording();
-            tts.Stop();
         }
     }
 
@@ -301,13 +308,6 @@ public class Shop : MonoBehaviour
     {
         if (canvas != null && player != null)
         {
-            // Calculate the position for the canvas to appear directly in front of the player
-            //Vector3 playerForward = player.transform.forward; // Direction player is facing
-            //Vector3 canvasPosition = player.transform.position + playerForward * displayDistance;
-            //canvasPosition.y += 15.0f;
-
-            //// Position and face the canvas toward the player
-            //canvas.transform.position = canvasPosition;
             canvas.transform.LookAt(player.transform); // Make the canvas face the player
             canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - player.transform.position); // Adjust for proper facing
 
@@ -347,14 +347,27 @@ public class Shop : MonoBehaviour
 
     private void stopRecording()
     {
+        dictationExperience.Deactivate();
         buttonText.text = PlayerPrefs.GetInt("Money", -1) + " Coins";
         recordingHint.SetActive(false);
-        dictationExperience.Deactivate();
     }
 
     public void AutomaticGPTAnswer()
     {
-        Debug.Log("AutomaticGPTAnswer");
-        StartCoroutine(CallOpenAI(textField.text));
+        if (!locked)
+        {
+            locked = true;
+            Debug.Log("AutomaticGPTAnswer");
+            StartCoroutine(CallOpenAI(textField.text));
+        }
     }
+
+    //private void Update()
+    //{
+    //    // check if "W" is pressed and start mic
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        TalkingWithHand();
+    //    }
+    //}
 }

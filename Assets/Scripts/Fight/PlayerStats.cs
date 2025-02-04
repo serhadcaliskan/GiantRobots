@@ -93,7 +93,7 @@ public class PlayerStats : Stats
         base.dodgeSuccessRate = PlayerPrefs.GetFloat("dodgeSuccessRate", 0.5f);
         base.disarmSuccessRate = PlayerPrefs.GetFloat("disarmSuccessRate", 0.5f);
         karmaScore = PlayerPrefs.GetInt("karmaScore", 50);
-        PlayerPrefs.SetInt("Money", 0);
+        PlayerPrefs.GetInt("Money", 0);
         //Debug.Log("Life Points: " + lifePoints);
         //Debug.Log("Shield Count: " + shieldCount);
         //Debug.Log("Shoot Damage: " + shootDamage);

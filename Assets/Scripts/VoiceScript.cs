@@ -70,6 +70,7 @@ public class VoiceScript : MonoBehaviour
     private ActiveStateSelector[] sendMessagePose;
     [SerializeField]
     private ActiveStateSelector[] activateMicPose;
+    private bool locked = false;
     private void Start()
     {
         if (canvas != null)
@@ -85,7 +86,6 @@ public class VoiceScript : MonoBehaviour
     {
         buttonText.text = "Thinking...";
         // Construct the message payload
-        //chatHistory.Add(new Message { role = "system", content = instructions });
         chatHistory.Add(new Message { role = "user", content = message });
 
         var requestData = new OpenAIRequest
@@ -135,9 +135,15 @@ public class VoiceScript : MonoBehaviour
                     Debug.LogError("Error: " + request.error);
                     answerTextField.text = "Error: " + request.error;
                 }
-                ttsButton.enabled = true;
+                //ttsButton.enabled = true;
+            }
+            else
+            {
+                answerTextField.text = "Sorry, I cannot talk right now. Please try again later.";
+                tts.Speak(answerTextField.text);
             }
         }
+        locked = false;
     }
     private IEnumerator UpdateKarma(string lastMessage)
     { // Construct the message payload
@@ -179,6 +185,7 @@ public class VoiceScript : MonoBehaviour
                     {
                         playerStats.KarmaScore -= 5;
                     }
+                    updatePrompt();
                 }
                 else
                 {
@@ -213,30 +220,26 @@ public class VoiceScript : MonoBehaviour
             //}
             wanderScript.canWander = false;
             playerStats.LoadGameSettings();
-            string helpfulness = PromptLibrary.HelpfulnessMid;
-            if (playerStats.KarmaScore < 33)
-                helpfulness = PromptLibrary.HelpfulnessLow;
-            else if (playerStats.KarmaScore > 66)
-                helpfulness = PromptLibrary.HelpfulnessHigh;
-
-            instructions = string.Format(PromptLibrary.NPCConversation, npcName, helpfulness, PromptLibrary.GetBehaviour(hasInfoAbout));
-            if (chatHistory.Count > 0)
-            {
-                List<Message> newHistory = new List<Message> { new Message { role = "system", content = instructions } };
-                foreach (Message message in chatHistory)
-                {
-                    if (message.role != "system")
-                        newHistory.Add(message);
-                }
-                chatHistory = newHistory;
-            }
-            else
-                chatHistory.Add(new Message { role = "system", content = instructions });
-
+            updatePrompt();
             ttsButton.onClick.AddListener(OnTTSButtonClick);
             transform.LookAt(player);
             ShowCanvasInFrontOfPlayer();
         }
+    }
+
+    private void updatePrompt()
+    {
+        string helpfulness = PromptLibrary.HelpfulnessMid;
+        if (playerStats.KarmaScore < 33)
+            helpfulness = PromptLibrary.HelpfulnessLow;
+        else if (playerStats.KarmaScore > 66)
+            helpfulness = PromptLibrary.HelpfulnessHigh;
+        instructions = string.Format(PromptLibrary.NPCConversation, npcName, helpfulness, PromptLibrary.GetBehaviour(hasInfoAbout));
+        Debug.Log(instructions);
+        if (chatHistory.Count == 0)
+            chatHistory.Add(new Message { role = "system", content = instructions });
+        else
+            chatHistory[0] = new Message { role = "system", content = instructions };
     }
 
     private void ShowCanvasInFrontOfPlayer()
@@ -255,6 +258,8 @@ public class VoiceScript : MonoBehaviour
     {
         if (other.transform == player)
         {
+            locked = false;
+            tts.Stop();
             for (int i = 0; i < activateMicPose.Length; i++)
             {
                 activateMicPose[i].WhenSelected -= () => TalkingWithHand();
@@ -267,7 +272,8 @@ public class VoiceScript : MonoBehaviour
             ttsButton.onClick.RemoveListener(OnTTSButtonClick);
             canvas.SetActive(false);
             stopRecording();
-            tts.Stop();
+            textField.text = "";
+            answerTextField.text = "";
         }
     }
 
@@ -302,7 +308,20 @@ public class VoiceScript : MonoBehaviour
     }
     public void AutomaticGPTAnswer()
     {
-        Debug.Log("AutomaticGPTAnswer");
-        StartCoroutine(CallOpenAI(textField.text));
+        if (!locked)
+        {
+            locked = true;
+            Debug.Log("AutomaticGPTAnswer");
+            StartCoroutine(CallOpenAI(textField.text));
+        }
+
     }
+    //private void Update()
+    //{
+    //    // check if "Space" is pressed and start mic
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        TalkingWithHand();
+    //    }
+    //}
 }
