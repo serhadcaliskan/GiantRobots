@@ -5,7 +5,7 @@
 - [Serhad Çalışkan](https://github.com/serhadcaliskan)
 
 ## Development Context
-This game was developed during the Winter Term 2024/2025 at TUM as part of the Computer Games Laboratory (IN7106) course.
+This game was developed during the Winter Term 2024/2025 at TUM as part of the [Computer Games Laboratory (IN7106)](https://www.cs.cit.tum.de/cg/teaching/winter-term-24-25/computer-games-laboratory/) course.
 
 ## Concept
 **Giant Robots** is an immersive RPG-style battling robots game developed for the Meta Quest 3. This innovative game eliminates the need for controllers, using hand gestures and voice commands to control the game.
