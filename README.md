@@ -1,4 +1,4 @@
-# Giant Robots - RPG Battling Robots Game for Meta Quest 3
+# Giant Robots - RPG Game for Meta Quest 3
 
 ## Team
 - [Maximilian Amougou](https://github.com/CallMeSwarley)
